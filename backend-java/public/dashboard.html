@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Dashboard - Smart Irrigation System</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">🌱 Smart Irrigation</div>
+      <div class="brand-sub">Precision Farming with ML</div>
+
+      <a href="dashboard.html" class="nav-link" data-page="dashboard">📊 Dashboard</a>
+      <a href="sensors.html" class="nav-link" data-page="sensors">📡 Sensor Monitoring</a>
+      <a href="irrigation.html" class="nav-link" data-page="irrigation">💧 Irrigation Control</a>
+      <a href="crops.html" class="nav-link" data-page="crops">🌾 Crops</a>
+      <a href="weather.html" class="nav-link" data-page="weather">⛅ Weather</a>
+
+      <div class="sidebar-footer">
+        <div class="user-badge">Signed in as <strong id="userBadge"></strong></div>
+        <button class="btn btn-outline" style="width:100%;" onclick="logout()">Log Out</button>
+      </div>
+    </aside>
+
+    <main class="content">
+      <h1 class="page-title">Dashboard</h1>
+      <p class="page-subtitle">Live overview of your farm's irrigation system</p>
+
+      <div class="grid">
+        <div class="card">
+          <div class="label">Soil Moisture</div>
+          <div class="value" id="cardMoisture">--</div>
+        </div>
+        <div class="card">
+          <div class="label">Temperature</div>
+          <div class="value" id="cardTemp">--</div>
+        </div>
+        <div class="card">
+          <div class="label">Humidity</div>
+          <div class="value" id="cardHumidity">--</div>
+        </div>
+        <div class="card">
+          <div class="label">Irrigation Status</div>
+          <div class="value" id="cardIrrigation">--</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>Recent Irrigation Activity</h2>
+        <table id="activityTable">
+          <thead>
+            <tr><th>Status</th><th>Mode</th><th>Triggered By</th><th>Confidence</th><th>Time</th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+        <div class="empty-state" id="activityEmpty" style="display:none;">No irrigation activity yet. Head to Irrigation Control to get started.</div>
+      </div>
+
+      <div class="panel">
+        <h2>Your Crops</h2>
+        <table id="cropsTable">
+          <thead>
+            <tr><th>Crop</th><th>Area (acres)</th><th>Planting Date</th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+        <div class="empty-state" id="cropsEmpty" style="display:none;">No crops added yet. Go to the Crops page to add one.</div>
+      </div>
+    </main>
+  </div>
+
+  <script src="js/common.js"></script>
+  <script>
+    requireAuth();
+    initLayout("dashboard");
+
+    async function loadDashboard() {
+      try {
+        const sensor = await apiFetch("/api/sensors/latest");
+        document.getElementById("cardMoisture").textContent = sensor.soil_moisture != null ? sensor.soil_moisture + " %" : "--";
+        document.getElementById("cardTemp").textContent = sensor.temperature != null ? sensor.temperature + " °C" : "--";
+        document.getElementById("cardHumidity").textContent = sensor.humidity != null ? sensor.humidity + " %" : "--";
+      } catch (e) { /* no sensor data yet */ }
+
+      try {
+        const status = await apiFetch("/api/irrigation/status");
+        const card = document.getElementById("cardIrrigation");
+        card.textContent = status.status || "OFF";
+        card.className = "value " + (status.status === "ON" ? "" : "danger");
+      } catch (e) {}
+
+      try {
+        const history = await apiFetch("/api/irrigation/history");
+        const tbody = document.querySelector("#activityTable tbody");
+        tbody.innerHTML = "";
+        if (history.length === 0) {
+          document.getElementById("activityEmpty").style.display = "block";
+        } else {
+          history.slice(0, 8).forEach((log) => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+              <td><span class="status-pill ${log.status === 'ON' ? 'status-on' : 'status-off'}">${log.status}</span></td>
+              <td>${log.mode}</td>
+              <td>${log.triggered_by || "-"}</td>
+              <td>${log.confidence != null ? (log.confidence * 100).toFixed(1) + "%" : "-"}</td>
+              <td>${log.created_at}</td>`;
+            tbody.appendChild(tr);
+          });
+        }
+      } catch (e) {}
+
+      try {
+        const crops = await apiFetch("/api/crops");
+        const tbody = document.querySelector("#cropsTable tbody");
+        tbody.innerHTML = "";
+        if (crops.length === 0) {
+          document.getElementById("cropsEmpty").style.display = "block";
+        } else {
+          crops.slice(0, 6).forEach((crop) => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `<td>${crop.crop_name}</td><td>${crop.area_acres}</td><td>${crop.planting_date || "-"}</td>`;
+            tbody.appendChild(tr);
+          });
+        }
+      } catch (e) {}
+    }
+
+    loadDashboard();
+  </script>
+</body>
+</html>
