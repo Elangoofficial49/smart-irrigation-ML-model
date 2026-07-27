@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Crops - Smart Irrigation System</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">🌱 Smart Irrigation</div>
+      <div class="brand-sub">Precision Farming with ML</div>
+
+      <a href="dashboard.html" class="nav-link" data-page="dashboard">📊 Dashboard</a>
+      <a href="sensors.html" class="nav-link" data-page="sensors">📡 Sensor Monitoring</a>
+      <a href="irrigation.html" class="nav-link" data-page="irrigation">💧 Irrigation Control</a>
+      <a href="crops.html" class="nav-link" data-page="crops">🌾 Crops</a>
+      <a href="weather.html" class="nav-link" data-page="weather">⛅ Weather</a>
+
+      <div class="sidebar-footer">
+        <div class="user-badge">Signed in as <strong id="userBadge"></strong></div>
+        <button class="btn btn-outline" style="width:100%;" onclick="logout()">Log Out</button>
+      </div>
+    </aside>
+
+    <main class="content">
+      <h1 class="page-title">Crops</h1>
+      <p class="page-subtitle">Track what's planted on your farm</p>
+
+      <div class="panel">
+        <h2>Add a Crop</h2>
+        <form id="cropForm" class="inline-form">
+          <div class="field">
+            <label>Crop Name</label>
+            <input type="text" id="cropName" required placeholder="e.g. Sugarcane">
+          </div>
+          <div class="field">
+            <label>Area (acres)</label>
+            <input type="number" id="areaAcres" step="0.1" min="0" placeholder="2.5">
+          </div>
+          <div class="field">
+            <label>Planting Date</label>
+            <input type="date" id="plantingDate">
+          </div>
+          <div class="field">
+            <label>Notes</label>
+            <input type="text" id="notes" placeholder="Optional">
+          </div>
+          <button type="submit" class="btn btn-primary">Add Crop</button>
+        </form>
+        <span id="cropMsg" class="form-message"></span>
+      </div>
+
+      <div class="panel">
+        <h2>Your Crops</h2>
+        <table id="cropsTable">
+          <thead>
+            <tr><th>Crop</th><th>Area (acres)</th><th>Planting Date</th><th>Notes</th><th></th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+        <div class="empty-state" id="cropsEmpty" style="display:none;">No crops added yet.</div>
+      </div>
+    </main>
+  </div>
+
+  <script src="js/common.js"></script>
+  <script>
+    requireAuth();
+    initLayout("crops");
+
+    async function loadCrops() {
+      try {
+        const crops = await apiFetch("/api/crops");
+        const tbody = document.querySelector("#cropsTable tbody");
+        tbody.innerHTML = "";
+        if (crops.length === 0) {
+          document.getElementById("cropsEmpty").style.display = "block";
+          return;
+        }
+        document.getElementById("cropsEmpty").style.display = "none";
+        crops.forEach((crop) => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${crop.crop_name}</td>
+            <td>${crop.area_acres}</td>
+            <td>${crop.planting_date || "-"}</td>
+            <td>${crop.notes || "-"}</td>
+            <td><button class="btn btn-danger" data-id="${crop.id}" style="padding:5px 10px;font-size:12px;">Delete</button></td>`;
+          tbody.appendChild(tr);
+        });
+
+        document.querySelectorAll("#cropsTable button[data-id]").forEach((btn) => {
+          btn.addEventListener("click", async () => {
+            try {
+              await apiFetch("/api/crops/" + btn.dataset.id, { method: "DELETE" });
+              await loadCrops();
+            } catch (err) {
+              showMessage("cropMsg", err.message);
+            }
+          });
+        });
+      } catch (e) {}
+    }
+
+    document.getElementById("cropForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const crop_name = document.getElementById("cropName").value.trim();
+      const area_acres = document.getElementById("areaAcres").value || "0";
+      const planting_date = document.getElementById("plantingDate").value;
+      const notes = document.getElementById("notes").value.trim();
+
+      try {
+        await apiFetch("/api/crops", {
+          method: "POST",
+          body: JSON.stringify({ crop_name, area_acres, planting_date, notes })
+        });
+        showMessage("cropMsg", "Crop added.", false);
+        document.getElementById("cropForm").reset();
+        await loadCrops();
+      } catch (err) {
+        showMessage("cropMsg", err.message);
+      }
+    });
+
+    loadCrops();
+  </script>
+</body>
+</html>

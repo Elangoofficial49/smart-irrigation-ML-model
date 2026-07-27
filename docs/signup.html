@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Sign Up - Smart Irrigation System</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="auth-wrapper">
+    <div class="auth-card">
+      <h1>Create your account</h1>
+      <p class="subtitle">Set up access to your farm's irrigation dashboard</p>
+
+      <div id="formMessage" class="form-message"></div>
+
+      <form id="signupForm">
+        <div class="field">
+          <label for="username">Username</label>
+          <input type="text" id="username" required autocomplete="username">
+        </div>
+        <div class="field">
+          <label for="password">Password</label>
+          <input type="password" id="password" required minlength="4" autocomplete="new-password">
+        </div>
+        <div class="field">
+          <label for="confirmPassword">Confirm Password</label>
+          <input type="password" id="confirmPassword" required minlength="4">
+        </div>
+        <button type="submit" class="btn btn-primary">Sign Up</button>
+      </form>
+
+      <div class="auth-switch">
+        Already have an account? <a href="login.html">Log in</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/common.js"></script>
+  <script>
+    document.getElementById("signupForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const username = document.getElementById("username").value.trim();
+      const password = document.getElementById("password").value;
+      const confirmPassword = document.getElementById("confirmPassword").value;
+
+      if (password !== confirmPassword) {
+        showMessage("formMessage", "Passwords do not match");
+        return;
+      }
+
+      try {
+        await apiFetch("/api/signup", {
+          method: "POST",
+          body: JSON.stringify({ username, password })
+        });
+        showMessage("formMessage", "Account created! Redirecting to login...", false);
+        setTimeout(() => (window.location.href = "login.html"), 1200);
+      } catch (err) {
+        showMessage("formMessage", err.message);
+      }
+    });
+  </script>
+</body>
+</html>
