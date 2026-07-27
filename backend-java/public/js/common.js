@@ -1,6 +1,6 @@
 // common.js - shared helpers used by every page
 
-const API_BASE = ""; // same origin, Java server serves both API and frontend
+const API_BASE = "https://elangoofficial49.github.io/smart-irrigation-ML-model/"; // same origin, Java server serves both API and frontend
 
 function getToken() {
   return localStorage.getItem("token");
