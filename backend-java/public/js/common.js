@@ -1,7 +1,6 @@
 // common.js - shared helpers used by every page
 
-const API_BASE = ""; // same origin, Java server serves both API and frontend
-
+const API_BASE = "https://smart-irrigation-ml-model.onrender.com";
 function getToken() {
   return localStorage.getItem("token");
 }
