@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Irrigation Control - Smart Irrigation System</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">🌱 Smart Irrigation</div>
+      <div class="brand-sub">Precision Farming with ML</div>
+
+      <a href="dashboard.html" class="nav-link" data-page="dashboard">📊 Dashboard</a>
+      <a href="sensors.html" class="nav-link" data-page="sensors">📡 Sensor Monitoring</a>
+      <a href="irrigation.html" class="nav-link" data-page="irrigation">💧 Irrigation Control</a>
+      <a href="crops.html" class="nav-link" data-page="crops">🌾 Crops</a>
+      <a href="weather.html" class="nav-link" data-page="weather">⛅ Weather</a>
+
+      <div class="sidebar-footer">
+        <div class="user-badge">Signed in as <strong id="userBadge"></strong></div>
+        <button class="btn btn-outline" style="width:100%;" onclick="logout()">Log Out</button>
+      </div>
+    </aside>
+
+    <main class="content">
+      <h1 class="page-title">Irrigation Control</h1>
+      <p class="page-subtitle">Let the ML model decide, or control irrigation manually</p>
+
+      <div class="card" style="max-width:260px;margin-bottom:24px;">
+        <div class="label">Current Status</div>
+        <div class="value" id="currentStatus">--</div>
+      </div>
+
+      <div class="panel">
+        <h2>🤖 ML-Based Auto Decision</h2>
+        <p style="font-size:13px;color:var(--text-500);margin-top:0;">
+          Runs the trained logistic-regression model against the latest sensor
+          reading (soil moisture, temperature, humidity, rainfall probability)
+          and decides whether to irrigate.
+        </p>
+        <button class="btn btn-primary" id="predictBtn">Run ML Prediction</button>
+        <span id="predictMsg" class="form-message"></span>
+        <div id="predictResult" style="margin-top:12px;font-size:13px;"></div>
+      </div>
+
+      <div class="panel">
+        <h2>🕹️ Manual Override</h2>
+        <div class="inline-form">
+          <button class="btn btn-primary" id="turnOnBtn">Turn Irrigation ON</button>
+          <button class="btn btn-danger" id="turnOffBtn">Turn Irrigation OFF</button>
+        </div>
+        <span id="toggleMsg" class="form-message"></span>
+      </div>
+
+      <div class="panel">
+        <h2>History</h2>
+        <table id="logTable">
+          <thead>
+            <tr><th>Status</th><th>Mode</th><th>Triggered By</th><th>Confidence</th><th>Time</th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+        <div class="empty-state" id="logEmpty" style="display:none;">No irrigation events yet.</div>
+      </div>
+    </main>
+  </div>
+
+  <script src="js/common.js"></script>
+  <script>
+    requireAuth();
+    initLayout("irrigation");
+
+    async function loadStatus() {
+      try {
+        const status = await apiFetch("/api/irrigation/status");
+        const el = document.getElementById("currentStatus");
+        el.textContent = status.status || "OFF";
+        el.className = "value " + (status.status === "ON" ? "" : "danger");
+      } catch (e) {}
+    }
+
+    async function loadHistory() {
+      try {
+        const history = await apiFetch("/api/irrigation/history");
+        const tbody = document.querySelector("#logTable tbody");
+        tbody.innerHTML = "";
+        if (history.length === 0) {
+          document.getElementById("logEmpty").style.display = "block";
+          return;
+        }
+        document.getElementById("logEmpty").style.display = "none";
+        history.forEach((log) => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td><span class="status-pill ${log.status === 'ON' ? 'status-on' : 'status-off'}">${log.status}</span></td>
+            <td>${log.mode}</td>
+            <td>${log.triggered_by || "-"}</td>
+            <td>${log.confidence != null ? (log.confidence * 100).toFixed(1) + "%" : "-"}</td>
+            <td>${log.created_at}</td>`;
+          tbody.appendChild(tr);
+        });
+      } catch (e) {}
+    }
+
+    document.getElementById("predictBtn").addEventListener("click", async () => {
+      try {
+        const result = await apiFetch("/api/irrigation/predict", { method: "POST" });
+        showMessage("predictMsg", "Prediction complete.", false);
+        document.getElementById("predictResult").innerHTML = `
+          Model decision: <strong>${result.status}</strong> &mdash;
+          confidence ${(result.confidence * 100).toFixed(1)}% &mdash;
+          based on soil moisture ${result.based_on.soil_moisture}%,
+          temperature ${result.based_on.temperature}°C,
+          humidity ${result.based_on.humidity}%,
+          rainfall probability ${result.based_on.rainfall_prob}%.`;
+        await loadStatus();
+        await loadHistory();
+      } catch (err) {
+        showMessage("predictMsg", err.message);
+      }
+    });
+
+    async function manualToggle(state) {
+      try {
+        await apiFetch("/api/irrigation/toggle", {
+          method: "POST",
+          body: JSON.stringify({ state })
+        });
+        showMessage("toggleMsg", "Irrigation turned " + state + ".", false);
+        await loadStatus();
+        await loadHistory();
+      } catch (err) {
+        showMessage("toggleMsg", err.message);
+      }
+    }
+
+    document.getElementById("turnOnBtn").addEventListener("click", () => manualToggle("ON"));
+    document.getElementById("turnOffBtn").addEventListener("click", () => manualToggle("OFF"));
+
+    loadStatus();
+    loadHistory();
+  </script>
+</body>
+</html>
