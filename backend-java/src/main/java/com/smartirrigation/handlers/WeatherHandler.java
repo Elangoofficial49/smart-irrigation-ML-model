@@ -1,9 +1,5 @@
 package com.smartirrigation.handlers;
 
-import com.smartirrigation.util.Json;
-import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
-
 import java.io.IOException;
 import java.net.URI;
 import java.net.URLEncoder;
@@ -14,6 +10,10 @@ import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import com.smartirrigation.util.Json;
+import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpHandler;
 
 /**
  * Fetches live weather using Open-Meteo (https://open-meteo.com) - it's free

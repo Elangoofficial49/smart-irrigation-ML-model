@@ -9,33 +9,43 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Base64;
 
+import io.github.cdimascio.dotenv.Dotenv;
+
 /**
- * Database layer using MySQL through the mysql-connector-j JDBC driver.
- * Connects to a MySQL server (e.g. via MySQL Workbench / local MySQL instance).
+ * Database layer using PostgreSQL (Supabase) through the postgresql JDBC driver.
+ * Connects to a Supabase-hosted Postgres instance.
  */
 public class Database {
 
-    // ---- Update these to match your MySQL Workbench / server setup ----
-    private static final String DB_HOST = "localhost";
-    private static final String DB_PORT = "3306";
-    private static final String DB_NAME = "smart_irrigation";
-    private static final String DB_USER = "root";
-    private static final String DB_PASSWORD = "elango123";
+    // ---- Loaded from .env (never hardcoded) ----
+    private static final Dotenv dotenv = Dotenv.configure()
+            .directory(System.getProperty("user.dir"))
+            .ignoreIfMissing()
+            .load();
 
-   private static final String DB_URL =
-    "jdbc:mysql://" + DB_HOST + ":" + DB_PORT + "/" + DB_NAME +
-    "?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&createDatabaseIfNotExist=true";
+    private static final String URL = dotenv.get("DB_URL");
+    private static final String USER = dotenv.get("DB_USER");
+    private static final String PASSWORD = dotenv.get("DB_PASSWORD");
 
     static {
+        System.out.println("[DEBUG] Working dir: " + System.getProperty("user.dir"));
+        System.out.println("[DEBUG] DB_URL loaded: " + (URL != null ? "YES -> " + URL : "NULL"));
+        System.out.println("[DEBUG] DB_USER loaded: " + (USER != null ? "YES" : "NULL"));
+        System.out.println("[DEBUG] DB_PASSWORD loaded: " + (PASSWORD != null ? "YES (hidden)" : "NULL"));
+
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
+            Class.forName("org.postgresql.Driver");
         } catch (ClassNotFoundException e) {
-            throw new RuntimeException("MySQL JDBC driver not found. Add mysql-connector-j to your dependencies.", e);
+            throw new RuntimeException("PostgreSQL JDBC driver not found. Add postgresql dependency to pom.xml.", e);
         }
     }
 
+    public static Connection getConnection() throws SQLException {
+        return DriverManager.getConnection(URL, USER, PASSWORD);
+    }
+
     public static Connection connect() throws SQLException {
-        return DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+        return getConnection();
     }
 
     public static void init() {
@@ -43,7 +53,7 @@ public class Database {
 
             st.execute("""
                 CREATE TABLE IF NOT EXISTS users (
-                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    id SERIAL PRIMARY KEY,
                     username VARCHAR(255) UNIQUE NOT NULL,
                     password_hash VARCHAR(255) NOT NULL,
                     salt VARCHAR(255) NOT NULL,
@@ -53,21 +63,21 @@ public class Database {
 
             st.execute("""
                 CREATE TABLE IF NOT EXISTS sensors (
-                    id INT AUTO_INCREMENT PRIMARY KEY,
-                    soil_moisture DOUBLE NOT NULL,
-                    temperature DOUBLE NOT NULL,
-                    humidity DOUBLE NOT NULL,
-                    rainfall_prob DOUBLE NOT NULL,
+                    id SERIAL PRIMARY KEY,
+                    soil_moisture DOUBLE PRECISION NOT NULL,
+                    temperature DOUBLE PRECISION NOT NULL,
+                    humidity DOUBLE PRECISION NOT NULL,
+                    rainfall_prob DOUBLE PRECISION NOT NULL,
                     recorded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 )
             """);
 
             st.execute("""
                 CREATE TABLE IF NOT EXISTS crops (
-                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    id SERIAL PRIMARY KEY,
                     username VARCHAR(255) NOT NULL,
                     crop_name VARCHAR(255) NOT NULL,
-                    area_acres DOUBLE,
+                    area_acres DOUBLE PRECISION,
                     planting_date VARCHAR(50),
                     notes TEXT,
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -76,16 +86,16 @@ public class Database {
 
             st.execute("""
                 CREATE TABLE IF NOT EXISTS irrigation_logs (
-                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    id SERIAL PRIMARY KEY,
                     status VARCHAR(50) NOT NULL,
                     mode VARCHAR(50) NOT NULL,
                     triggered_by VARCHAR(255),
-                    confidence DOUBLE,
+                    confidence DOUBLE PRECISION,
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 )
             """);
 
-            System.out.println("[Database] MySQL initialized at " + DB_URL);
+            System.out.println("[Database] PostgreSQL (Supabase) initialized at " + URL);
         } catch (SQLException e) {
             throw new RuntimeException("Failed to initialize database", e);
         }

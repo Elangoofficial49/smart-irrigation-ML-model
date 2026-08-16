@@ -1,14 +1,17 @@
 package com.smartirrigation.handlers;
 
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Map;
+
 import com.smartirrigation.Database;
 import com.smartirrigation.SessionManager;
 import com.smartirrigation.util.Json;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
-
-import java.io.IOException;
-import java.sql.*;
-import java.util.Map;
 
 public class AuthHandler extends BaseHandler {
 
