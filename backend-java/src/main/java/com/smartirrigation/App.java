@@ -19,6 +19,8 @@ public class App {
     private static final int PORT = 5000;
 
     public static void main(String[] args) throws Exception {
+        System.out.println("Working directory: " + new File(".").getAbsolutePath());
+
         new File("database").mkdirs();
         Database.init();
 
