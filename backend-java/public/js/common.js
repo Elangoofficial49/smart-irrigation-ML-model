@@ -1,12 +1,20 @@
-// common.js - shared helpers used by every page
+// ==========================================================================
+// Smart Irrigation System - Common JavaScript Utilities & Navigation
+// ==========================================================================
 
-const API_BASE = "https://smart-irrigation-ml-model-1.onrender.com";
+// Intelligent API base URL detection:
+// When served from the backend (localhost:5000 or production server), use relative path ""
+// If running from file:// or separate frontend origin, fallback to configured URL.
+const API_BASE = (window.location.protocol.startsWith("http") && !window.location.host.includes("github.io")) 
+  ? "" 
+  : "https://smart-irrigation-ml-model-1.onrender.com";
+
 function getToken() {
   return localStorage.getItem("token");
 }
 
 function getUsername() {
-  return localStorage.getItem("username") || "";
+  return localStorage.getItem("username") || "User";
 }
 
 function saveSession(token, username) {
@@ -19,40 +27,53 @@ function clearSession() {
   localStorage.removeItem("username");
 }
 
-/** Redirects to login if there is no token. Call at the top of protected pages. */
+/** Redirects to login if user is not authenticated */
 function requireAuth() {
   if (!getToken()) {
     window.location.href = "login.html";
   }
 }
 
-/** fetch() wrapper that automatically attaches the auth token */
+/** Robust API fetch wrapper with token injection and error handling */
 async function apiFetch(path, options = {}) {
   const headers = options.headers || {};
-  headers["Content-Type"] = "application/json";
+  if (!headers["Content-Type"] && !(options.body instanceof FormData)) {
+    headers["Content-Type"] = "application/json";
+  }
+
   const token = getToken();
-  if (token) headers["Authorization"] = "Bearer " + token;
+  if (token) {
+    headers["Authorization"] = "Bearer " + token;
+  }
 
-  const response = await fetch(API_BASE + path, { ...options, headers });
-  let data = null;
   try {
-    data = await response.json();
-  } catch (e) {
-    data = {};
-  }
+    const response = await fetch(API_BASE + path, { ...options, headers });
+    let data = null;
+    try {
+      data = await response.json();
+    } catch (e) {
+      data = {};
+    }
 
-  if (response.status === 401) {
-    clearSession();
-    window.location.href = "login.html";
-    throw new Error("Not authenticated");
-  }
+    if (response.status === 401) {
+      clearSession();
+      showToast("Session expired. Please log in again.", "warning");
+      setTimeout(() => {
+        window.location.href = "login.html";
+      }, 1000);
+      throw new Error("Not authenticated");
+    }
 
-  if (!response.ok) {
-    throw new Error(data.error || "Request failed (" + response.status + ")");
+    if (!response.ok) {
+      throw new Error(data.error || "Request failed (" + response.status + ")");
+    }
+    return data;
+  } catch (err) {
+    throw err;
   }
-  return data;
 }
 
+/** User logout action */
 async function logout() {
   try {
     await apiFetch("/api/logout", { method: "POST" });
@@ -63,18 +84,82 @@ async function logout() {
   window.location.href = "login.html";
 }
 
+/** Toast Notification System */
+function showToast(message, type = "info") {
+  let container = document.getElementById("toast-container");
+  if (!container) {
+    container = document.createElement("div");
+    container.id = "toast-container";
+    document.body.appendChild(container);
+  }
+
+  const toast = document.createElement("div");
+  toast.className = `toast toast-${type}`;
+
+  const iconMap = {
+    success: "fa-circle-check",
+    error: "fa-circle-exclamation",
+    warning: "fa-triangle-exclamation",
+    info: "fa-circle-info"
+  };
+
+  toast.innerHTML = `
+    <i class="fa-solid ${iconMap[type] || 'fa-circle-info'}"></i>
+    <div style="flex:1;">${escapeHtml(message)}</div>
+  `;
+
+  container.appendChild(toast);
+
+  setTimeout(() => {
+    toast.style.opacity = "0";
+    toast.style.transform = "translateX(40px)";
+    toast.style.transition = "all 0.3s ease";
+    setTimeout(() => toast.remove(), 300);
+  }, 4000);
+}
+
 function showMessage(elementId, text, isError = true) {
   const el = document.getElementById(elementId);
   if (!el) return;
   el.textContent = text;
-  el.style.color = isError ? "#d64545" : "#2f8f4e";
+  el.style.color = isError ? "#ef4444" : "#10b981";
 }
 
-/** Highlights the current page in the sidebar nav and fills in the username badge */
+function escapeHtml(str) {
+  if (!str) return "";
+  return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+
+/** Layout and Navigation Initializer */
 function initLayout(activePage) {
-  document.querySelectorAll(".nav-link").forEach((link) => {
-    if (link.dataset.page === activePage) link.classList.add("active");
+  // Highlight active link
+  document.querySelectorAll(".nav-item").forEach((link) => {
+    if (link.dataset.page === activePage) {
+      link.classList.add("active");
+    } else {
+      link.classList.remove("active");
+    }
   });
+
+  // Set user badge initials & name
+  const username = getUsername();
   const userBadge = document.getElementById("userBadge");
-  if (userBadge) userBadge.textContent = getUsername();
+  const avatarInitials = document.getElementById("avatarInitials");
+  if (userBadge) userBadge.textContent = username;
+  if (avatarInitials) avatarInitials.textContent = username.slice(0, 2).toUpperCase();
+
+  // Mobile menu toggle logic
+  const mobileToggle = document.getElementById("mobileToggle");
+  const sidebar = document.querySelector(".sidebar");
+  if (mobileToggle && sidebar) {
+    mobileToggle.addEventListener("click", () => {
+      sidebar.classList.toggle("open");
+    });
+
+    document.addEventListener("click", (e) => {
+      if (sidebar.classList.contains("open") && !sidebar.contains(e.target) && !mobileToggle.contains(e.target)) {
+        sidebar.classList.remove("open");
+      }
+    });
+  }
 }

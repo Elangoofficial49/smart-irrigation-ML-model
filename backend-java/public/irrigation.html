@@ -1,70 +1,218 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Irrigation Control - Smart Irrigation System</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="css/style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Irrigation Control &bull; Smart Irrigation AI</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <div class="app-shell">
+  <div class="app-container">
+    <!-- Sidebar -->
     <aside class="sidebar">
-      <div class="brand">🌱 Smart Irrigation</div>
-      <div class="brand-sub">Precision Farming with ML</div>
+      <div class="sidebar-header">
+        <div class="brand-icon"><i class="fa-solid fa-leaf"></i></div>
+        <div class="brand-info">
+          <h2>AgroPulse AI</h2>
+          <span>Smart Irrigation System</span>
+        </div>
+      </div>
 
-      <a href="dashboard.html" class="nav-link" data-page="dashboard">📊 Dashboard</a>
-      <a href="sensors.html" class="nav-link" data-page="sensors">📡 Sensor Monitoring</a>
-      <a href="irrigation.html" class="nav-link" data-page="irrigation">💧 Irrigation Control</a>
-      <a href="crops.html" class="nav-link" data-page="crops">🌾 Crops</a>
-      <a href="weather.html" class="nav-link" data-page="weather">⛅ Weather</a>
+      <nav class="sidebar-nav">
+        <div class="nav-section-title">Telemetry & Control</div>
+        <a href="dashboard.html" class="nav-item" data-page="dashboard">
+          <i class="fa-solid fa-chart-pie"></i>
+          <span>Dashboard</span>
+        </a>
+        <a href="sensors.html" class="nav-item" data-page="sensors">
+          <i class="fa-solid fa-satellite-dish"></i>
+          <span>Sensor Monitoring</span>
+        </a>
+        <a href="irrigation.html" class="nav-item" data-page="irrigation">
+          <i class="fa-solid fa-faucet-drip"></i>
+          <span>Irrigation Control</span>
+        </a>
+
+        <div class="nav-section-title">Farm Management</div>
+        <a href="crops.html" class="nav-item" data-page="crops">
+          <i class="fa-solid fa-wheat-awn"></i>
+          <span>Crop Inventory</span>
+        </a>
+        <a href="weather.html" class="nav-item" data-page="weather">
+          <i class="fa-solid fa-cloud-sun-rain"></i>
+          <span>Weather Intelligence</span>
+        </a>
+      </nav>
 
       <div class="sidebar-footer">
-        <div class="user-badge">Signed in as <strong id="userBadge"></strong></div>
-        <button class="btn btn-outline" style="width:100%;" onclick="logout()">Log Out</button>
+        <div class="user-profile-card">
+          <div class="user-avatar" id="avatarInitials">US</div>
+          <div class="user-details">
+            <div class="user-name" id="userBadge">Operator</div>
+            <div class="user-role"><div class="online-dot"></div> Connected</div>
+          </div>
+        </div>
+        <button class="btn-logout" onclick="logout()">
+          <i class="fa-solid fa-arrow-right-from-bracket"></i>
+          <span>Log Out</span>
+        </button>
       </div>
     </aside>
 
-    <main class="content">
-      <h1 class="page-title">Irrigation Control</h1>
-      <p class="page-subtitle">Let the ML model decide, or control irrigation manually</p>
-
-      <div class="card" style="max-width:260px;margin-bottom:24px;">
-        <div class="label">Current Status</div>
-        <div class="value" id="currentStatus">--</div>
-      </div>
-
-      <div class="panel">
-        <h2>🤖 ML-Based Auto Decision</h2>
-        <p style="font-size:13px;color:var(--text-500);margin-top:0;">
-          Runs the trained logistic-regression model against the latest sensor
-          reading (soil moisture, temperature, humidity, rainfall probability)
-          and decides whether to irrigate.
-        </p>
-        <button class="btn btn-primary" id="predictBtn">Run ML Prediction</button>
-        <span id="predictMsg" class="form-message"></span>
-        <div id="predictResult" style="margin-top:12px;font-size:13px;"></div>
-      </div>
-
-      <div class="panel">
-        <h2>🕹️ Manual Override</h2>
-        <div class="inline-form">
-          <button class="btn btn-primary" id="turnOnBtn">Turn Irrigation ON</button>
-          <button class="btn btn-danger" id="turnOffBtn">Turn Irrigation OFF</button>
+    <!-- Main Content -->
+    <div class="main-wrapper">
+      <header class="top-navbar">
+        <div style="display:flex; align-items:center; gap:14px;">
+          <button class="mobile-menu-toggle" id="mobileToggle" aria-label="Toggle Navigation">
+            <i class="fa-solid fa-bars"></i>
+          </button>
+          <div class="breadcrumb-area">
+            <span class="parent">AgroPulse</span>
+            <i class="fa-solid fa-chevron-right"></i>
+            <span class="current">Irrigation Control</span>
+          </div>
         </div>
-        <span id="toggleMsg" class="form-message"></span>
-      </div>
 
-      <div class="panel">
-        <h2>History</h2>
-        <table id="logTable">
-          <thead>
-            <tr><th>Status</th><th>Mode</th><th>Triggered By</th><th>Confidence</th><th>Time</th></tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-        <div class="empty-state" id="logEmpty" style="display:none;">No irrigation events yet.</div>
-      </div>
-    </main>
+        <div class="top-nav-actions">
+          <div class="system-status-badge">
+            <i class="fa-solid fa-shield-halved" style="color:var(--primary-600);"></i>
+            <span>Relay Actuators Active</span>
+          </div>
+        </div>
+      </header>
+
+      <main class="page-content">
+        <div class="page-header">
+          <div class="page-title-group">
+            <h1>Pump Actuator & ML Control Center</h1>
+            <p>Automated machine learning inference pipeline with manual override capabilities</p>
+          </div>
+        </div>
+
+        <!-- Live Animated Pump State Banner -->
+        <div class="pump-status-banner pump-inactive" id="pumpBanner">
+          <div class="pump-info">
+            <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
+              <span class="status-pill status-off" id="bannerStatusPill">PUMP OFF</span>
+              <span style="font-size:12.5px; opacity:0.85;" id="bannerModeText">Standby</span>
+            </div>
+            <h3 id="bannerTitle">Irrigation Valves Closed</h3>
+            <p id="bannerSubtitle">No active water discharge. System is in automated listening mode.</p>
+          </div>
+          <div class="pump-visual-ring" id="bannerVisualRing">
+            <i class="fa-solid fa-faucet-drip"></i>
+          </div>
+        </div>
+
+        <!-- ML & Manual Control Grid -->
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap:24px; margin-bottom:28px;">
+          
+          <!-- ML Model Autonomous Decision -->
+          <div class="panel" style="margin-bottom:0;">
+            <div class="panel-header">
+              <div class="panel-title">
+                <i class="fa-solid fa-robot"></i>
+                <span>ML Autonomous Decision Engine</span>
+              </div>
+            </div>
+            <p style="font-size:13.5px; color:var(--slate-600); line-height:1.6; margin-bottom:16px;">
+              Executes logistic regression against the most recent IoT ground reading (soil moisture, temperature, humidity, rainfall probability) to compute the optimal water delivery decision.
+            </p>
+
+            <button class="btn btn-primary btn-block btn-lg" id="predictBtn" onclick="runMlPrediction()">
+              <i class="fa-solid fa-wand-magic-sparkles"></i>
+              <span>Run ML Inference Evaluation</span>
+            </button>
+
+            <!-- Result breakdown card -->
+            <div class="ml-decision-box" id="predictResultBox" style="display:none; margin-top:18px;">
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span style="font-size:13px; font-weight:600; color:var(--slate-700);">Computed Action:</span>
+                <span class="status-pill" id="mlResultBadge">--</span>
+              </div>
+
+              <div class="ml-confidence-meter">
+                <div class="ml-confidence-bar" id="mlConfidenceBar" style="width:0%;"></div>
+              </div>
+
+              <div style="display:flex; justify-content:space-between; font-size:12px; color:var(--slate-500); margin-bottom:12px;">
+                <span>Inference Confidence:</span>
+                <strong id="mlConfidenceVal">--%</strong>
+              </div>
+
+              <div style="font-size:12.5px; color:var(--slate-600); border-top:1px dashed var(--primary-200); padding-top:10px;" id="mlFactorDetails">
+                <!-- Factors inserted dynamically -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Manual Pump Actuation -->
+          <div class="panel" style="margin-bottom:0; display:flex; flex-direction:column; justify-content:space-between;">
+            <div>
+              <div class="panel-header">
+                <div class="panel-title">
+                  <i class="fa-solid fa-gamepad"></i>
+                  <span>Manual Override Station</span>
+                </div>
+              </div>
+              <p style="font-size:13.5px; color:var(--slate-600); line-height:1.6; margin-bottom:20px;">
+                Operator manual controls directly engage or disengage the solenoid field valves and main pump relay, bypassing automated ML schedules.
+              </p>
+              <div style="background:var(--slate-50); border:1px solid var(--border-color); border-radius:var(--radius-md); padding:16px; margin-bottom:20px;">
+                <div style="font-size:12px; font-weight:700; color:var(--slate-500); text-transform:uppercase; margin-bottom:4px;">Safety Notice</div>
+                <p style="font-size:12.5px; color:var(--slate-600);">
+                  Manual overrides are logged with operator identity for compliance and agronomic auditing.
+                </p>
+              </div>
+            </div>
+
+            <div style="display:flex; gap:14px;">
+              <button class="btn btn-success btn-lg" style="flex:1;" onclick="manualToggle('ON')" id="btnTurnOn">
+                <i class="fa-solid fa-play"></i>
+                <span>Turn ON Pump</span>
+              </button>
+              <button class="btn btn-danger btn-lg" style="flex:1;" onclick="manualToggle('OFF')" id="btnTurnOff">
+                <i class="fa-solid fa-stop"></i>
+                <span>Turn OFF Pump</span>
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Full Audit History Table -->
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">
+              <i class="fa-solid fa-list-check"></i>
+              <span>Irrigation Actuation Audit Log</span>
+            </div>
+          </div>
+
+          <div class="table-responsive">
+            <table class="data-table" id="logTable">
+              <thead>
+                <tr>
+                  <th>Event ID</th>
+                  <th>Pump State</th>
+                  <th>Control Mode</th>
+                  <th>Triggered By</th>
+                  <th>ML Confidence</th>
+                  <th>Timestamp</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+            <div class="empty-state" id="logEmpty" style="display:none;">
+              <i class="fa-solid fa-clipboard-list"></i>
+              No irrigation events logged yet.
+            </div>
+          </div>
+        </div>
+
+      </main>
+    </div>
   </div>
 
   <script src="js/common.js"></script>
@@ -75,9 +223,32 @@
     async function loadStatus() {
       try {
         const status = await apiFetch("/api/irrigation/status");
-        const el = document.getElementById("currentStatus");
-        el.textContent = status.status || "OFF";
-        el.className = "value " + (status.status === "ON" ? "" : "danger");
+        const isON = status.status === "ON";
+
+        const banner = document.getElementById("pumpBanner");
+        const pill = document.getElementById("bannerStatusPill");
+        const modeText = document.getElementById("bannerModeText");
+        const title = document.getElementById("bannerTitle");
+        const sub = document.getElementById("bannerSubtitle");
+        const ring = document.getElementById("bannerVisualRing");
+
+        if (isON) {
+          banner.className = "pump-status-banner pump-active";
+          pill.className = "status-pill status-on";
+          pill.textContent = "PUMP ACTIVE";
+          modeText.textContent = `Mode: ${status.mode || 'auto'}`;
+          title.textContent = "Irrigation System Discharging";
+          sub.textContent = "Active water flow through drip lines & sprinkler zones.";
+          ring.innerHTML = '<i class="fa-solid fa-water"></i>';
+        } else {
+          banner.className = "pump-status-banner pump-inactive";
+          pill.className = "status-pill status-off";
+          pill.textContent = "PUMP STANDBY";
+          modeText.textContent = `Mode: ${status.mode || 'standby'}`;
+          title.textContent = "Irrigation Valves Closed";
+          sub.textContent = "No active water discharge. System is in automated monitoring mode.";
+          ring.innerHTML = '<i class="fa-solid fa-faucet-drip"></i>';
+        }
       } catch (e) {}
     }
 
@@ -86,41 +257,64 @@
         const history = await apiFetch("/api/irrigation/history");
         const tbody = document.querySelector("#logTable tbody");
         tbody.innerHTML = "";
-        if (history.length === 0) {
+
+        if (!history || history.length === 0) {
           document.getElementById("logEmpty").style.display = "block";
           return;
         }
+
         document.getElementById("logEmpty").style.display = "none";
         history.forEach((log) => {
           const tr = document.createElement("tr");
           tr.innerHTML = `
+            <td>#${log.id}</td>
             <td><span class="status-pill ${log.status === 'ON' ? 'status-on' : 'status-off'}">${log.status}</span></td>
-            <td>${log.mode}</td>
-            <td>${log.triggered_by || "-"}</td>
-            <td>${log.confidence != null ? (log.confidence * 100).toFixed(1) + "%" : "-"}</td>
-            <td>${log.created_at}</td>`;
+            <td><span class="status-pill ${log.mode === 'auto' ? 'status-auto' : 'status-manual'}">${log.mode}</span></td>
+            <td>${escapeHtml(log.triggered_by || "-")}</td>
+            <td>${log.confidence != null ? (log.confidence * 100).toFixed(1) + "%" : "N/A"}</td>
+            <td style="font-size:12.5px; color:var(--slate-500);">${log.created_at || "-"}</td>`;
           tbody.appendChild(tr);
         });
       } catch (e) {}
     }
 
-    document.getElementById("predictBtn").addEventListener("click", async () => {
+    async function runMlPrediction() {
+      const btn = document.getElementById("predictBtn");
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Analyzing Sensor Telemetry...';
+
       try {
-        const result = await apiFetch("/api/irrigation/predict", { method: "POST" });
-        showMessage("predictMsg", "Prediction complete.", false);
-        document.getElementById("predictResult").innerHTML = `
-          Model decision: <strong>${result.status}</strong> &mdash;
-          confidence ${(result.confidence * 100).toFixed(1)}% &mdash;
-          based on soil moisture ${result.based_on.soil_moisture}%,
-          temperature ${result.based_on.temperature}°C,
-          humidity ${result.based_on.humidity}%,
-          rainfall probability ${result.based_on.rainfall_prob}%.`;
+        const res = await apiFetch("/api/irrigation/predict", { method: "POST" });
+        const isON = res.status === "ON";
+        const pct = Math.round((res.confidence || 0.5) * 100);
+
+        const box = document.getElementById("predictResultBox");
+        box.style.display = "block";
+
+        const badge = document.getElementById("mlResultBadge");
+        badge.className = `status-pill ${isON ? 'status-on' : 'status-off'}`;
+        badge.textContent = isON ? "IRRIGATE (PUMP ON)" : "DO NOT IRRIGATE (PUMP OFF)";
+
+        document.getElementById("mlConfidenceBar").style.width = pct + "%";
+        document.getElementById("mlConfidenceVal").textContent = pct + "%";
+
+        const based = res.based_on || {};
+        document.getElementById("mlFactorDetails").innerHTML = `
+          <strong>Input Telemetry Analyzed:</strong><br>
+          &bull; Soil Moisture: <strong>${based.soil_moisture}%</strong> &bull; Temp: <strong>${based.temperature}°C</strong><br>
+          &bull; Humidity: <strong>${based.humidity}%</strong> &bull; Rain Probability: <strong>${based.rainfall_prob}%</strong>
+        `;
+
+        showToast(`ML Decision: ${res.status} (${pct}% confidence)`, "success");
         await loadStatus();
         await loadHistory();
       } catch (err) {
-        showMessage("predictMsg", err.message);
+        showToast(err.message, "error");
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i> <span>Run ML Inference Evaluation</span>';
       }
-    });
+    }
 
     async function manualToggle(state) {
       try {
@@ -128,16 +322,13 @@
           method: "POST",
           body: JSON.stringify({ state })
         });
-        showMessage("toggleMsg", "Irrigation turned " + state + ".", false);
+        showToast(`Pump successfully switched ${state}`, "success");
         await loadStatus();
         await loadHistory();
       } catch (err) {
-        showMessage("toggleMsg", err.message);
+        showToast(err.message, "error");
       }
     }
-
-    document.getElementById("turnOnBtn").addEventListener("click", () => manualToggle("ON"));
-    document.getElementById("turnOffBtn").addEventListener("click", () => manualToggle("OFF"));
 
     loadStatus();
     loadHistory();

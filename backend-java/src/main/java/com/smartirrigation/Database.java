@@ -55,8 +55,29 @@ public class Database {
                 CREATE TABLE IF NOT EXISTS users (
                     id SERIAL PRIMARY KEY,
                     username VARCHAR(255) UNIQUE NOT NULL,
+                    email VARCHAR(255) UNIQUE,
                     password_hash VARCHAR(255) NOT NULL,
                     salt VARCHAR(255) NOT NULL,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )
+            """);
+
+            try {
+                st.execute("ALTER TABLE users ADD COLUMN IF NOT EXISTS email VARCHAR(255);");
+                // Deduplicate any older test rows with same email before enforcing unique index
+                st.execute("DELETE FROM users a USING users b WHERE a.id < b.id AND a.email IS NOT NULL AND LOWER(a.email) = LOWER(b.email);");
+                st.execute("CREATE UNIQUE INDEX IF NOT EXISTS idx_users_email_unique ON users (LOWER(email));");
+            } catch (SQLException ignored) {
+                // Column or index might already exist or SQLite fallback
+            }
+
+            st.execute("""
+                CREATE TABLE IF NOT EXISTS password_resets (
+                    id SERIAL PRIMARY KEY,
+                    email VARCHAR(255) NOT NULL,
+                    otp_code VARCHAR(10) NOT NULL,
+                    expires_at TIMESTAMP NOT NULL,
+                    used BOOLEAN DEFAULT FALSE,
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 )
             """);

@@ -1,68 +1,207 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Crops - Smart Irrigation System</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="css/style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Crop Inventory &bull; Smart Irrigation AI</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <div class="app-shell">
+  <div class="app-container">
+    <!-- Sidebar -->
     <aside class="sidebar">
-      <div class="brand">🌱 Smart Irrigation</div>
-      <div class="brand-sub">Precision Farming with ML</div>
+      <div class="sidebar-header">
+        <div class="brand-icon"><i class="fa-solid fa-leaf"></i></div>
+        <div class="brand-info">
+          <h2>AgroPulse AI</h2>
+          <span>Smart Irrigation System</span>
+        </div>
+      </div>
 
-      <a href="dashboard.html" class="nav-link" data-page="dashboard">📊 Dashboard</a>
-      <a href="sensors.html" class="nav-link" data-page="sensors">📡 Sensor Monitoring</a>
-      <a href="irrigation.html" class="nav-link" data-page="irrigation">💧 Irrigation Control</a>
-      <a href="crops.html" class="nav-link" data-page="crops">🌾 Crops</a>
-      <a href="weather.html" class="nav-link" data-page="weather">⛅ Weather</a>
+      <nav class="sidebar-nav">
+        <div class="nav-section-title">Telemetry & Control</div>
+        <a href="dashboard.html" class="nav-item" data-page="dashboard">
+          <i class="fa-solid fa-chart-pie"></i>
+          <span>Dashboard</span>
+        </a>
+        <a href="sensors.html" class="nav-item" data-page="sensors">
+          <i class="fa-solid fa-satellite-dish"></i>
+          <span>Sensor Monitoring</span>
+        </a>
+        <a href="irrigation.html" class="nav-item" data-page="irrigation">
+          <i class="fa-solid fa-faucet-drip"></i>
+          <span>Irrigation Control</span>
+        </a>
+
+        <div class="nav-section-title">Farm Management</div>
+        <a href="crops.html" class="nav-item" data-page="crops">
+          <i class="fa-solid fa-wheat-awn"></i>
+          <span>Crop Inventory</span>
+        </a>
+        <a href="weather.html" class="nav-item" data-page="weather">
+          <i class="fa-solid fa-cloud-sun-rain"></i>
+          <span>Weather Intelligence</span>
+        </a>
+      </nav>
 
       <div class="sidebar-footer">
-        <div class="user-badge">Signed in as <strong id="userBadge"></strong></div>
-        <button class="btn btn-outline" style="width:100%;" onclick="logout()">Log Out</button>
+        <div class="user-profile-card">
+          <div class="user-avatar" id="avatarInitials">US</div>
+          <div class="user-details">
+            <div class="user-name" id="userBadge">Operator</div>
+            <div class="user-role"><div class="online-dot"></div> Connected</div>
+          </div>
+        </div>
+        <button class="btn-logout" onclick="logout()">
+          <i class="fa-solid fa-arrow-right-from-bracket"></i>
+          <span>Log Out</span>
+        </button>
       </div>
     </aside>
 
-    <main class="content">
-      <h1 class="page-title">Crops</h1>
-      <p class="page-subtitle">Track what's planted on your farm</p>
+    <!-- Main Content -->
+    <div class="main-wrapper">
+      <header class="top-navbar">
+        <div style="display:flex; align-items:center; gap:14px;">
+          <button class="mobile-menu-toggle" id="mobileToggle" aria-label="Toggle Navigation">
+            <i class="fa-solid fa-bars"></i>
+          </button>
+          <div class="breadcrumb-area">
+            <span class="parent">AgroPulse</span>
+            <i class="fa-solid fa-chevron-right"></i>
+            <span class="current">Crop Inventory</span>
+          </div>
+        </div>
 
-      <div class="panel">
-        <h2>Add a Crop</h2>
-        <form id="cropForm" class="inline-form">
-          <div class="field">
-            <label>Crop Name</label>
-            <input type="text" id="cropName" required placeholder="e.g. Sugarcane">
+        <div class="top-nav-actions">
+          <button class="btn btn-primary btn-sm" onclick="openCropModal()">
+            <i class="fa-solid fa-plus"></i>
+            <span>Add New Crop</span>
+          </button>
+        </div>
+      </header>
+
+      <main class="page-content">
+        <div class="page-header">
+          <div class="page-title-group">
+            <h1>Planted Crops & Acreage Management</h1>
+            <p>Track crop growth stages, planted acreage, and soil hydration targets</p>
           </div>
-          <div class="field">
-            <label>Area (acres)</label>
-            <input type="number" id="areaAcres" step="0.1" min="0" placeholder="2.5">
+        </div>
+
+        <!-- KPI Metrics -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-info">
+              <div class="stat-label">Total Farm Land</div>
+              <div class="stat-value" id="statTotalAcres">0.0 ac</div>
+              <div class="stat-subtext positive"><i class="fa-solid fa-chart-area"></i> Active cultivated area</div>
+            </div>
+            <div class="stat-icon"><i class="fa-solid fa-map-location-dot"></i></div>
           </div>
-          <div class="field">
-            <label>Planting Date</label>
-            <input type="date" id="plantingDate">
+
+          <div class="stat-card stat-blue">
+            <div class="stat-info">
+              <div class="stat-label">Active Crop Types</div>
+              <div class="stat-value" id="statCropCount">0</div>
+              <div class="stat-subtext"><i class="fa-solid fa-seedling"></i> Distinct varieties</div>
+            </div>
+            <div class="stat-icon icon-blue"><i class="fa-solid fa-wheat-awn"></i></div>
           </div>
-          <div class="field">
-            <label>Notes</label>
-            <input type="text" id="notes" placeholder="Optional">
+
+          <div class="stat-card stat-amber">
+            <div class="stat-info">
+              <div class="stat-label">Irrigation Optimization</div>
+              <div class="stat-value">Active</div>
+              <div class="stat-subtext"><i class="fa-solid fa-droplet"></i> Crop coefficient tuned</div>
+            </div>
+            <div class="stat-icon icon-amber"><i class="fa-solid fa-faucet-drip"></i></div>
           </div>
-          <button type="submit" class="btn btn-primary">Add Crop</button>
-        </form>
-        <span id="cropMsg" class="form-message"></span>
+        </div>
+
+        <!-- Visual Crop Cards Grid -->
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">
+              <i class="fa-solid fa-layer-group"></i>
+              <span>Cultivated Plots & Crops</span>
+            </div>
+            <button class="btn btn-outline btn-sm" onclick="openCropModal()">
+              <i class="fa-solid fa-plus"></i> Add Crop
+            </button>
+          </div>
+
+          <div class="crop-cards-grid" id="cropCardsContainer">
+            <!-- Cards rendered dynamically -->
+          </div>
+
+          <div class="empty-state" id="cropCardsEmpty" style="display:none;">
+            <i class="fa-solid fa-wheat-awn-circle-exclamation"></i>
+            No crops registered in this farm yet. Click "Add New Crop" to register your first plot.
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- Add Crop Modal -->
+  <div class="modal-overlay" id="cropModal">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 style="font-size:17px; font-weight:700; color:var(--slate-900);">
+          <i class="fa-solid fa-seedling" style="color:var(--primary-600); margin-right:8px;"></i>
+          Add Crop to Farm
+        </h3>
+        <button onclick="closeCropModal()" style="background:none; border:none; font-size:18px; color:var(--slate-400); cursor:pointer;">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
       </div>
 
-      <div class="panel">
-        <h2>Your Crops</h2>
-        <table id="cropsTable">
-          <thead>
-            <tr><th>Crop</th><th>Area (acres)</th><th>Planting Date</th><th>Notes</th><th></th></tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-        <div class="empty-state" id="cropsEmpty" style="display:none;">No crops added yet.</div>
-      </div>
-    </main>
+      <form id="cropModalForm">
+        <div class="modal-body">
+          <div style="margin-bottom:14px;">
+            <label style="font-size:12.5px; font-weight:600; color:var(--slate-600); margin-bottom:6px; display:block;">Quick Crop Presets:</label>
+            <div style="display:flex; gap:6px; flex-wrap:wrap;">
+              <button type="button" class="city-chip" onclick="setPreset('Sugarcane', 'High water requirement')">Sugarcane</button>
+              <button type="button" class="city-chip" onclick="setPreset('Wheat', 'Moderate moisture')">Wheat</button>
+              <button type="button" class="city-chip" onclick="setPreset('Rice / Paddy', 'Flood / High moisture')">Rice</button>
+              <button type="button" class="city-chip" onclick="setPreset('Cotton', 'Deep root system')">Cotton</button>
+              <button type="button" class="city-chip" onclick="setPreset('Tomato', 'Drip irrigation recommended')">Tomato</button>
+              <button type="button" class="city-chip" onclick="setPreset('Maize / Corn', 'Warm climate crop')">Maize</button>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="cropName">Crop Name / Variety</label>
+            <input type="text" id="cropName" class="form-input no-icon" required placeholder="e.g. Sugarcane Co 86032">
+          </div>
+
+          <div class="form-group">
+            <label for="areaAcres">Cultivated Area (Acres)</label>
+            <input type="number" id="areaAcres" class="form-input no-icon" step="0.1" min="0" placeholder="e.g. 3.5" required>
+          </div>
+
+          <div class="form-group">
+            <label for="plantingDate">Planting / Sowing Date</label>
+            <input type="date" id="plantingDate" class="form-input no-icon">
+          </div>
+
+          <div class="form-group">
+            <label for="notes">Agronomic Notes / Zone Details</label>
+            <input type="text" id="notes" class="form-input no-icon" placeholder="e.g. Sector B - Drip irrigation line 2">
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" onclick="closeCropModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="saveCropBtn">
+            <i class="fa-solid fa-check"></i> Save Crop Record
+          </button>
+        </div>
+      </form>
+    </div>
   </div>
 
   <script src="js/common.js"></script>
@@ -70,57 +209,137 @@
     requireAuth();
     initLayout("crops");
 
+    function openCropModal() {
+      document.getElementById("cropModal").classList.add("open");
+      const today = new Date().toISOString().split("T")[0];
+      document.getElementById("plantingDate").value = today;
+    }
+
+    function closeCropModal() {
+      document.getElementById("cropModal").classList.remove("open");
+      document.getElementById("cropModalForm").reset();
+    }
+
+    function setPreset(name, notes) {
+      document.getElementById("cropName").value = name;
+      document.getElementById("notes").value = notes;
+    }
+
+    function calculateDaysPlanted(dateStr) {
+      if (!dateStr) return null;
+      const planted = new Date(dateStr);
+      const now = new Date();
+      const diffTime = Math.abs(now - planted);
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      return diffDays;
+    }
+
+    function getCropIcon(name) {
+      const lower = (name || "").toLowerCase();
+      if (lower.includes("sugarcane")) return "fa-cubes-stacked";
+      if (lower.includes("wheat") || lower.includes("grain")) return "fa-wheat-awn";
+      if (lower.includes("rice") || lower.includes("paddy")) return "fa-bowl-rice";
+      if (lower.includes("cotton")) return "fa-shirt";
+      if (lower.includes("tomato") || lower.includes("vegetable")) return "fa-apple-whole";
+      if (lower.includes("corn") || lower.includes("maize")) return "fa-sun";
+      return "fa-seedling";
+    }
+
     async function loadCrops() {
       try {
         const crops = await apiFetch("/api/crops");
-        const tbody = document.querySelector("#cropsTable tbody");
-        tbody.innerHTML = "";
-        if (crops.length === 0) {
-          document.getElementById("cropsEmpty").style.display = "block";
+        const container = document.getElementById("cropCardsContainer");
+        const emptyState = document.getElementById("cropCardsEmpty");
+        container.innerHTML = "";
+
+        if (!crops || crops.length === 0) {
+          emptyState.style.display = "block";
+          document.getElementById("statTotalAcres").textContent = "0.0 ac";
+          document.getElementById("statCropCount").textContent = "0";
           return;
         }
-        document.getElementById("cropsEmpty").style.display = "none";
+
+        emptyState.style.display = "none";
+        let totalAcres = 0;
+
         crops.forEach((crop) => {
-          const tr = document.createElement("tr");
-          tr.innerHTML = `
-            <td>${crop.crop_name}</td>
-            <td>${crop.area_acres}</td>
-            <td>${crop.planting_date || "-"}</td>
-            <td>${crop.notes || "-"}</td>
-            <td><button class="btn btn-danger" data-id="${crop.id}" style="padding:5px 10px;font-size:12px;">Delete</button></td>`;
-          tbody.appendChild(tr);
+          totalAcres += (crop.area_acres || 0);
+          const days = calculateDaysPlanted(crop.planting_date);
+          const icon = getCropIcon(crop.crop_name);
+
+          const card = document.createElement("div");
+          card.className = "crop-card";
+          card.innerHTML = `
+            <div class="crop-card-top">
+              <div class="crop-badge-icon"><i class="fa-solid ${icon}"></i></div>
+              <div style="flex:1;">
+                <h3 style="font-size:16px; font-weight:700; color:var(--slate-900); margin-bottom:2px;">${escapeHtml(crop.crop_name)}</h3>
+                <span class="status-pill status-on" style="font-size:11px; padding:2px 8px;">Active Plot</span>
+              </div>
+              <button class="btn btn-outline btn-sm" onclick="deleteCrop(${crop.id})" style="color:#ef4444; border-color:#fca5a5;" title="Delete crop">
+                <i class="fa-solid fa-trash-can"></i>
+              </button>
+            </div>
+
+            <div class="crop-details-row">
+              <span>Cultivated Area:</span>
+              <span class="val">${crop.area_acres} Acres</span>
+            </div>
+            <div class="crop-details-row">
+              <span>Planting Date:</span>
+              <span class="val">${crop.planting_date || "Not recorded"}</span>
+            </div>
+            <div class="crop-details-row">
+              <span>Growth Age:</span>
+              <span class="val">${days != null ? `${days} days ago` : "Recent"}</span>
+            </div>
+            <div class="crop-details-row">
+              <span>Notes:</span>
+              <span class="val" style="font-weight:400; font-size:12px;">${escapeHtml(crop.notes || "None")}</span>
+            </div>
+          `;
+          container.appendChild(card);
         });
 
-        document.querySelectorAll("#cropsTable button[data-id]").forEach((btn) => {
-          btn.addEventListener("click", async () => {
-            try {
-              await apiFetch("/api/crops/" + btn.dataset.id, { method: "DELETE" });
-              await loadCrops();
-            } catch (err) {
-              showMessage("cropMsg", err.message);
-            }
-          });
-        });
+        document.getElementById("statTotalAcres").textContent = totalAcres.toFixed(1) + " ac";
+        document.getElementById("statCropCount").textContent = crops.length;
+
       } catch (e) {}
     }
 
-    document.getElementById("cropForm").addEventListener("submit", async (e) => {
+    async function deleteCrop(id) {
+      if (!confirm("Are you sure you want to remove this crop plot?")) return;
+      try {
+        await apiFetch("/api/crops/" + id, { method: "DELETE" });
+        showToast("Crop plot removed from inventory", "success");
+        await loadCrops();
+      } catch (err) {
+        showToast(err.message, "error");
+      }
+    }
+
+    document.getElementById("cropModalForm").addEventListener("submit", async (e) => {
       e.preventDefault();
       const crop_name = document.getElementById("cropName").value.trim();
       const area_acres = document.getElementById("areaAcres").value || "0";
       const planting_date = document.getElementById("plantingDate").value;
       const notes = document.getElementById("notes").value.trim();
 
+      const btn = document.getElementById("saveCropBtn");
+      btn.disabled = true;
+
       try {
         await apiFetch("/api/crops", {
           method: "POST",
           body: JSON.stringify({ crop_name, area_acres, planting_date, notes })
         });
-        showMessage("cropMsg", "Crop added.", false);
-        document.getElementById("cropForm").reset();
+        showToast("New crop plot successfully registered!", "success");
+        closeCropModal();
         await loadCrops();
       } catch (err) {
-        showMessage("cropMsg", err.message);
+        showToast(err.message, "error");
+      } finally {
+        btn.disabled = false;
       }
     });
 

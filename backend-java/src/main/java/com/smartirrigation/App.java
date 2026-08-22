@@ -40,6 +40,9 @@ public class App {
         server.createContext("/api/signup", auth.signup());
         server.createContext("/api/login", auth.login());
         server.createContext("/api/logout", auth.logout());
+        server.createContext("/api/auth/forgot-password/request", auth.forgotPasswordRequest());
+        server.createContext("/api/auth/forgot-password/verify", auth.forgotPasswordVerify());
+        server.createContext("/api/auth/forgot-password/reset", auth.forgotPasswordReset());
 
         // ---- Sensor monitoring ----
         server.createContext("/api/sensors/latest", sensors.latest());

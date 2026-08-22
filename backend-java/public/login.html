@@ -1,43 +1,76 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Login - Smart Irrigation System</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="css/style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login &bull; Smart Irrigation AI</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
 </head>
-<body>
-  <div class="auth-wrapper">
-    <div class="auth-card">
-      <h1>Smart Irrigation System</h1>
-      <p class="subtitle">Precision farming powered by ML &mdash; log in to continue</p>
+<body class="auth-page">
 
-      <div id="formMessage" class="form-message"></div>
-
-      <form id="loginForm">
-        <div class="field">
-          <label for="username">Username</label>
-          <input type="text" id="username" required autocomplete="username">
-        </div>
-        <div class="field">
-          <label for="password">Password</label>
-          <input type="password" id="password" required autocomplete="current-password">
-        </div>
-        <button type="submit" class="btn btn-primary">Log In</button>
-      </form>
-
-      <div class="auth-switch">
-        Don't have an account? <a href="signup.html">Sign up</a>
+  <div class="auth-card">
+    <div class="auth-header">
+      <div class="auth-brand-logo">
+        <i class="fa-solid fa-leaf"></i>
       </div>
+      <h1>Welcome Back</h1>
+      <p>Sign in to manage your AI-powered precision irrigation</p>
+    </div>
+
+    <form id="loginForm">
+      <div class="form-group">
+        <label for="username">Username or Email</label>
+        <div class="input-icon-wrap">
+          <i class="fa-solid fa-user prefix-icon"></i>
+          <input type="text" id="username" class="form-input" placeholder="e.g. farmer_john or user@farm.com" required autocomplete="username">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:7px;">
+          <label for="password" style="margin-bottom:0;">Password</label>
+          <a href="forgot-password.html" style="font-size:12.5px; font-weight:600;">Forgot password?</a>
+        </div>
+        <div class="input-icon-wrap">
+          <i class="fa-solid fa-lock prefix-icon"></i>
+          <input type="password" id="password" class="form-input" placeholder="Enter your password" required autocomplete="current-password">
+          <button type="button" class="password-toggle" id="togglePassword" aria-label="Toggle password visibility">
+            <i class="fa-solid fa-eye"></i>
+          </button>
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-block btn-lg" id="submitBtn" style="margin-top:12px;">
+        <span>Sign In to Dashboard</span>
+        <i class="fa-solid fa-arrow-right"></i>
+      </button>
+    </form>
+
+    <div class="auth-footer">
+      Don't have an account yet? <a href="signup.html">Create an Account</a>
     </div>
   </div>
 
   <script src="js/common.js"></script>
   <script>
+    // Password visibility toggle
+    const toggleBtn = document.getElementById("togglePassword");
+    const passwordInput = document.getElementById("password");
+    toggleBtn.addEventListener("click", () => {
+      const type = passwordInput.getAttribute("type") === "password" ? "text" : "password";
+      passwordInput.setAttribute("type", type);
+      toggleBtn.querySelector("i").className = type === "password" ? "fa-solid fa-eye" : "fa-solid fa-eye-slash";
+    });
+
     document.getElementById("loginForm").addEventListener("submit", async (e) => {
       e.preventDefault();
       const username = document.getElementById("username").value.trim();
       const password = document.getElementById("password").value;
+      const submitBtn = document.getElementById("submitBtn");
+
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Authenticating...';
 
       try {
         const data = await apiFetch("/api/login", {
@@ -45,14 +78,21 @@
           body: JSON.stringify({ username, password })
         });
         saveSession(data.token, data.username);
-        window.location.href = "dashboard.html";
+        showToast("Login successful! Redirecting...", "success");
+        setTimeout(() => {
+          window.location.href = "dashboard.html";
+        }, 800);
       } catch (err) {
-        showMessage("formMessage", err.message);
+        showToast(err.message, "error");
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<span>Sign In to Dashboard</span> <i class="fa-solid fa-arrow-right"></i>';
       }
     });
 
-    // If already logged in, skip straight to dashboard
-    if (getToken()) window.location.href = "dashboard.html";
+    // If session already active, redirect
+    if (getToken()) {
+      window.location.href = "dashboard.html";
+    }
   </script>
 </body>
 </html>

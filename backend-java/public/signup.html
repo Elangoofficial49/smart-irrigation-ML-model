@@ -1,63 +1,144 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Sign Up - Smart Irrigation System</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="css/style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Up &bull; Smart Irrigation AI</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
 </head>
-<body>
-  <div class="auth-wrapper">
-    <div class="auth-card">
-      <h1>Create your account</h1>
-      <p class="subtitle">Set up access to your farm's irrigation dashboard</p>
+<body class="auth-page">
 
-      <div id="formMessage" class="form-message"></div>
-
-      <form id="signupForm">
-        <div class="field">
-          <label for="username">Username</label>
-          <input type="text" id="username" required autocomplete="username">
-        </div>
-        <div class="field">
-          <label for="password">Password</label>
-          <input type="password" id="password" required minlength="4" autocomplete="new-password">
-        </div>
-        <div class="field">
-          <label for="confirmPassword">Confirm Password</label>
-          <input type="password" id="confirmPassword" required minlength="4">
-        </div>
-        <button type="submit" class="btn btn-primary">Sign Up</button>
-      </form>
-
-      <div class="auth-switch">
-        Already have an account? <a href="login.html">Log in</a>
+  <div class="auth-card">
+    <div class="auth-header">
+      <div class="auth-brand-logo">
+        <i class="fa-solid fa-seedling"></i>
       </div>
+      <h1>Create Your Account</h1>
+      <p>Set up automated ML irrigation & telemetry for your farm</p>
+    </div>
+
+    <form id="signupForm">
+      <div class="form-group">
+        <label for="username">Username</label>
+        <div class="input-icon-wrap">
+          <i class="fa-solid fa-user prefix-icon"></i>
+          <input type="text" id="username" class="form-input" placeholder="Choose a username" required autocomplete="username">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="email">Registered Email Address</label>
+        <div class="input-icon-wrap">
+          <i class="fa-solid fa-envelope prefix-icon"></i>
+          <input type="email" id="email" class="form-input" placeholder="name@farm.com (used for OTP recovery)" required autocomplete="email">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <div class="input-icon-wrap">
+          <i class="fa-solid fa-lock prefix-icon"></i>
+          <input type="password" id="password" class="form-input" placeholder="Minimum 4 characters" required autocomplete="new-password">
+          <button type="button" class="password-toggle" id="togglePassword">
+            <i class="fa-solid fa-eye"></i>
+          </button>
+        </div>
+        <div class="strength-meter">
+          <div class="strength-bar" id="strengthBar"></div>
+        </div>
+        <span class="strength-text" id="strengthText">Password strength: None</span>
+      </div>
+
+      <div class="form-group">
+        <label for="confirmPassword">Confirm Password</label>
+        <div class="input-icon-wrap">
+          <i class="fa-solid fa-shield-check prefix-icon"></i>
+          <input type="password" id="confirmPassword" class="form-input" placeholder="Re-enter your password" required autocomplete="new-password">
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-block btn-lg" id="submitBtn" style="margin-top:16px;">
+        <span>Create Farm Account</span>
+        <i class="fa-solid fa-arrow-right"></i>
+      </button>
+    </form>
+
+    <div class="auth-footer">
+      Already have an account? <a href="login.html">Sign in here</a>
     </div>
   </div>
 
   <script src="js/common.js"></script>
   <script>
+    const passwordInput = document.getElementById("password");
+    const strengthBar = document.getElementById("strengthBar");
+    const strengthText = document.getElementById("strengthText");
+    const toggleBtn = document.getElementById("togglePassword");
+
+    toggleBtn.addEventListener("click", () => {
+      const type = passwordInput.getAttribute("type") === "password" ? "text" : "password";
+      passwordInput.setAttribute("type", type);
+      toggleBtn.querySelector("i").className = type === "password" ? "fa-solid fa-eye" : "fa-solid fa-eye-slash";
+    });
+
+    passwordInput.addEventListener("input", () => {
+      const val = passwordInput.value;
+      let score = 0;
+      if (val.length >= 4) score += 25;
+      if (val.length >= 8) score += 25;
+      if (/[A-Z]/.test(val) && /[0-9]/.test(val)) score += 25;
+      if (/[^A-Za-z0-9]/.test(val)) score += 25;
+
+      strengthBar.style.width = score + "%";
+      if (score <= 25) {
+        strengthBar.style.backgroundColor = "#ef4444";
+        strengthText.textContent = "Password strength: Weak";
+        strengthText.style.color = "#ef4444";
+      } else if (score <= 50) {
+        strengthBar.style.backgroundColor = "#f59e0b";
+        strengthText.textContent = "Password strength: Fair";
+        strengthText.style.color = "#f59e0b";
+      } else if (score <= 75) {
+        strengthBar.style.backgroundColor = "#3b82f6";
+        strengthText.textContent = "Password strength: Good";
+        strengthText.style.color = "#3b82f6";
+      } else {
+        strengthBar.style.backgroundColor = "#10b981";
+        strengthText.textContent = "Password strength: Strong 💪";
+        strengthText.style.color = "#10b981";
+      }
+    });
+
     document.getElementById("signupForm").addEventListener("submit", async (e) => {
       e.preventDefault();
       const username = document.getElementById("username").value.trim();
+      const email = document.getElementById("email").value.trim();
       const password = document.getElementById("password").value;
       const confirmPassword = document.getElementById("confirmPassword").value;
+      const submitBtn = document.getElementById("submitBtn");
 
       if (password !== confirmPassword) {
-        showMessage("formMessage", "Passwords do not match");
+        showToast("Passwords do not match. Please check again.", "warning");
         return;
       }
+
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Creating Account...';
 
       try {
         await apiFetch("/api/signup", {
           method: "POST",
-          body: JSON.stringify({ username, password })
+          body: JSON.stringify({ username, email, password })
         });
-        showMessage("formMessage", "Account created! Redirecting to login...", false);
-        setTimeout(() => (window.location.href = "login.html"), 1200);
+        showToast("Account created successfully! Redirecting to login...", "success");
+        setTimeout(() => {
+          window.location.href = "login.html";
+        }, 1200);
       } catch (err) {
-        showMessage("formMessage", err.message);
+        showToast(err.message, "error");
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<span>Create Farm Account</span> <i class="fa-solid fa-arrow-right"></i>';
       }
     });
   </script>

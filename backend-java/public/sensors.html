@@ -1,66 +1,269 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Sensor Monitoring - Smart Irrigation System</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="css/style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sensor Monitoring &bull; Smart Irrigation AI</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <div class="app-shell">
+  <div class="app-container">
+    <!-- Sidebar -->
     <aside class="sidebar">
-      <div class="brand">🌱 Smart Irrigation</div>
-      <div class="brand-sub">Precision Farming with ML</div>
+      <div class="sidebar-header">
+        <div class="brand-icon"><i class="fa-solid fa-leaf"></i></div>
+        <div class="brand-info">
+          <h2>AgroPulse AI</h2>
+          <span>Smart Irrigation System</span>
+        </div>
+      </div>
 
-      <a href="dashboard.html" class="nav-link" data-page="dashboard">📊 Dashboard</a>
-      <a href="sensors.html" class="nav-link" data-page="sensors">📡 Sensor Monitoring</a>
-      <a href="irrigation.html" class="nav-link" data-page="irrigation">💧 Irrigation Control</a>
-      <a href="crops.html" class="nav-link" data-page="crops">🌾 Crops</a>
-      <a href="weather.html" class="nav-link" data-page="weather">⛅ Weather</a>
+      <nav class="sidebar-nav">
+        <div class="nav-section-title">Telemetry & Control</div>
+        <a href="dashboard.html" class="nav-item" data-page="dashboard">
+          <i class="fa-solid fa-chart-pie"></i>
+          <span>Dashboard</span>
+        </a>
+        <a href="sensors.html" class="nav-item" data-page="sensors">
+          <i class="fa-solid fa-satellite-dish"></i>
+          <span>Sensor Monitoring</span>
+        </a>
+        <a href="irrigation.html" class="nav-item" data-page="irrigation">
+          <i class="fa-solid fa-faucet-drip"></i>
+          <span>Irrigation Control</span>
+        </a>
+
+        <div class="nav-section-title">Farm Management</div>
+        <a href="crops.html" class="nav-item" data-page="crops">
+          <i class="fa-solid fa-wheat-awn"></i>
+          <span>Crop Inventory</span>
+        </a>
+        <a href="weather.html" class="nav-item" data-page="weather">
+          <i class="fa-solid fa-cloud-sun-rain"></i>
+          <span>Weather Intelligence</span>
+        </a>
+      </nav>
 
       <div class="sidebar-footer">
-        <div class="user-badge">Signed in as <strong id="userBadge"></strong></div>
-        <button class="btn btn-outline" style="width:100%;" onclick="logout()">Log Out</button>
+        <div class="user-profile-card">
+          <div class="user-avatar" id="avatarInitials">US</div>
+          <div class="user-details">
+            <div class="user-name" id="userBadge">Operator</div>
+            <div class="user-role"><div class="online-dot"></div> Connected</div>
+          </div>
+        </div>
+        <button class="btn-logout" onclick="logout()">
+          <i class="fa-solid fa-arrow-right-from-bracket"></i>
+          <span>Log Out</span>
+        </button>
       </div>
     </aside>
 
-    <main class="content">
-      <h1 class="page-title">Sensor Monitoring</h1>
-      <p class="page-subtitle">Live soil moisture, temperature, humidity and rainfall probability readings</p>
+    <!-- Main Content -->
+    <div class="main-wrapper">
+      <header class="top-navbar">
+        <div style="display:flex; align-items:center; gap:14px;">
+          <button class="mobile-menu-toggle" id="mobileToggle" aria-label="Toggle Navigation">
+            <i class="fa-solid fa-bars"></i>
+          </button>
+          <div class="breadcrumb-area">
+            <span class="parent">AgroPulse</span>
+            <i class="fa-solid fa-chevron-right"></i>
+            <span class="current">Sensor Monitoring</span>
+          </div>
+        </div>
 
-      <div class="panel">
-        <p style="font-size:13px;color:var(--text-500);margin-top:0;">
-          No physical sensors connected? Click below to simulate a new field reading
-          (stands in for real soil moisture / DHT22 / rain sensor hardware).
-        </p>
-        <button class="btn btn-primary" id="simulateBtn">Simulate New Reading</button>
-        <span id="simulateMsg" class="form-message"></span>
-      </div>
+        <div class="top-nav-actions">
+          <button class="btn btn-outline btn-sm" onclick="exportCsv()">
+            <i class="fa-solid fa-file-csv"></i>
+            <span>Export CSV</span>
+          </button>
+          <button class="btn btn-primary btn-sm" id="simulateBtn" onclick="simulateReading()">
+            <i class="fa-solid fa-satellite"></i>
+            <span>Simulate Telemetry</span>
+          </button>
+        </div>
+      </header>
 
-      <div class="grid">
-        <div class="card"><div class="label">Soil Moisture</div><div class="value" id="valMoisture">--</div></div>
-        <div class="card"><div class="label">Temperature</div><div class="value" id="valTemp">--</div></div>
-        <div class="card"><div class="label">Humidity</div><div class="value" id="valHumidity">--</div></div>
-        <div class="card"><div class="label">Rainfall Probability</div><div class="value" id="valRain">--</div></div>
-      </div>
+      <main class="page-content">
+        <div class="page-header">
+          <div class="page-title-group">
+            <h1>IoT Sensor Nodes & Telemetry</h1>
+            <p>Real-time ground probe metrics, environmental telemetry, and historical readings</p>
+          </div>
+        </div>
 
-      <div class="panel">
-        <h2>Reading History</h2>
-        <table id="historyTable">
-          <thead>
-            <tr><th>Soil Moisture</th><th>Temperature</th><th>Humidity</th><th>Rainfall Prob.</th><th>Recorded At</th></tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-        <div class="empty-state" id="historyEmpty" style="display:none;">No readings yet — simulate one above.</div>
-      </div>
-    </main>
+        <!-- Metric Stat Cards -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-info">
+              <div class="stat-label">Soil Moisture Content</div>
+              <div class="stat-value" id="valMoisture">--</div>
+              <div class="stat-subtext" id="statusMoisture"><i class="fa-solid fa-droplet"></i> Capacitive probe</div>
+            </div>
+            <div class="stat-icon"><i class="fa-solid fa-water"></i></div>
+          </div>
+
+          <div class="stat-card stat-amber">
+            <div class="stat-info">
+              <div class="stat-label">Ambient Temperature</div>
+              <div class="stat-value" id="valTemp">--</div>
+              <div class="stat-subtext"><i class="fa-solid fa-temperature-half"></i> DHT22 digital probe</div>
+            </div>
+            <div class="stat-icon icon-amber"><i class="fa-solid fa-temperature-high"></i></div>
+          </div>
+
+          <div class="stat-card stat-blue">
+            <div class="stat-info">
+              <div class="stat-label">Relative Humidity</div>
+              <div class="stat-value" id="valHumidity">--</div>
+              <div class="stat-subtext"><i class="fa-solid fa-wind"></i> Atmospheric sensor</div>
+            </div>
+            <div class="stat-icon icon-blue"><i class="fa-solid fa-cloud"></i></div>
+          </div>
+
+          <div class="stat-card stat-purple">
+            <div class="stat-info">
+              <div class="stat-label">Rainfall Probability</div>
+              <div class="stat-value" id="valRain">--</div>
+              <div class="stat-subtext"><i class="fa-solid fa-cloud-rain"></i> Precipitation forecast</div>
+            </div>
+            <div class="stat-icon icon-purple"><i class="fa-solid fa-cloud-showers-heavy"></i></div>
+          </div>
+        </div>
+
+        <!-- Telemetry History Chart -->
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">
+              <i class="fa-solid fa-chart-line"></i>
+              <span>Multi-Sensor Telemetry Time-Series</span>
+            </div>
+            <span style="font-size:12px; color:var(--slate-500);">Ground & Atmospheric Sensors</span>
+          </div>
+          <div style="height:280px; position:relative;">
+            <canvas id="sensorHistoryChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Historical Readings Table -->
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">
+              <i class="fa-solid fa-database"></i>
+              <span>Historical Sensor Readings</span>
+            </div>
+            <div style="display:flex; gap:10px; align-items:center;">
+              <label style="font-size:12px; color:var(--slate-500);">Show: </label>
+              <select id="limitSelect" class="form-input no-icon" style="padding:6px 12px; width:auto;" onchange="loadHistory()">
+                <option value="10">10 records</option>
+                <option value="25" selected>25 records</option>
+                <option value="50">50 records</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="table-responsive">
+            <table class="data-table" id="historyTable">
+              <thead>
+                <tr>
+                  <th>Timestamp</th>
+                  <th>Soil Moisture</th>
+                  <th>Temperature</th>
+                  <th>Humidity</th>
+                  <th>Rain Probability</th>
+                  <th>Condition Status</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+            <div class="empty-state" id="historyEmpty" style="display:none;">
+              <i class="fa-solid fa-satellite-dish"></i>
+              No sensor telemetry recorded yet. Click "Simulate Telemetry" above to generate readings.
+            </div>
+          </div>
+        </div>
+
+      </main>
+    </div>
   </div>
 
   <script src="js/common.js"></script>
   <script>
     requireAuth();
     initLayout("sensors");
+
+    let historyChart = null;
+    let cachedReadings = [];
+
+    function renderChart(readings) {
+      const ctx = document.getElementById('sensorHistoryChart').getContext('2d');
+      if (historyChart) historyChart.destroy();
+
+      const rev = [...readings].reverse();
+      const labels = rev.map((r, i) => r.recorded_at ? r.recorded_at.split(" ")[1] || `Sample ${i+1}` : `Sample ${i+1}`);
+      const moisture = rev.map(r => r.soil_moisture);
+      const temp = rev.map(r => r.temperature);
+      const humidity = rev.map(r => r.humidity);
+      const rain = rev.map(r => r.rainfall_prob);
+
+      historyChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              label: 'Soil Moisture (%)',
+              data: moisture,
+              borderColor: '#10b981',
+              backgroundColor: 'rgba(16, 185, 129, 0.1)',
+              fill: true,
+              tension: 0.3,
+              borderWidth: 2
+            },
+            {
+              label: 'Temperature (°C)',
+              data: temp,
+              borderColor: '#f59e0b',
+              backgroundColor: 'transparent',
+              tension: 0.3,
+              borderWidth: 2
+            },
+            {
+              label: 'Humidity (%)',
+              data: humidity,
+              borderColor: '#0ea5e9',
+              backgroundColor: 'transparent',
+              tension: 0.3,
+              borderWidth: 2
+            },
+            {
+              label: 'Rainfall Prob (%)',
+              data: rain,
+              borderColor: '#8b5cf6',
+              borderDash: [5, 5],
+              backgroundColor: 'transparent',
+              tension: 0.3,
+              borderWidth: 2
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { position: 'top' },
+            tooltip: { cornerRadius: 8 }
+          },
+          scales: {
+            y: { min: 0, max: 100, grid: { color: '#f1f5f9' } },
+            x: { grid: { display: false } }
+          }
+        }
+      });
+    }
 
     async function loadLatest() {
       try {
@@ -70,38 +273,90 @@
           document.getElementById("valTemp").textContent = sensor.temperature + " °C";
           document.getElementById("valHumidity").textContent = sensor.humidity + " %";
           document.getElementById("valRain").textContent = sensor.rainfall_prob + " %";
+
+          const statusEl = document.getElementById("statusMoisture");
+          if (sensor.soil_moisture < 30) {
+            statusEl.innerHTML = '<span style="color:#ef4444; font-weight:700;"><i class="fa-solid fa-triangle-exclamation"></i> Low Moisture (Dry)</span>';
+          } else if (sensor.soil_moisture > 75) {
+            statusEl.innerHTML = '<span style="color:#3b82f6; font-weight:600;"><i class="fa-solid fa-water"></i> Saturated Soil</span>';
+          } else {
+            statusEl.innerHTML = '<span style="color:#10b981; font-weight:600;"><i class="fa-solid fa-circle-check"></i> Optimal Hydration</span>';
+          }
         }
       } catch (e) {}
     }
 
     async function loadHistory() {
+      const limit = document.getElementById("limitSelect").value || 25;
       try {
-        const history = await apiFetch("/api/sensors/history?limit=15");
+        const history = await apiFetch("/api/sensors/history?limit=" + limit);
+        cachedReadings = history || [];
         const tbody = document.querySelector("#historyTable tbody");
         tbody.innerHTML = "";
-        if (history.length === 0) {
+
+        if (cachedReadings.length === 0) {
           document.getElementById("historyEmpty").style.display = "block";
           return;
         }
+
         document.getElementById("historyEmpty").style.display = "none";
-        history.forEach((r) => {
+        renderChart(cachedReadings);
+
+        cachedReadings.forEach((r) => {
+          let badge = '<span class="status-pill status-on">Optimal</span>';
+          if (r.soil_moisture < 30) badge = '<span class="status-pill status-off">Dry Soil</span>';
+          else if (r.soil_moisture > 75) badge = '<span class="status-pill status-manual">Saturated</span>';
+
           const tr = document.createElement("tr");
-          tr.innerHTML = `<td>${r.soil_moisture}%</td><td>${r.temperature}°C</td><td>${r.humidity}%</td><td>${r.rainfall_prob}%</td><td>${r.recorded_at}</td>`;
+          tr.innerHTML = `
+            <td style="font-size:12.5px; color:var(--slate-500);">${r.recorded_at || "-"}</td>
+            <td><strong>${r.soil_moisture}%</strong></td>
+            <td>${r.temperature}°C</td>
+            <td>${r.humidity}%</td>
+            <td>${r.rainfall_prob}%</td>
+            <td>${badge}</td>`;
           tbody.appendChild(tr);
         });
       } catch (e) {}
     }
 
-    document.getElementById("simulateBtn").addEventListener("click", async () => {
+    async function simulateReading() {
+      const btn = document.getElementById("simulateBtn");
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Reading Sensors...';
+
       try {
         await apiFetch("/api/sensors/simulate", { method: "POST" });
-        showMessage("simulateMsg", "New reading recorded.", false);
+        showToast("New telemetry sample recorded from probes!", "success");
         await loadLatest();
         await loadHistory();
       } catch (err) {
-        showMessage("simulateMsg", err.message);
+        showToast(err.message, "error");
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-satellite"></i> <span>Simulate Telemetry</span>';
       }
-    });
+    }
+
+    function exportCsv() {
+      if (!cachedReadings || cachedReadings.length === 0) {
+        showToast("No sensor data available to export", "warning");
+        return;
+      }
+      let csv = "ID,Soil_Moisture_Pct,Temperature_C,Humidity_Pct,Rainfall_Prob_Pct,Recorded_At\n";
+      cachedReadings.forEach(r => {
+        csv += `${r.id},${r.soil_moisture},${r.temperature},${r.humidity},${r.rainfall_prob},"${r.recorded_at}"\n`;
+      });
+
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `sensor_telemetry_${Date.now()}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast("Telemetry CSV exported successfully", "success");
+    }
 
     loadLatest();
     loadHistory();
