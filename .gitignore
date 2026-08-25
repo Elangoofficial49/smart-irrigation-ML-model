@@ -1,3 +1,4 @@
 backend-java/.env
 backend-java/target/
 *.class
+backend-java/database/*.db

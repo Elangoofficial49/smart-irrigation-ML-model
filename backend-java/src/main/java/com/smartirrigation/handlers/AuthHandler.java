@@ -186,7 +186,7 @@ public class AuthHandler extends BaseHandler {
 
         try (Connection conn = Database.connect()) {
             // 1. Check if user with this email exists
-            boolean userExists;
+            boolean userExists = false;
             try (PreparedStatement ps = conn.prepareStatement("SELECT id FROM users WHERE email = ?")) {
                 ps.setString(1, email);
                 try (ResultSet rs = ps.executeQuery()) {

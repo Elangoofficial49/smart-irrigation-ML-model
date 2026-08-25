@@ -39,7 +39,7 @@
           <i class="fa-solid fa-wheat-awn"></i>
           <span>Crop Inventory</span>
         </a>
-        <a href="weather.html" class="nav-item" data-page="weather">
+        <a href="weather.html" class="nav-item active" data-page="weather">
           <i class="fa-solid fa-cloud-sun-rain"></i>
           <span>Weather Intelligence</span>
         </a>
@@ -75,9 +75,9 @@
         </div>
 
         <div class="top-nav-actions">
-          <div class="system-status-badge">
+          <div class="system-status-badge" id="gpsStatusPill">
             <i class="fa-solid fa-satellite"></i>
-            <span>Open-Meteo Satellite Sync</span>
+            <span id="gpsStatusText">Satellite Sync</span>
           </div>
         </div>
       </header>
@@ -85,33 +85,51 @@
       <main class="page-content">
         <div class="page-header">
           <div class="page-title-group">
-            <h1>Farm Weather Radar & Forecasts</h1>
-            <p>Live meteorological feeds, precipitation probability, and agricultural advisories</p>
+            <h1>Farm Weather Radar & Climate Tracking</h1>
+            <p>High-precision Live GPS meteorological feeds, 7-day forecast & agricultural advisories</p>
           </div>
         </div>
 
-        <!-- City Search & Chips -->
+        <!-- Search & Live GPS Locator Panel -->
         <div class="panel" style="padding:20px 24px; margin-bottom:24px;">
           <div style="display:flex; gap:12px; flex-wrap:wrap; align-items:center;">
             <div class="input-icon-wrap" style="flex:1; min-width:240px;">
               <i class="fa-solid fa-magnifying-glass prefix-icon"></i>
               <input type="text" id="cityInput" class="form-input" value="Madurai" placeholder="Enter farm region or city (e.g. Madurai, Coimbatore, Delhi)">
             </div>
-            <button class="btn btn-primary" onclick="fetchWeather()" id="fetchWeatherBtn">
+            
+            <button class="btn btn-primary" onclick="fetchWeatherByCity()" id="fetchWeatherBtn">
               <i class="fa-solid fa-cloud-arrow-down"></i>
               <span>Get Weather</span>
             </button>
+
+            <!-- Live GPS Auto-Detect Button -->
+            <button class="btn btn-secondary" onclick="detectGpsLocation()" id="gpsBtn" style="border:1.5px solid var(--primary-500); color:var(--primary-700); background:#f0fdf4;">
+              <i class="fa-solid fa-crosshairs"></i>
+              <span>Use Live GPS Location</span>
+            </button>
           </div>
 
-          <div class="weather-city-chips">
+          <!-- GPS Coordinates Live Display Bar -->
+          <div id="gpsCoordsBar" style="display:none; margin-top:14px; padding:8px 14px; background:#f0fdf4; border-radius:var(--radius-md); border:1px solid #bbf7d0; font-size:12.5px; color:#15803d; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px;">
+            <div>
+              <i class="fa-solid fa-location-crosshairs"></i> <strong>Live Farm GPS:</strong> 
+              Lat: <span id="gpsLat">--</span>, Lon: <span id="gpsLon">--</span> &bull; Accuracy: <span id="gpsAcc">--</span>
+            </div>
+            <span class="gps-badge live"><i class="fa-solid fa-circle-dot"></i> Live Tracking Active</span>
+          </div>
+
+          <!-- Popular Regions Chips -->
+          <div class="weather-city-chips" style="margin-top:14px;">
             <span style="font-size:12px; color:var(--slate-500); align-self:center;">Popular Regions:</span>
             <button class="city-chip" onclick="quickCity('Madurai')">Madurai</button>
             <button class="city-chip" onclick="quickCity('Coimbatore')">Coimbatore</button>
             <button class="city-chip" onclick="quickCity('Chennai')">Chennai</button>
-            <button class="city-chip" onclick="quickCity('Delhi')">Delhi</button>
-            <button class="city-chip" onclick="quickCity('Pune')">Pune</button>
+            <button class="city-chip" onclick="quickCity('Tiruchirappalli')">Trichy</button>
+            <button class="city-chip" onclick="quickCity('Salem')">Salem</button>
+            <button class="city-chip" onclick="quickCity('Thanjavur')">Thanjavur</button>
             <button class="city-chip" onclick="quickCity('Bangalore')">Bangalore</button>
-            <button class="city-chip" onclick="quickCity('London')">London</button>
+            <button class="city-chip" onclick="quickCity('Delhi')">Delhi</button>
           </div>
         </div>
 
@@ -123,18 +141,20 @@
                 <i class="fa-solid fa-location-dot"></i> Farm Weather Station
               </div>
               <h2 id="wLocation" style="font-size:32px; font-weight:800; letter-spacing:-0.5px;">Madurai, India</h2>
-              <div style="font-size:14px; opacity:0.9; margin-top:4px;" id="wLocalTime">Live Atmospheric Data</div>
+              <div style="font-size:14px; opacity:0.9; margin-top:4px;" id="wLocalTime">Live High-Precision Meteorological Radar</div>
+              <div id="wConditionTa" style="font-size:14px; font-weight:600; color:#fef08a; margin-top:4px;">வானிலை: --</div>
             </div>
 
             <div style="text-align:right;">
               <div style="font-size:54px; font-weight:800; line-height:1;" id="wTemp">--°C</div>
-              <div style="font-size:14px; opacity:0.9; margin-top:4px;" id="wCondition">Atmospheric Feed</div>
+              <div style="font-size:13px; opacity:0.9; margin-top:6px;" id="wApparentTemp">Feels like: --°C</div>
+              <div style="font-size:15px; font-weight:700; opacity:0.95; margin-top:2px;" id="wCondition">Atmospheric Feed</div>
             </div>
           </div>
         </div>
 
-        <!-- Metric Details Cards -->
-        <div class="stats-grid">
+        <!-- Metric Details Cards (8 Metrics) -->
+        <div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));">
           <div class="stat-card stat-blue">
             <div class="stat-info">
               <div class="stat-label">Precipitation Probability</div>
@@ -148,18 +168,54 @@
             <div class="stat-info">
               <div class="stat-label">Relative Humidity</div>
               <div class="stat-value" id="wHumidity">--%</div>
-              <div class="stat-subtext"><i class="fa-solid fa-wind"></i> Ambient vapor density</div>
+              <div class="stat-subtext"><i class="fa-solid fa-smog"></i> Ambient vapor density</div>
             </div>
-            <div class="stat-icon icon-amber"><i class="fa-solid fa-smog"></i></div>
+            <div class="stat-icon icon-amber"><i class="fa-solid fa-water"></i></div>
           </div>
 
           <div class="stat-card stat-purple">
             <div class="stat-info">
-              <div class="stat-label">Wind Velocity</div>
+              <div class="stat-label">Wind Velocity & Direction</div>
               <div class="stat-value" id="wWind">-- km/h</div>
-              <div class="stat-subtext"><i class="fa-solid fa-gauge-high"></i> Surface wind speed</div>
+              <div class="stat-subtext" id="wWindDir"><i class="fa-solid fa-compass"></i> Direction: --</div>
             </div>
             <div class="stat-icon icon-purple"><i class="fa-solid fa-wind"></i></div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-info">
+              <div class="stat-label">UV Index & Sun Exposure</div>
+              <div class="stat-value" id="wUv">--</div>
+              <div class="stat-subtext" id="wUvLevel"><i class="fa-solid fa-sun"></i> UV Level: --</div>
+            </div>
+            <div class="stat-icon" style="background:#fef3c7; color:#d97706;"><i class="fa-solid fa-sun"></i></div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-info">
+              <div class="stat-label">Surface Pressure</div>
+              <div class="stat-value" id="wPressure">-- hPa</div>
+              <div class="stat-subtext"><i class="fa-solid fa-gauge-simple"></i> Atmospheric barometric</div>
+            </div>
+            <div class="stat-icon" style="background:#e0f2fe; color:#0284c7;"><i class="fa-solid fa-gauge-simple"></i></div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-info">
+              <div class="stat-label">Cloud Cover</div>
+              <div class="stat-value" id="wCloud">--%</div>
+              <div class="stat-subtext"><i class="fa-solid fa-cloud"></i> Sky coverage</div>
+            </div>
+            <div class="stat-icon" style="background:#f1f5f9; color:#475569;"><i class="fa-solid fa-cloud"></i></div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-info">
+              <div class="stat-label">Precipitation Volume</div>
+              <div class="stat-value" id="wPrecipMm">-- mm</div>
+              <div class="stat-subtext"><i class="fa-solid fa-cloud-showers-heavy"></i> Current rainfall</div>
+            </div>
+            <div class="stat-icon icon-blue"><i class="fa-solid fa-cloud-showers-heavy"></i></div>
           </div>
 
           <div class="stat-card">
@@ -172,21 +228,46 @@
           </div>
         </div>
 
-        <!-- Smart Agricultural Advisory Panel -->
+        <!-- 7-Day Farm Forecast Section -->
+        <div class="panel" style="margin-bottom:24px;">
+          <div class="panel-header">
+            <div class="panel-title">
+              <i class="fa-solid fa-calendar-week"></i>
+              <span>7-Day Agricultural Meteorological Forecast</span>
+            </div>
+          </div>
+          <div class="forecast-grid" id="forecastContainer">
+            <!-- Rendered dynamically -->
+            <div style="text-align:center; padding:20px; color:var(--slate-400); grid-column:1/-1;">
+              <i class="fa-solid fa-spinner fa-spin"></i> Loading 7-day forecast...
+            </div>
+          </div>
+        </div>
+
+        <!-- Smart Agricultural Advisory Panel (Bilingual: English & Tamil) -->
         <div class="panel">
           <div class="panel-header">
             <div class="panel-title">
               <i class="fa-solid fa-lightbulb"></i>
-              <span>Automated Agricultural Irrigation Advisory</span>
+              <span>Automated Agricultural Advisory &bull; விவசாய ஆலோசனை</span>
             </div>
           </div>
           <div style="background:var(--primary-50); border:1.5px solid var(--primary-200); border-radius:var(--radius-md); padding:18px 22px;" id="advisoryBox">
             <h4 style="font-size:15px; font-weight:700; color:var(--primary-900); margin-bottom:6px;" id="advisoryHeading">
-              Analyzing Weather Conditions...
+              🌾 Precision Field Advisory (English)
             </h4>
-            <p style="font-size:13.5px; color:var(--primary-800); line-height:1.6;" id="advisoryText">
-              Open-Meteo telemetry is being evaluated against precision crop thresholds.
+            <p style="font-size:13.5px; color:var(--primary-800); line-height:1.6; margin-bottom:12px;" id="advisoryText">
+              Evaluating live meteorological telemetry...
             </p>
+
+            <div style="border-top:1px dashed var(--primary-300); padding-top:12px; margin-top:12px;">
+              <h4 style="font-size:14.5px; font-weight:700; color:#065f46; margin-bottom:6px;">
+                🇮🇳 தமிழ் விவசாய வழிகாட்டல்:
+              </h4>
+              <p style="font-size:13.5px; color:#047857; line-height:1.6;" id="advisoryTextTa">
+                வானிலை விவரங்கள் மதிப்பீடு செய்யப்படுகின்றன...
+              </p>
+            </div>
           </div>
         </div>
 
@@ -195,54 +276,116 @@
   </div>
 
   <script src="js/common.js"></script>
+  <script src="js/ai-assistant.js"></script>
   <script>
     requireAuth();
     initLayout("weather");
 
+    let currentLat = null;
+    let currentLon = null;
+
     function quickCity(city) {
       document.getElementById("cityInput").value = city;
-      fetchWeather();
+      fetchWeatherByCity();
     }
 
-    async function fetchWeather() {
+    async function fetchWeatherByCity() {
       const city = document.getElementById("cityInput").value.trim() || "Madurai";
+      await fetchWeatherData("/api/weather?city=" + encodeURIComponent(city));
+    }
+
+    // Live GPS Location Detection
+    function detectGpsLocation() {
+      const gpsBtn = document.getElementById("gpsBtn");
+      if (!navigator.geolocation) {
+        showToast("Geolocation is not supported by your browser", "error");
+        return;
+      }
+
+      gpsBtn.disabled = true;
+      gpsBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> <span>Pinpointing GPS...</span>';
+
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          currentLat = position.coords.latitude;
+          currentLon = position.coords.longitude;
+          const accuracy = Math.round(position.coords.accuracy);
+
+          document.getElementById("gpsLat").textContent = currentLat.toFixed(4);
+          document.getElementById("gpsLon").textContent = currentLon.toFixed(4);
+          document.getElementById("gpsAcc").textContent = "±" + accuracy + "m";
+          document.getElementById("gpsCoordsBar").style.display = "flex";
+          document.getElementById("gpsStatusText").textContent = "Live GPS Active (" + currentLat.toFixed(2) + "°, " + currentLon.toFixed(2) + "°)";
+
+          showToast("Live GPS location acquired (±" + accuracy + "m accuracy)", "success");
+
+          await fetchWeatherData(`/api/weather?lat=${currentLat}&lon=${currentLon}`);
+
+          gpsBtn.disabled = false;
+          gpsBtn.innerHTML = '<i class="fa-solid fa-crosshairs"></i> <span>Live GPS: Active 📍</span>';
+          gpsBtn.style.background = "#dcfce7";
+          gpsBtn.style.borderColor = "#10b981";
+        },
+        (error) => {
+          gpsBtn.disabled = false;
+          gpsBtn.innerHTML = '<i class="fa-solid fa-crosshairs"></i> <span>Use Live GPS Location</span>';
+          let msg = "Could not get GPS location.";
+          if (error.code === error.PERMISSION_DENIED) msg = "Location permission denied by browser. Please allow location access in browser settings.";
+          else if (error.code === error.POSITION_UNAVAILABLE) msg = "GPS location is currently unavailable.";
+          else if (error.code === error.TIMEOUT) msg = "GPS request timed out.";
+          showToast(msg, "warning");
+        },
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+      );
+    }
+
+    async function fetchWeatherData(url) {
       const btn = document.getElementById("fetchWeatherBtn");
       btn.disabled = true;
       btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Fetching...';
 
       try {
-        const data = await apiFetch("/api/weather?city=" + encodeURIComponent(city));
+        const data = await apiFetch(url);
         
+        // Location & Condition
         document.getElementById("wLocation").textContent = data.city + (data.country ? ", " + data.country : "");
         document.getElementById("wTemp").textContent = (data.temperature_c != null ? data.temperature_c : "--") + "°C";
-        document.getElementById("wHumidity").textContent = (data.humidity_percent != null ? data.humidity_percent : "--") + "%";
+        document.getElementById("wApparentTemp").textContent = "Feels like: " + (data.apparent_temperature_c != null ? data.apparent_temperature_c : data.temperature_c) + "°C";
+        document.getElementById("wCondition").textContent = data.weather_description || "Clear Sky ☀️";
+        document.getElementById("wConditionTa").textContent = "வானிலை: " + (data.weather_description_ta || "--");
+
+        // 8 Metric details
         document.getElementById("wRain").textContent = (data.rainfall_probability_percent != null ? data.rainfall_probability_percent : "--") + "%";
+        document.getElementById("wHumidity").textContent = (data.humidity_percent != null ? data.humidity_percent : "--") + "%";
         document.getElementById("wWind").textContent = (data.wind_speed_kmh != null ? data.wind_speed_kmh : "--") + " km/h";
+        document.getElementById("wWindDir").innerHTML = `<i class="fa-solid fa-compass"></i> Direction: <strong>${data.wind_direction_cardinal || "N"}</strong> (${data.wind_direction_deg || 0}°)`;
+        document.getElementById("wUv").textContent = data.uv_index != null ? data.uv_index : "0.0";
+        document.getElementById("wUvLevel").innerHTML = `<i class="fa-solid fa-sun"></i> UV Level: <strong>${data.uv_level || "Moderate"}</strong>`;
+        document.getElementById("wPressure").textContent = (data.pressure_hpa != null ? data.pressure_hpa : 1013) + " hPa";
+        document.getElementById("wCloud").textContent = (data.cloud_cover_percent != null ? data.cloud_cover_percent : 0) + "%";
+        document.getElementById("wPrecipMm").textContent = (data.precipitation_mm != null ? data.precipitation_mm : 0.0) + " mm";
+
+        // Advisories
+        if (data.advisory_en) document.getElementById("advisoryText").textContent = data.advisory_en;
+        if (data.advisory_ta) document.getElementById("advisoryTextTa").textContent = data.advisory_ta;
 
         const rain = data.rainfall_probability_percent || 0;
         const temp = data.temperature_c || 25;
-
-        // Advisory formulation
-        const advHeading = document.getElementById("advisoryHeading");
-        const advText = document.getElementById("advisoryText");
         const wNeed = document.getElementById("wNeed");
 
         if (rain >= 60) {
-          advHeading.textContent = "🌧️ High Rainfall Expected — Pause Scheduled Irrigation";
-          advText.textContent = `A ${rain}% probability of precipitation has been detected for ${data.city}. It is strongly recommended to pause automated pump cycles to prevent root rot and conserve aquifer resources.`;
           wNeed.textContent = "Minimal";
           wNeed.style.color = "#3b82f6";
         } else if (temp >= 35) {
-          advHeading.textContent = "☀️ High Ambient Heat — Increase Soil Moisture Monitoring";
-          advText.textContent = `High temperatures of ${temp}°C will accelerate evapotranspiration in crops. Ensure ground moisture sensors remain above critical wilting points.`;
           wNeed.textContent = "High";
           wNeed.style.color = "#ef4444";
         } else {
-          advHeading.textContent = "🌱 Standard Field Conditions — ML Auto Mode Recommended";
-          advText.textContent = `Conditions in ${data.city} are within normal seasonal parameters (Temp: ${temp}°C, Rain: ${rain}%). Allow the Logistic Regression model to dictate localized watering.`;
           wNeed.textContent = "Moderate";
           wNeed.style.color = "#10b981";
         }
+
+        // Render 7-day daily forecast cards
+        renderForecast(data.daily_forecast);
 
         showToast(`Weather updated for ${data.city}`, "success");
       } catch (err) {
@@ -253,7 +396,47 @@
       }
     }
 
-    fetchWeather();
+    function renderForecast(daily) {
+      const container = document.getElementById("forecastContainer");
+      if (!daily || !Array.isArray(daily) || daily.length === 0) {
+        container.innerHTML = `<div style="text-align:center; padding:20px; color:var(--slate-400); grid-column:1/-1;">Forecast data not available</div>`;
+        return;
+      }
+
+      container.innerHTML = daily.map((d, index) => {
+        const dateObj = new Date(d.date);
+        const dayName = index === 0 ? "Today" : dateObj.toLocaleDateString("en-US", { weekday: "short" });
+        const dateStr = dateObj.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+        const icon = getWeatherIcon(d.weather_code);
+
+        return `
+          <div class="forecast-card">
+            <div class="forecast-day">${dayName}</div>
+            <div style="font-size:10.5px; color:var(--slate-400); margin-bottom:4px;">${dateStr}</div>
+            <div class="forecast-icon">${icon}</div>
+            <div class="forecast-temp">${Math.round(d.temp_max)}° <span class="forecast-temp-min">${Math.round(d.temp_min)}°</span></div>
+            <div class="forecast-rain"><i class="fa-solid fa-droplet"></i> ${Math.round(d.rain_prob)}%</div>
+            <div style="font-size:10.5px; color:var(--slate-600); margin-top:4px; font-weight:500;">${d.description || ""}</div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function getWeatherIcon(code) {
+      if (code === 0) return "☀️";
+      if (code === 1 || code === 2) return "⛅";
+      if (code === 3) return "☁️";
+      if (code === 45 || code === 48) return "🌫️";
+      if (code >= 51 && code <= 55) return "🌦️";
+      if (code >= 61 && code <= 65) return "🌧️";
+      if (code >= 71 && code <= 75) return "❄️";
+      if (code >= 80 && code <= 82) return "🌧️";
+      if (code >= 95) return "⛈️";
+      return "🌤️";
+    }
+
+    // Auto-load weather on start
+    detectGpsLocation();
   </script>
 </body>
 </html>

@@ -5,10 +5,12 @@ import java.net.InetSocketAddress;
 import java.util.concurrent.Executors;
 
 import com.smartirrigation.handlers.AuthHandler;
+import com.smartirrigation.handlers.ChatHandler;
 import com.smartirrigation.handlers.CropHandler;
 import com.smartirrigation.handlers.IrrigationHandler;
 import com.smartirrigation.handlers.SensorHandler;
 import com.smartirrigation.handlers.StaticFileHandler;
+import com.smartirrigation.handlers.TtsHandler;
 import com.smartirrigation.handlers.WeatherHandler;
 import com.smartirrigation.model.IrrigationModel;
 import com.sun.net.httpserver.HttpServer;
@@ -36,6 +38,9 @@ public class App {
         CropHandler crops = new CropHandler();
         WeatherHandler weather = new WeatherHandler();
 
+        ChatHandler chat = new ChatHandler();
+        TtsHandler tts = new TtsHandler();
+
         // ---- Auth ----
         server.createContext("/api/signup", auth.signup());
         server.createContext("/api/login", auth.login());
@@ -61,6 +66,10 @@ public class App {
 
         // ---- Weather ----
         server.createContext("/api/weather", weather.get());
+
+        // ---- AI Assistant Voice & Chatbot ----
+        server.createContext("/api/chat", chat.handle());
+        server.createContext("/api/tts", tts.get());
 
         // ---- Static frontend (HTML/CSS/JS) ----
         server.createContext("/", new StaticFileHandler("public"));
