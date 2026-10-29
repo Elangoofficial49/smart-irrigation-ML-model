@@ -17,6 +17,7 @@ import java.util.Map;
 
 import com.smartirrigation.Database;
 import com.smartirrigation.util.Json;
+import com.smartirrigation.util.TamilNlpEngine;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
@@ -70,9 +71,7 @@ public class ChatHandler extends BaseHandler {
 
         // 2. Load API Keys
         String geminiApiKey = getApiKey("GEMINI_API_KEY");
-        String openAiApiKey = getApiKey("OPENAI_API_KEY");
-        String groqApiKey = getApiKey("GROQ_API_KEY");
-
+       
         String reply = null;
 
         // Try Google Gemini Cloud Model first
@@ -80,19 +79,26 @@ public class ChatHandler extends BaseHandler {
             reply = queryGemini(message, lang, farm, geminiApiKey);
         }
 
-        // Try OpenAI if Gemini not available
-        if ((reply == null || reply.isBlank()) && openAiApiKey != null && !openAiApiKey.isBlank()) {
-            reply = queryOpenAi(message, lang, farm, openAiApiKey);
-        }
-
-        // Try Groq if others not available
-        if ((reply == null || reply.isBlank()) && groqApiKey != null && !groqApiKey.isBlank()) {
-            reply = queryGroq(message, lang, farm, groqApiKey);
-        }
-
-        // 3. Fallback to Deep Natural Language Reasoning Engine if offline
+        // 3. Fallback to High-Precision Tamil / English Agricultural NLP Engine
         if (reply == null || reply.isBlank()) {
-            reply = generateIntelligentResponse(message, lang, farm, username);
+            if ("ta".equals(lang)) {
+                TamilNlpEngine.FarmTelemetry telemetry = new TamilNlpEngine.FarmTelemetry();
+                telemetry.soilMoisture = farm.moisture;
+                telemetry.temperature = farm.temp;
+                telemetry.humidity = farm.humidity;
+                telemetry.rainProbability = farm.rainProb;
+                telemetry.pumpStatus = farm.pumpStatus;
+                telemetry.registeredCrops = farm.crops;
+
+                TamilNlpEngine.NlpResult nlp = TamilNlpEngine.process(message, telemetry);
+                reply = nlp.response;
+                if (nlp.targetAction != null) {
+                    if ("PUMP_ON".equals(nlp.targetAction)) togglePumpState(username, "ON");
+                    else if ("PUMP_OFF".equals(nlp.targetAction)) togglePumpState(username, "OFF");
+                }
+            } else {
+                reply = generateIntelligentResponse(message, lang, farm, username);
+            }
         }
 
         String speechText = cleanForSpeech(reply);
@@ -150,7 +156,7 @@ public class ChatHandler extends BaseHandler {
             }
 
             try (PreparedStatement ps = conn.prepareStatement(
-                    "SELECT c.crop_name, c.area_acres FROM crops c JOIN users u ON c.user_id = u.id WHERE u.username = ? LIMIT 5")) {
+                    "SELECT crop_name, area_acres FROM crops WHERE username = ? OR username IS NULL LIMIT 5")) {
                 ps.setString(1, username);
                 try (ResultSet rs = ps.executeQuery()) {
                     while (rs.next()) {
@@ -195,59 +201,8 @@ public class ChatHandler extends BaseHandler {
         return null;
     }
 
-    private String queryOpenAi(String userQuery, String lang, FarmContext farm, String apiKey) {
-        try {
-            String systemPrompt = "You are AgroBot, an expert agricultural AI assistant fluent in Tamil and English. "
-                    + "Respond in " + ("ta".equals(lang) ? "Tamil (தமிழ்)" : "English") + ". "
-                    + "Live Farm Context: Soil Moisture: " + farm.moisture + "%, Temp: " + farm.temp + "C, Pump: " + farm.pumpStatus;
-
-            String escapedSys = systemPrompt.replace("\\", "\\\\").replace("\"", "\\\"").replace("\n", "\\n").replace("\r", "");
-            String escapedUser = userQuery.replace("\\", "\\\\").replace("\"", "\\\"").replace("\n", "\\n").replace("\r", "");
-
-            String payload = "{\"model\":\"gpt-4o-mini\",\"messages\":[{\"role\":\"system\",\"content\":\"" + escapedSys + "\"},{\"role\":\"user\",\"content\":\"" + escapedUser + "\"}]}";
-
-            HttpRequest request = HttpRequest.newBuilder(URI.create("https://api.openai.com/v1/chat/completions"))
-                    .header("Content-Type", "application/json; charset=utf-8")
-                    .header("Authorization", "Bearer " + apiKey)
-                    .timeout(Duration.ofSeconds(12))
-                    .POST(HttpRequest.BodyPublishers.ofString(payload, StandardCharsets.UTF_8))
-                    .build();
-
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
-            if (response.statusCode() == 200) {
-                return extractJsonText(response.body());
-            }
-        } catch (IOException | InterruptedException ignored) {
-        }
-        return null;
-    }
-
-    private String queryGroq(String userQuery, String lang, FarmContext farm, String apiKey) {
-        try {
-            String systemPrompt = "You are AgroBot, an expert agricultural AI assistant fluent in Tamil and English. "
-                    + "Respond in " + ("ta".equals(lang) ? "Tamil (தமிழ்)" : "English") + ". "
-                    + "Live Farm Context: Soil Moisture: " + farm.moisture + "%, Temp: " + farm.temp + "C, Pump: " + farm.pumpStatus;
-
-            String escapedSys = systemPrompt.replace("\\", "\\\\").replace("\"", "\\\"").replace("\n", "\\n").replace("\r", "");
-            String escapedUser = userQuery.replace("\\", "\\\\").replace("\"", "\\\"").replace("\n", "\\n").replace("\r", "");
-
-            String payload = "{\"model\":\"llama-3.3-70b-versatile\",\"messages\":[{\"role\":\"system\",\"content\":\"" + escapedSys + "\"},{\"role\":\"user\",\"content\":\"" + escapedUser + "\"}]}";
-
-            HttpRequest request = HttpRequest.newBuilder(URI.create("https://api.groq.com/openai/v1/chat/completions"))
-                    .header("Content-Type", "application/json; charset=utf-8")
-                    .header("Authorization", "Bearer " + apiKey)
-                    .timeout(Duration.ofSeconds(12))
-                    .POST(HttpRequest.BodyPublishers.ofString(payload, StandardCharsets.UTF_8))
-                    .build();
-
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
-            if (response.statusCode() == 200) {
-                return extractJsonText(response.body());
-            }
-        } catch (IOException | InterruptedException ignored) {
-        }
-        return null;
-    }
+    
+     
 
     private String extractJsonText(String jsonBody) {
         if (jsonBody == null) return null;

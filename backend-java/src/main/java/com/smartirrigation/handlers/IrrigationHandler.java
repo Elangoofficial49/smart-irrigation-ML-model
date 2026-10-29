@@ -34,6 +34,20 @@ public class IrrigationHandler extends BaseHandler {
         return this::handleStatus;
     }
 
+    public HttpHandler modelInfo() {
+        return this::handleModelInfo;
+    }
+
+    /** Returns the model card: dataset, hyperparameters, test metrics and feature importance. */
+    private void handleModelInfo(HttpExchange exchange) throws IOException {
+        if (handlePreflight(exchange)) return;
+        if (currentUser(exchange) == null) {
+            sendJson(exchange, 401, Json.obj().put("error", "Not authenticated").build());
+            return;
+        }
+        sendJson(exchange, 200, model.modelInfoJson());
+    }
+
     /** Runs the ML model against the latest sensor reading and logs+returns the decision. */
     private void handlePredict(HttpExchange exchange) throws IOException {
         if (handlePreflight(exchange)) return;
@@ -63,10 +77,17 @@ public class IrrigationHandler extends BaseHandler {
             String status = predictedClass == 1 ? "ON" : "OFF";
 
             try (PreparedStatement ps = conn.prepareStatement(
-                    "INSERT INTO irrigation_logs (status, mode, triggered_by, confidence) VALUES (?, 'auto', ?, ?)")) {
+                    "INSERT INTO irrigation_logs (status, mode, triggered_by, confidence, "
+                            + "soil_moisture, temperature, humidity, rainfall_prob, model_name) "
+                            + "VALUES (?, 'auto', ?, ?, ?, ?, ?, ?, ?)")) {
                 ps.setString(1, status);
                 ps.setString(2, user);
                 ps.setDouble(3, confidence);
+                ps.setDouble(4, soilMoisture);
+                ps.setDouble(5, temperature);
+                ps.setDouble(6, humidity);
+                ps.setDouble(7, rainfallProb);
+                ps.setString(8, model.getActiveModelName());
                 ps.executeUpdate();
             }
 
@@ -80,6 +101,7 @@ public class IrrigationHandler extends BaseHandler {
             sendJson(exchange, 200, Json.obj()
                     .put("status", status)
                     .put("confidence", Math.round(confidence * 1000.0) / 1000.0)
+                    .put("model", model.getActiveModelName())
                     .putRaw("based_on", basedOnJson)
                     .build());
         } catch (SQLException e) {

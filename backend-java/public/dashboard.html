@@ -1,254 +1,295 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard &bull; Smart Irrigation AI</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard • AgroPulse AI</title>
+  <!-- PWA Meta Tags & Web App Manifest -->
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#163D2B" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="AgroPulse AI" />
+  <link rel="apple-touch-icon" href="icons/icon-192.svg" />
+  <link rel="icon" type="image/svg+xml" href="icons/icon.svg" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/style.css?v=3" />
 </head>
 <body>
-  <div class="app-container">
-    <!-- Sidebar -->
+  <div class="app-layout">
+    <!-- Enterprise Forest-Green Sidebar -->
     <aside class="sidebar">
       <div class="sidebar-header">
-        <div class="brand-icon"><i class="fa-solid fa-leaf"></i></div>
-        <div class="brand-info">
-          <h2>AgroPulse AI</h2>
-          <span>Smart Irrigation System</span>
+        <div class="logo-icon"><i class="fa-solid fa-seedling"></i></div>
+        <div>
+          <div class="brand-title">AgroPulse AI</div>
+          <div class="brand-sub">Precision Irrigation</div>
         </div>
       </div>
 
-      <nav class="sidebar-nav">
-        <div class="nav-section-title">Telemetry & Control</div>
-        <a href="dashboard.html" class="nav-item" data-page="dashboard">
-          <i class="fa-solid fa-chart-pie"></i>
-          <span>Dashboard</span>
+      <nav class="sidebar-nav" aria-label="Main Navigation">
+        <div class="nav-section-label">Telemetry &amp; Control</div>
+        <a href="dashboard.html" class="nav-item active" data-page="dashboard">
+          <i class="fa-solid fa-chart-line"></i> <span>Dashboard</span>
         </a>
         <a href="sensors.html" class="nav-item" data-page="sensors">
-          <i class="fa-solid fa-satellite-dish"></i>
-          <span>Sensor Monitoring</span>
+          <i class="fa-solid fa-satellite-dish"></i> <span>Sensor Monitoring</span>
         </a>
         <a href="irrigation.html" class="nav-item" data-page="irrigation">
-          <i class="fa-solid fa-faucet-drip"></i>
-          <span>Irrigation Control</span>
+          <i class="fa-solid fa-faucet-drip"></i> <span>Irrigation Control</span>
         </a>
 
-        <div class="nav-section-title">Farm Management</div>
+        <div class="nav-section-label">Farm Management</div>
         <a href="crops.html" class="nav-item" data-page="crops">
-          <i class="fa-solid fa-wheat-awn"></i>
-          <span>Crop Inventory</span>
+          <i class="fa-solid fa-wheat-awn"></i> <span>Crop Inventory</span>
         </a>
         <a href="weather.html" class="nav-item" data-page="weather">
-          <i class="fa-solid fa-cloud-sun-rain"></i>
-          <span>Weather Intelligence</span>
+          <i class="fa-solid fa-cloud-sun-rain"></i> <span>Weather Intelligence</span>
         </a>
       </nav>
 
       <div class="sidebar-footer">
-        <div class="user-profile-card">
-          <div class="user-avatar" id="avatarInitials">US</div>
-          <div class="user-details">
+        <div class="user-card">
+          <div class="user-avatar" id="avatarInitials">EL</div>
+          <div class="user-info">
             <div class="user-name" id="userBadge">Operator</div>
-            <div class="user-role"><div class="online-dot"></div> Connected</div>
+            <div class="user-role">● Field Operations</div>
           </div>
         </div>
         <button class="btn-logout" onclick="logout()">
-          <i class="fa-solid fa-arrow-right-from-bracket"></i>
-          <span>Log Out</span>
+          <i class="fa-solid fa-right-from-bracket"></i> <span>Sign Out</span>
         </button>
       </div>
     </aside>
 
-    <!-- Main Content -->
+    <!-- Main Operations Workspace -->
     <div class="main-wrapper">
       <header class="top-navbar">
-        <div style="display:flex; align-items:center; gap:14px;">
-          <button class="mobile-menu-toggle" id="mobileToggle" aria-label="Toggle Navigation">
+        <div style="display:flex; align-items:center; gap:12px;">
+          <button class="mobile-menu-btn" id="mobileToggle" aria-label="Toggle Navigation">
             <i class="fa-solid fa-bars"></i>
           </button>
-          <div class="breadcrumb-area">
-            <span class="parent">AgroPulse</span>
-            <i class="fa-solid fa-chevron-right"></i>
+          <nav class="page-breadcrumb" aria-label="Breadcrumb">
+            <span>AgroPulse AI</span>
+            <span class="sep">/</span>
+            <span>Telemetry &amp; Control</span>
+            <span class="sep">/</span>
             <span class="current">Dashboard</span>
-          </div>
+          </nav>
         </div>
 
-        <div class="top-nav-actions">
-          <div class="system-status-badge">
-            <div class="live-pulse"></div>
-            <span>PostgreSQL & ML Online</span>
-          </div>
+        <div class="top-actions">
+          <span class="status-pill success" id="probeTimestampBadge">
+            <span class="status-dot"></span>
+            <span id="probeTimestampText">Telemetry Active</span>
+          </span>
           <button class="btn btn-primary btn-sm" onclick="quickSimulate()" id="quickSimBtn">
             <i class="fa-solid fa-arrows-rotate"></i>
-            <span>Simulate Sensor</span>
+            <span>Poll Field Sensor</span>
           </button>
         </div>
       </header>
 
-      <main class="page-content">
-        <div class="page-header">
-          <div class="page-title-group">
-            <h1>Farm Telemetry & Control Dashboard</h1>
-            <p>Live environmental monitoring, real-time ML decisions, and irrigation status</p>
+      <main class="content-area">
+        <div class="page-header-bar">
+          <div>
+            <h1 class="page-title">Operational Dashboard</h1>
+            <p class="page-subtitle">Real-time environmental telemetry, Random Forest irrigation recommendations, and field status.</p>
+          </div>
+          <div class="page-header-actions">
+            <a href="crops.html" class="btn btn-secondary btn-sm">
+              <i class="fa-solid fa-wheat-awn"></i> Crop Inventory
+            </a>
+            <a href="irrigation.html" class="btn btn-secondary btn-sm">
+              <i class="fa-solid fa-faucet-drip"></i> Irrigation Control
+            </a>
           </div>
         </div>
 
-        <!-- Metric KPI Cards -->
-        <div class="stats-grid">
-          <div class="stat-card">
-            <div class="stat-info">
-              <div class="stat-label">Soil Moisture</div>
-              <div class="stat-value" id="cardMoisture">--</div>
-              <div class="stat-subtext" id="moistureStatus"><i class="fa-solid fa-droplet"></i> Reading live sensor</div>
+        <!-- Compact 4-Metric Strip -->
+        <section class="metrics-strip" aria-label="Primary Farm Telemetry Metrics">
+          <div class="metric-cell">
+            <div class="metric-label">
+              <span>Soil Moisture</span>
+              <i class="fa-solid fa-droplet" title="Volumetric water content from Capacitive Probe #1"></i>
             </div>
-            <div class="stat-icon"><i class="fa-solid fa-water"></i></div>
+            <div class="metric-value-row">
+              <span class="metric-value" id="cardMoisture">—</span>
+            </div>
+            <div class="metric-desc" id="moistureStatus">Awaiting probe telemetry</div>
           </div>
 
-          <div class="stat-card stat-amber">
-            <div class="stat-info">
-              <div class="stat-label">Soil / Ambient Temp</div>
-              <div class="stat-value" id="cardTemp">--</div>
-              <div class="stat-subtext" id="tempStatus"><i class="fa-solid fa-temperature-half"></i> Optimal field range</div>
+          <div class="metric-cell">
+            <div class="metric-label">
+              <span>Ambient / Soil Temp</span>
+              <i class="fa-solid fa-temperature-half" title="Field temperature measurement"></i>
             </div>
-            <div class="stat-icon icon-amber"><i class="fa-solid fa-temperature-high"></i></div>
+            <div class="metric-value-row">
+              <span class="metric-value" id="cardTemp">—</span>
+            </div>
+            <div class="metric-desc" id="tempStatus">Target range: 20°C – 34°C</div>
           </div>
 
-          <div class="stat-card stat-blue">
-            <div class="stat-info">
-              <div class="stat-label">Relative Humidity</div>
-              <div class="stat-value" id="cardHumidity">--</div>
-              <div class="stat-subtext" id="humidityStatus"><i class="fa-solid fa-wind"></i> Atmospheric moisture</div>
+          <div class="metric-cell">
+            <div class="metric-label">
+              <span>Relative Humidity</span>
+              <i class="fa-solid fa-wind" title="Atmospheric relative humidity"></i>
             </div>
-            <div class="stat-icon icon-blue"><i class="fa-solid fa-cloud"></i></div>
+            <div class="metric-value-row">
+              <span class="metric-value" id="cardHumidity">—</span>
+            </div>
+            <div class="metric-desc" id="humidityStatus">Evapotranspiration factor</div>
           </div>
 
-          <div class="stat-card stat-purple">
-            <div class="stat-info">
-              <div class="stat-label">Irrigation Pump</div>
-              <div class="stat-value" id="cardIrrigation">OFF</div>
-              <div class="stat-subtext" id="pumpMode"><i class="fa-solid fa-sliders"></i> Standby mode</div>
+          <div class="metric-cell">
+            <div class="metric-label">
+              <span>Main Irrigation Pump</span>
+              <i class="fa-solid fa-faucet-drip" title="Current relay actuator status"></i>
             </div>
-            <div class="stat-icon icon-purple"><i class="fa-solid fa-power-off"></i></div>
+            <div class="metric-value-row">
+              <span class="metric-value" id="cardIrrigation">OFF</span>
+            </div>
+            <div class="metric-desc" id="pumpMode">Mode: standby</div>
           </div>
-        </div>
+        </section>
 
-        <!-- Telemetry Chart & ML Quick Action -->
-        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap:24px; margin-bottom:28px;">
-          <div class="panel" style="margin-bottom:0;">
+        <!-- Primary Analytics & Integrated AgroPulse AI Grid -->
+        <div class="workspace-grid" style="margin-bottom:16px;">
+          <!-- Left: Moisture & Humidity Trends Chart -->
+          <section class="panel" style="margin-bottom:0;">
             <div class="panel-header">
-              <div class="panel-title">
-                <i class="fa-solid fa-chart-line"></i>
-                <span>Moisture & Humidity Trends</span>
+              <div>
+                <div class="panel-title">
+                  <i class="fa-solid fa-chart-line"></i>
+                  <span>Soil Moisture &amp; Humidity Telemetry</span>
+                </div>
+                <div class="panel-subtitle">Last 10 recorded measurements from Capacitive Ground Probe #1</div>
               </div>
-              <span style="font-size:12px; color:var(--slate-500);">Last 10 telemetry samples</span>
+              <a href="sensors.html" class="btn btn-ghost btn-xs">Full Telemetry <i class="fa-solid fa-arrow-right"></i></a>
             </div>
-            <div style="height:250px; position:relative;">
+            <div style="height:260px; position:relative;">
               <canvas id="telemetryChart"></canvas>
             </div>
-          </div>
+          </section>
 
-          <div class="panel" style="margin-bottom:0; display:flex; flex-direction:column; justify-content:space-between;">
-            <div>
-              <div class="panel-header">
-                <div class="panel-title">
-                  <i class="fa-solid fa-robot"></i>
-                  <span>AI Precision Decision Engine</span>
+          <!-- Right: AgroPulse AI Insights Panel -->
+          <aside class="ai-insights-panel">
+            <div class="ai-insights-header">
+              <div class="ai-insights-title">
+                <span class="ai-badge-dot"></span>
+                <span>AgroPulse AI Insights</span>
+              </div>
+              <span id="quickMlBadge" class="status-pill neutral">Ready</span>
+            </div>
+            <div class="ai-insights-body">
+              <div class="ai-insight-item">
+                <div class="ai-insight-label">Measured Field Inputs</div>
+                <div class="ai-insight-text" id="aiMeasuredSummary">
+                  Loading latest sensor reading…
+                </div>
+                <div class="ai-meta-row" id="aiMeasuredMeta">
+                  <span><i class="fa-regular fa-clock"></i> Timestamp: —</span>
+                  <span><i class="fa-solid fa-satellite-dish"></i> Source: Probe #1</span>
                 </div>
               </div>
-              <p style="font-size:13.5px; color:var(--slate-600); line-height:1.6; margin-bottom:16px;">
-                Our on-device Logistic Regression ML model analyzes soil moisture, heat, humidity, and rainfall probability to optimize irrigation timing and save up to 40% water.
-              </p>
-              <div class="ml-decision-box" id="quickMlBox">
-                <div style="display:flex; justify-content:space-between; align-items:center;">
-                  <strong style="font-size:13.5px; color:var(--slate-800);">Current Recommendation:</strong>
-                  <span id="quickMlBadge" class="status-pill status-auto">Ready</span>
+
+              <div class="ai-insight-item">
+                <div class="ai-insight-label">Random Forest Decision Evaluation</div>
+                <div class="ai-insight-text" id="aiDecisionExplanation">
+                  Run an evaluation to compute irrigation necessity from soil moisture, temperature, humidity, and rain probability.
                 </div>
-                <div class="ml-confidence-meter">
-                  <div class="ml-confidence-bar" id="quickMlBar" style="width: 0%;"></div>
+                <div class="ml-confidence-meter" style="margin-top:8px;">
+                  <div class="ml-confidence-bar" id="quickMlBar" style="width:0%;"></div>
                 </div>
-                <div style="display:flex; justify-content:space-between; font-size:12px; color:var(--slate-500);">
-                  <span>Confidence Level</span>
-                  <span id="quickMlScore">--%</span>
+                <div style="display:flex; justify-content:space-between; font-size:11.5px; color:var(--text-secondary); margin-top:4px;">
+                  <span>Model Confidence</span>
+                  <span id="quickMlScore" class="num">—</span>
                 </div>
               </div>
-            </div>
 
-            <div style="display:flex; gap:12px; margin-top:20px;">
-              <button class="btn btn-primary" style="flex:1;" onclick="quickPredict()" id="quickPredictBtn">
-                <i class="fa-solid fa-wand-magic-sparkles"></i>
-                <span>Evaluate ML Decision</span>
-              </button>
-              <a href="irrigation.html" class="btn btn-secondary">
-                <span>Pump Controls</span>
-                <i class="fa-solid fa-arrow-right"></i>
-              </a>
+              <div style="display:flex; gap:8px; margin-top:4px;">
+                <button class="btn btn-primary btn-sm" style="flex:1;" onclick="quickPredict()" id="quickPredictBtn">
+                  <i class="fa-solid fa-microchip"></i>
+                  <span>Evaluate ML Decision</span>
+                </button>
+                <a href="irrigation.html" class="btn btn-secondary btn-sm">
+                  <span>Pump Control</span>
+                </a>
+              </div>
             </div>
-          </div>
+          </aside>
         </div>
 
-        <!-- Recent Logs & Crops Grid -->
-        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap:24px;">
-          <!-- Recent Activity -->
-          <div class="panel">
+        <!-- Secondary Operational Tables: Recent Irrigation Activity & Registered Crops -->
+        <div class="grid-2">
+          <!-- Recent Irrigation Activity -->
+          <section class="panel panel-flush" style="margin-bottom:0;">
             <div class="panel-header">
-              <div class="panel-title">
-                <i class="fa-solid fa-clock-rotate-left"></i>
-                <span>Recent Irrigation Activity</span>
+              <div>
+                <div class="panel-title">
+                  <i class="fa-solid fa-clock-rotate-left"></i>
+                  <span>Recent Irrigation Activity</span>
+                </div>
+                <div class="panel-subtitle">Latest automated and manual pump events</div>
               </div>
-              <a href="irrigation.html" style="font-size:12.5px; font-weight:600;">View All</a>
+              <a href="irrigation.html" class="btn btn-ghost btn-xs">Audit Log <i class="fa-solid fa-arrow-right"></i></a>
             </div>
 
             <div class="table-responsive">
               <table class="data-table" id="activityTable">
                 <thead>
                   <tr>
-                    <th>Status</th>
+                    <th>State</th>
                     <th>Mode</th>
-                    <th>Triggered By</th>
-                    <th>Confidence</th>
-                    <th>Time</th>
+                    <th>Operator / Trigger</th>
+                    <th class="num">Confidence</th>
+                    <th>Timestamp</th>
                   </tr>
                 </thead>
                 <tbody></tbody>
               </table>
-              <div class="empty-state" id="activityEmpty" style="display:none;">
-                <i class="fa-solid fa-faucet-drip"></i>
-                No irrigation activity logged yet.
+              <div class="empty-state" id="activityEmpty" style="display:none; padding:28px 16px;">
+                <div class="empty-state-title">No irrigation events logged yet</div>
+                <p class="empty-state-desc" style="margin-bottom:0;">Run an ML evaluation or toggle the pump in Irrigation Control.</p>
               </div>
             </div>
-          </div>
+          </section>
 
-          <!-- Farm Crops -->
-          <div class="panel">
+          <!-- Planted Crops Overview -->
+          <section class="panel panel-flush" style="margin-bottom:0;">
             <div class="panel-header">
-              <div class="panel-title">
-                <i class="fa-solid fa-seedling"></i>
-                <span>Planted Crops Overview</span>
+              <div>
+                <div class="panel-title">
+                  <i class="fa-solid fa-wheat-awn"></i>
+                  <span>Registered Crop Plots</span>
+                </div>
+                <div class="panel-subtitle">Active field allocations and irrigation status</div>
               </div>
-              <a href="crops.html" style="font-size:12.5px; font-weight:600;">Manage Crops</a>
+              <a href="crops.html" class="btn btn-ghost btn-xs">Manage Inventory <i class="fa-solid fa-arrow-right"></i></a>
             </div>
 
             <div class="table-responsive">
               <table class="data-table" id="cropsTable">
                 <thead>
                   <tr>
-                    <th>Crop</th>
-                    <th>Area (Acres)</th>
-                    <th>Planted Date</th>
+                    <th>Crop &amp; Variety</th>
+                    <th>Plot</th>
+                    <th class="num">Area</th>
+                    <th>Stage</th>
+                    <th>Status</th>
                   </tr>
                 </thead>
                 <tbody></tbody>
               </table>
-              <div class="empty-state" id="cropsEmpty" style="display:none;">
-                <i class="fa-solid fa-wheat-awn"></i>
-                No crops registered yet.
+              <div class="empty-state" id="cropsEmpty" style="display:none; padding:28px 16px;">
+                <div class="empty-state-title">No crops registered yet</div>
+                <p class="empty-state-desc" style="margin-bottom:10px;">Register your field plots in Crop Inventory to track water demand.</p>
+                <a href="crops.html" class="btn btn-primary btn-xs"><i class="fa-solid fa-plus"></i> Add Crop</a>
               </div>
             </div>
-          </div>
+          </section>
         </div>
-
       </main>
     </div>
   </div>
@@ -262,35 +303,35 @@
     let chartInstance = null;
 
     function initChart(labels, moistureData, humidityData) {
-      const ctx = document.getElementById('telemetryChart').getContext('2d');
+      const ctx = document.getElementById("telemetryChart").getContext("2d");
       if (chartInstance) chartInstance.destroy();
 
       chartInstance = new Chart(ctx, {
-        type: 'line',
+        type: "line",
         data: {
           labels: labels,
           datasets: [
             {
-              label: 'Soil Moisture (%)',
+              label: "Soil Moisture (%)",
               data: moistureData,
-              borderColor: '#10b981',
-              backgroundColor: 'rgba(16, 185, 129, 0.12)',
-              tension: 0.35,
-              fill: true,
-              borderWidth: 2.5,
-              pointRadius: 4,
-              pointBackgroundColor: '#10b981'
-            },
-            {
-              label: 'Humidity (%)',
-              data: humidityData,
-              borderColor: '#0ea5e9',
-              backgroundColor: 'rgba(14, 165, 233, 0.08)',
-              tension: 0.35,
+              borderColor: "#21834A",
+              backgroundColor: "rgba(33, 131, 74, 0.08)",
+              tension: 0.3,
               fill: true,
               borderWidth: 2,
               pointRadius: 3,
-              pointBackgroundColor: '#0ea5e9'
+              pointBackgroundColor: "#21834A"
+            },
+            {
+              label: "Relative Humidity (%)",
+              data: humidityData,
+              borderColor: "#3478B8",
+              backgroundColor: "rgba(52, 120, 184, 0.05)",
+              tension: 0.3,
+              fill: true,
+              borderWidth: 1.75,
+              pointRadius: 2.5,
+              pointBackgroundColor: "#3478B8"
             }
           ]
         },
@@ -298,48 +339,76 @@
           responsive: true,
           maintainAspectRatio: false,
           plugins: {
-            legend: { position: 'top', labels: { font: { family: 'Plus Jakarta Sans', size: 12 } } },
-            tooltip: { padding: 10, cornerRadius: 8 }
+            legend: {
+              position: "top",
+              align: "end",
+              labels: { boxWidth: 12, font: { family: "Inter", size: 12, weight: "600" }, color: "#17231D" }
+            },
+            tooltip: { padding: 10, cornerRadius: 6 }
           },
           scales: {
-            y: { min: 0, max: 100, grid: { color: '#f1f5f9' } },
-            x: { grid: { display: false } }
+            y: {
+              min: 0,
+              max: 100,
+              grid: { color: "#E1E7E1" },
+              ticks: { font: { family: "Inter", size: 11 }, color: "#69766D" }
+            },
+            x: {
+              grid: { display: false },
+              ticks: { font: { family: "Inter", size: 11 }, color: "#69766D" }
+            }
           }
         }
       });
     }
 
     async function loadDashboard() {
-      // 1. Latest Sensors & History for Chart
+      // 1. Latest Sensor & History
       try {
         const sensor = await apiFetch("/api/sensors/latest");
-        if (sensor.soil_moisture != null) {
-          document.getElementById("cardMoisture").textContent = sensor.soil_moisture + " %";
-          document.getElementById("cardTemp").textContent = sensor.temperature + " °C";
-          document.getElementById("cardHumidity").textContent = sensor.humidity + " %";
+        if (sensor && sensor.soil_moisture != null) {
+          const sm = Number(sensor.soil_moisture);
+          const temp = Number(sensor.temperature || 0);
+          const hum = Number(sensor.humidity || 0);
+          const rain = Number(sensor.rainfall_prob || 0);
+
+          document.getElementById("cardMoisture").textContent = sm.toFixed(1) + "%";
+          document.getElementById("cardTemp").textContent = temp.toFixed(1) + "°C";
+          document.getElementById("cardHumidity").textContent = hum.toFixed(1) + "%";
 
           const moistSub = document.getElementById("moistureStatus");
-          if (sensor.soil_moisture < 30) {
-            moistSub.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> <span style="color:#ef4444; font-weight:700;">Dry &mdash; Needs Water</span>';
-          } else if (sensor.soil_moisture > 70) {
-            moistSub.innerHTML = '<i class="fa-solid fa-water"></i> <span style="color:#3b82f6; font-weight:600;">Saturated / High</span>';
+          if (sm < 35) {
+            moistSub.innerHTML = '<span style="color:var(--warning-amber); font-weight:600;">Low moisture — irrigation advised</span>';
+          } else if (sm > 75) {
+            moistSub.innerHTML = '<span style="color:var(--info-blue); font-weight:600;">High saturation — hold water</span>';
           } else {
-            moistSub.innerHTML = '<i class="fa-solid fa-circle-check"></i> <span style="color:#10b981; font-weight:600;">Optimal Moisture</span>';
+            moistSub.innerHTML = '<span style="color:var(--action-green); font-weight:600;">Within optimal root-zone range</span>';
           }
+
+          document.getElementById("aiMeasuredSummary").innerHTML =
+            `Soil Moisture: <strong class="num">${sm.toFixed(1)}%</strong> · Temp: <strong class="num">${temp.toFixed(1)}°C</strong> · Humidity: <strong class="num">${hum.toFixed(0)}%</strong> · Rain Prob: <strong class="num">${rain.toFixed(0)}%</strong>`;
+          document.getElementById("aiMeasuredMeta").innerHTML =
+            `<span><i class="fa-regular fa-clock"></i> Measured: ${escapeHtml(sensor.recorded_at || "Just now")}</span>
+             <span><i class="fa-solid fa-satellite-dish"></i> Source: Capacitive Probe #1</span>`;
+
+          const tsShort = sensor.recorded_at && sensor.recorded_at.length >= 16 ? sensor.recorded_at.slice(11, 16) : "Live";
+          document.getElementById("probeTimestampText").textContent = `Probe #1 · ${tsShort}`;
+        } else {
+          document.getElementById("aiMeasuredSummary").textContent = "Data unavailable — poll or simulate a field sensor reading.";
         }
 
         const history = await apiFetch("/api/sensors/history?limit=10");
-        if (history && history.length > 0) {
+        if (Array.isArray(history) && history.length > 0) {
           const rev = [...history].reverse();
-          const labels = rev.map((_, i) => `T-${rev.length - i}`);
-          const moisture = rev.map(r => r.soil_moisture);
-          const humidity = rev.map(r => r.humidity);
+          const labels = rev.map((r, i) => (r.recorded_at && r.recorded_at.length >= 16) ? r.recorded_at.slice(11, 16) : `T-${rev.length - i}`);
+          const moisture = rev.map((r) => r.soil_moisture);
+          const humidity = rev.map((r) => r.humidity);
           initChart(labels, moisture, humidity);
         } else {
-          initChart(['T-1'], [0], [0]);
+          initChart(["No data"], [0], [0]);
         }
       } catch (e) {
-        initChart(['T-1'], [0], [0]);
+        initChart(["Offline"], [0], [0]);
       }
 
       // 2. Irrigation Status
@@ -349,8 +418,17 @@
         const mode = document.getElementById("pumpMode");
         const isON = status.status === "ON";
         card.textContent = isON ? "ON" : "OFF";
-        card.style.color = isON ? "#10b981" : "#ef4444";
-        mode.innerHTML = `<i class="fa-solid fa-sliders"></i> Mode: <strong>${status.mode || 'standby'}</strong>`;
+        card.style.color = isON ? "var(--action-green)" : "var(--text-primary)";
+        mode.innerHTML = `Mode: <strong>${escapeHtml(status.mode || "standby")}</strong> ${status.triggered_by ? `by ${escapeHtml(status.triggered_by)}` : ""}`;
+
+        if (status.confidence != null) {
+          const pct = Math.round(Number(status.confidence) * 100);
+          document.getElementById("quickMlBar").style.width = pct + "%";
+          document.getElementById("quickMlScore").textContent = pct + "%";
+          const badge = document.getElementById("quickMlBadge");
+          badge.className = `status-pill ${isON ? "warning" : "success"}`;
+          badge.innerHTML = `<span class="status-dot"></span><span>${isON ? "Irrigate (ON)" : "Hold (OFF)"}</span>`;
+        }
       } catch (e) {}
 
       // 3. Irrigation Activity History
@@ -358,26 +436,29 @@
         const history = await apiFetch("/api/irrigation/history");
         const tbody = document.querySelector("#activityTable tbody");
         tbody.innerHTML = "";
-        if (!history || history.length === 0) {
+        if (!Array.isArray(history) || history.length === 0) {
           document.getElementById("activityEmpty").style.display = "block";
         } else {
           document.getElementById("activityEmpty").style.display = "none";
-          history.slice(0, 6).forEach((log) => {
+          history.slice(0, 5).forEach((log) => {
+            const isOn = log.status === "ON";
             const tr = document.createElement("tr");
             tr.innerHTML = `
-              <td><span class="status-pill ${log.status === 'ON' ? 'status-on' : 'status-off'}">${log.status}</span></td>
-              <td><span class="status-pill ${log.mode === 'auto' ? 'status-auto' : 'status-manual'}">${log.mode}</span></td>
-              <td>${escapeHtml(log.triggered_by || "-")}</td>
-              <td>${log.confidence != null ? (log.confidence * 100).toFixed(1) + "%" : "-"}</td>
-              <td style="font-size:12px; color:var(--slate-500);">${log.created_at || "-"}</td>`;
+              <td><span class="status-pill ${isOn ? "success" : "neutral"}"><span class="status-dot"></span>${escapeHtml(log.status)}</span></td>
+              <td><span class="badge ${log.mode === "auto" ? "badge-info" : "badge-neutral"}">${escapeHtml(log.mode)}</span></td>
+              <td>${escapeHtml(log.triggered_by || "—")}</td>
+              <td class="num">${log.confidence != null ? (Number(log.confidence) * 100).toFixed(1) + "%" : "—"}</td>
+              <td style="font-size:12px; color:var(--text-secondary);">${escapeHtml(log.created_at || "—")}</td>
+            `;
             tbody.appendChild(tr);
           });
         }
       } catch (e) {}
 
-      // 4. Crops
+      // 4. Registered Crop Plots
       try {
-        const crops = await apiFetch("/api/crops");
+        const cropsRes = await apiFetch("/api/crops");
+        const crops = Array.isArray(cropsRes) ? cropsRes : (cropsRes.crops || []);
         const tbody = document.querySelector("#cropsTable tbody");
         tbody.innerHTML = "";
         if (!crops || crops.length === 0) {
@@ -385,11 +466,19 @@
         } else {
           document.getElementById("cropsEmpty").style.display = "none";
           crops.slice(0, 5).forEach((c) => {
+            const st = c.irrigation_status || "Optimal";
+            const pill = st === "Requires Irrigation" ? "warning" : (st === "Scheduled" ? "info" : "success");
             const tr = document.createElement("tr");
             tr.innerHTML = `
-              <td><strong>${escapeHtml(c.crop_name)}</strong></td>
-              <td>${c.area_acres} ac</td>
-              <td>${c.planting_date || "-"}</td>`;
+              <td>
+                <div class="cell-primary">${escapeHtml(c.crop_name)}</div>
+                <div class="cell-secondary">${escapeHtml(c.variety || "Standard")}</div>
+              </td>
+              <td><span class="badge badge-neutral" style="font-family:var(--font-mono);">${escapeHtml(c.field_plot || "Plot A-1")}</span></td>
+              <td class="num">${Number(c.area_acres || 0).toFixed(1)} ac</td>
+              <td><span class="badge badge-primary">${escapeHtml(c.growth_stage || "Vegetative")}</span></td>
+              <td><span class="status-pill ${pill}"><span class="status-dot"></span>${escapeHtml(st)}</span></td>
+            `;
             tbody.appendChild(tr);
           });
         }
@@ -399,41 +488,44 @@
     async function quickSimulate() {
       const btn = document.getElementById("quickSimBtn");
       btn.disabled = true;
-      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Reading...';
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> <span>Polling…</span>';
       try {
         await apiFetch("/api/sensors/simulate", { method: "POST" });
-        showToast("New field telemetry recorded successfully!", "success");
+        showToast("Recorded new field telemetry reading.", "success");
         await loadDashboard();
       } catch (err) {
         showToast(err.message, "error");
       } finally {
         btn.disabled = false;
-        btn.innerHTML = '<i class="fa-solid fa-arrows-rotate"></i> <span>Simulate Sensor</span>';
+        btn.innerHTML = '<i class="fa-solid fa-arrows-rotate"></i> <span>Poll Field Sensor</span>';
       }
     }
 
     async function quickPredict() {
       const btn = document.getElementById("quickPredictBtn");
       btn.disabled = true;
-      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Predicting...';
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> <span>Evaluating…</span>';
       try {
         const res = await apiFetch("/api/irrigation/predict", { method: "POST" });
         const isON = res.status === "ON";
         const badge = document.getElementById("quickMlBadge");
-        badge.className = `status-pill ${isON ? 'status-on' : 'status-off'}`;
-        badge.textContent = isON ? "IRRIGATE (ON)" : "HOLD (OFF)";
+        badge.className = `status-pill ${isON ? "warning" : "success"}`;
+        badge.innerHTML = `<span class="status-dot"></span><span>${isON ? "IRRIGATE (ON)" : "HOLD (OFF)"}</span>`;
 
         const pct = Math.round((res.confidence || 0.5) * 100);
         document.getElementById("quickMlBar").style.width = pct + "%";
-        document.getElementById("quickMlScore").textContent = pct + "% Confidence";
+        document.getElementById("quickMlScore").textContent = pct + "% (" + (res.model || "Random Forest") + ")";
+        document.getElementById("aiDecisionExplanation").innerHTML = isON
+          ? `<strong>Recommendation: Activate Irrigation.</strong> Model (${escapeHtml(res.model || "Random Forest")}) detected moisture deficit relative to evapotranspiration demand.`
+          : `<strong>Recommendation: Hold Irrigation.</strong> Root-zone moisture and atmospheric conditions do not require immediate water application.`;
 
-        showToast(`ML Decision: Pump ${res.status} (${pct}% confidence)`, "success");
+        showToast(`ML Evaluation: Pump ${res.status} (${pct}% confidence)`, "success");
         await loadDashboard();
       } catch (err) {
         showToast(err.message, "error");
       } finally {
         btn.disabled = false;
-        btn.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i> <span>Evaluate ML Decision</span>';
+        btn.innerHTML = '<i class="fa-solid fa-microchip"></i> <span>Evaluate ML Decision</span>';
       }
     }
 

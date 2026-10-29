@@ -1,104 +1,112 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Irrigation Control &bull; Smart Irrigation AI</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <link rel="stylesheet" href="css/style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Irrigation Control • AgroPulse AI</title>
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#163D2B" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="AgroPulse AI" />
+  <link rel="apple-touch-icon" href="icons/icon-192.svg" />
+  <link rel="icon" type="image/svg+xml" href="icons/icon.svg" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="css/style.css?v=3" />
 </head>
 <body>
-  <div class="app-container">
-    <!-- Sidebar -->
+  <div class="app-layout">
+    <!-- Enterprise Forest-Green Sidebar -->
     <aside class="sidebar">
       <div class="sidebar-header">
-        <div class="brand-icon"><i class="fa-solid fa-leaf"></i></div>
-        <div class="brand-info">
-          <h2>AgroPulse AI</h2>
-          <span>Smart Irrigation System</span>
+        <div class="logo-icon"><i class="fa-solid fa-seedling"></i></div>
+        <div>
+          <div class="brand-title">AgroPulse AI</div>
+          <div class="brand-sub">Precision Irrigation</div>
         </div>
       </div>
 
-      <nav class="sidebar-nav">
-        <div class="nav-section-title">Telemetry & Control</div>
+      <nav class="sidebar-nav" aria-label="Main Navigation">
+        <div class="nav-section-label">Telemetry &amp; Control</div>
         <a href="dashboard.html" class="nav-item" data-page="dashboard">
-          <i class="fa-solid fa-chart-pie"></i>
-          <span>Dashboard</span>
+          <i class="fa-solid fa-chart-line"></i> <span>Dashboard</span>
         </a>
         <a href="sensors.html" class="nav-item" data-page="sensors">
-          <i class="fa-solid fa-satellite-dish"></i>
-          <span>Sensor Monitoring</span>
+          <i class="fa-solid fa-satellite-dish"></i> <span>Sensor Monitoring</span>
         </a>
-        <a href="irrigation.html" class="nav-item" data-page="irrigation">
-          <i class="fa-solid fa-faucet-drip"></i>
-          <span>Irrigation Control</span>
+        <a href="irrigation.html" class="nav-item active" data-page="irrigation">
+          <i class="fa-solid fa-faucet-drip"></i> <span>Irrigation Control</span>
         </a>
 
-        <div class="nav-section-title">Farm Management</div>
+        <div class="nav-section-label">Farm Management</div>
         <a href="crops.html" class="nav-item" data-page="crops">
-          <i class="fa-solid fa-wheat-awn"></i>
-          <span>Crop Inventory</span>
+          <i class="fa-solid fa-wheat-awn"></i> <span>Crop Inventory</span>
         </a>
         <a href="weather.html" class="nav-item" data-page="weather">
-          <i class="fa-solid fa-cloud-sun-rain"></i>
-          <span>Weather Intelligence</span>
+          <i class="fa-solid fa-cloud-sun-rain"></i> <span>Weather Intelligence</span>
         </a>
       </nav>
 
       <div class="sidebar-footer">
-        <div class="user-profile-card">
-          <div class="user-avatar" id="avatarInitials">US</div>
-          <div class="user-details">
+        <div class="user-card">
+          <div class="user-avatar" id="avatarInitials">EL</div>
+          <div class="user-info">
             <div class="user-name" id="userBadge">Operator</div>
-            <div class="user-role"><div class="online-dot"></div> Connected</div>
+            <div class="user-role">● Field Operations</div>
           </div>
         </div>
         <button class="btn-logout" onclick="logout()">
-          <i class="fa-solid fa-arrow-right-from-bracket"></i>
-          <span>Log Out</span>
+          <i class="fa-solid fa-right-from-bracket"></i> <span>Sign Out</span>
         </button>
       </div>
     </aside>
 
-    <!-- Main Content -->
+    <!-- Main Operations Workspace -->
     <div class="main-wrapper">
       <header class="top-navbar">
-        <div style="display:flex; align-items:center; gap:14px;">
-          <button class="mobile-menu-toggle" id="mobileToggle" aria-label="Toggle Navigation">
+        <div style="display:flex; align-items:center; gap:12px;">
+          <button class="mobile-menu-btn" id="mobileToggle" aria-label="Toggle Navigation">
             <i class="fa-solid fa-bars"></i>
           </button>
-          <div class="breadcrumb-area">
-            <span class="parent">AgroPulse</span>
-            <i class="fa-solid fa-chevron-right"></i>
+          <nav class="page-breadcrumb" aria-label="Breadcrumb">
+            <span>AgroPulse AI</span>
+            <span class="sep">/</span>
+            <span>Telemetry &amp; Control</span>
+            <span class="sep">/</span>
             <span class="current">Irrigation Control</span>
-          </div>
+          </nav>
         </div>
 
-        <div class="top-nav-actions">
-          <div class="system-status-badge">
-            <i class="fa-solid fa-shield-halved" style="color:var(--primary-600);"></i>
-            <span>Relay Actuators Active</span>
-          </div>
+        <div class="top-actions">
+          <span class="status-pill success">
+            <span class="status-dot"></span>
+            <span>Solenoid Relay Controller Ready</span>
+          </span>
         </div>
       </header>
 
-      <main class="page-content">
-        <div class="page-header">
-          <div class="page-title-group">
-            <h1>Pump Actuator & ML Control Center</h1>
-            <p>Automated machine learning inference pipeline with manual override capabilities</p>
+      <main class="content-area">
+        <div class="page-header-bar">
+          <div>
+            <h1 class="page-title">Irrigation Control</h1>
+            <p class="page-subtitle">Manage main pump actuation, autonomous Random Forest irrigation evaluations, and audit logs.</p>
+          </div>
+          <div class="page-header-actions">
+            <button type="button" class="btn btn-secondary btn-sm" onclick="loadStatus(); loadHistory(); showToast('Refreshed pump state and audit log.', 'info');">
+              <i class="fa-solid fa-rotate"></i> Refresh State
+            </button>
           </div>
         </div>
 
-        <!-- Live Animated Pump State Banner -->
+        <!-- Live Pump State Banner -->
         <div class="pump-status-banner pump-inactive" id="pumpBanner">
-          <div class="pump-info">
+          <div>
             <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
-              <span class="status-pill status-off" id="bannerStatusPill">PUMP OFF</span>
-              <span style="font-size:12.5px; opacity:0.85;" id="bannerModeText">Standby</span>
+              <span class="status-pill neutral" id="bannerStatusPill"><span class="status-dot"></span>PUMP OFF</span>
+              <span style="font-size:12px; color:var(--text-secondary); font-weight:500;" id="bannerModeText">Mode: Standby</span>
             </div>
-            <h3 id="bannerTitle">Irrigation Valves Closed</h3>
-            <p id="bannerSubtitle">No active water discharge. System is in automated listening mode.</p>
+            <h3 id="bannerTitle" style="font-size:16px; font-weight:700; color:var(--text-primary); margin-bottom:2px;">Irrigation Valves Closed</h3>
+            <p id="bannerSubtitle" style="font-size:13px; color:var(--text-secondary);">No active water discharge. System is in automated telemetry monitoring mode.</p>
           </div>
           <div class="pump-visual-ring" id="bannerVisualRing">
             <i class="fa-solid fa-faucet-drip"></i>
@@ -106,87 +114,94 @@
         </div>
 
         <!-- ML & Manual Control Grid -->
-        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap:24px; margin-bottom:28px;">
-          
-          <!-- ML Model Autonomous Decision -->
-          <div class="panel" style="margin-bottom:0;">
-            <div class="panel-header">
-              <div class="panel-title">
-                <i class="fa-solid fa-robot"></i>
-                <span>ML Autonomous Decision Engine</span>
-              </div>
-            </div>
-            <p style="font-size:13.5px; color:var(--slate-600); line-height:1.6; margin-bottom:16px;">
-              Executes logistic regression against the most recent IoT ground reading (soil moisture, temperature, humidity, rainfall probability) to compute the optimal water delivery decision.
-            </p>
-
-            <button class="btn btn-primary btn-block btn-lg" id="predictBtn" onclick="runMlPrediction()">
-              <i class="fa-solid fa-wand-magic-sparkles"></i>
-              <span>Run ML Inference Evaluation</span>
-            </button>
-
-            <!-- Result breakdown card -->
-            <div class="ml-decision-box" id="predictResultBox" style="display:none; margin-top:18px;">
-              <div style="display:flex; justify-content:space-between; align-items:center;">
-                <span style="font-size:13px; font-weight:600; color:var(--slate-700);">Computed Action:</span>
-                <span class="status-pill" id="mlResultBadge">--</span>
-              </div>
-
-              <div class="ml-confidence-meter">
-                <div class="ml-confidence-bar" id="mlConfidenceBar" style="width:0%;"></div>
-              </div>
-
-              <div style="display:flex; justify-content:space-between; font-size:12px; color:var(--slate-500); margin-bottom:12px;">
-                <span>Inference Confidence:</span>
-                <strong id="mlConfidenceVal">--%</strong>
-              </div>
-
-              <div style="font-size:12.5px; color:var(--slate-600); border-top:1px dashed var(--primary-200); padding-top:10px;" id="mlFactorDetails">
-                <!-- Factors inserted dynamically -->
-              </div>
-            </div>
-          </div>
-
-          <!-- Manual Pump Actuation -->
-          <div class="panel" style="margin-bottom:0; display:flex; flex-direction:column; justify-content:space-between;">
+        <div class="grid-2" style="margin-bottom:16px;">
+          <!-- ML Autonomous Decision Engine -->
+          <section class="panel" style="margin-bottom:0; display:flex; flex-direction:column; justify-content:space-between;">
             <div>
               <div class="panel-header">
-                <div class="panel-title">
-                  <i class="fa-solid fa-gamepad"></i>
-                  <span>Manual Override Station</span>
+                <div>
+                  <div class="panel-title">
+                    <i class="fa-solid fa-microchip"></i>
+                    <span>AgroPulse AI Autonomous Evaluation</span>
+                  </div>
+                  <div class="panel-subtitle">Random Forest ensemble (60 trees) + agronomic safety guardrails</div>
                 </div>
               </div>
-              <p style="font-size:13.5px; color:var(--slate-600); line-height:1.6; margin-bottom:20px;">
-                Operator manual controls directly engage or disengage the solenoid field valves and main pump relay, bypassing automated ML schedules.
+              <p style="font-size:13px; color:var(--text-secondary); line-height:1.55; margin-bottom:14px;">
+                Evaluates the most recent measured field reading (soil moisture, ambient temperature, relative humidity, and rain probability) to determine whether irrigation should be engaged.
               </p>
-              <div style="background:var(--slate-50); border:1px solid var(--border-color); border-radius:var(--radius-md); padding:16px; margin-bottom:20px;">
-                <div style="font-size:12px; font-weight:700; color:var(--slate-500); text-transform:uppercase; margin-bottom:4px;">Safety Notice</div>
-                <p style="font-size:12.5px; color:var(--slate-600);">
-                  Manual overrides are logged with operator identity for compliance and agronomic auditing.
+
+              <!-- Result breakdown card -->
+              <div class="ml-decision-box" id="predictResultBox" style="display:none; margin-bottom:14px;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                  <span style="font-size:12.5px; font-weight:600; color:var(--text-primary);">Model Recommendation:</span>
+                  <span class="status-pill" id="mlResultBadge">—</span>
+                </div>
+
+                <div class="ml-confidence-meter">
+                  <div class="ml-confidence-bar" id="mlConfidenceBar" style="width:0%;"></div>
+                </div>
+
+                <div style="display:flex; justify-content:space-between; font-size:12px; color:var(--text-secondary); margin-bottom:10px;">
+                  <span>Prediction Confidence:</span>
+                  <strong id="mlConfidenceVal" class="num">—%</strong>
+                </div>
+
+                <div style="font-size:12px; color:var(--text-secondary); border-top:1px solid var(--border-color); padding-top:8px;" id="mlFactorDetails"></div>
+              </div>
+            </div>
+
+            <button class="btn btn-primary btn-block" id="predictBtn" onclick="runMlPrediction()">
+              <i class="fa-solid fa-microchip"></i>
+              <span>Run ML Inference Evaluation</span>
+            </button>
+          </section>
+
+          <!-- Manual Override Station -->
+          <section class="panel" style="margin-bottom:0; display:flex; flex-direction:column; justify-content:space-between;">
+            <div>
+              <div class="panel-header">
+                <div>
+                  <div class="panel-title">
+                    <i class="fa-solid fa-sliders"></i>
+                    <span>Manual Valve &amp; Pump Override</span>
+                  </div>
+                  <div class="panel-subtitle">Direct operator actuation with backend state verification</div>
+                </div>
+              </div>
+              <p style="font-size:13px; color:var(--text-secondary); line-height:1.55; margin-bottom:12px;">
+                Directly engage or close the main irrigation solenoid relay. State updates are applied only after backend confirmation and logged with operator credentials.
+              </p>
+              <div style="background:var(--bg-main); border:1px solid var(--border-color); border-radius:var(--radius-sm); padding:10px 12px; margin-bottom:14px;">
+                <div style="font-size:11px; font-weight:700; color:var(--text-secondary); text-transform:uppercase; letter-spacing:0.04em; margin-bottom:2px;">Equipment Safeguard</div>
+                <p style="font-size:12px; color:var(--text-secondary);" id="manualFeedbackText">
+                  Select an action below. You will be prompted to confirm before actuating field equipment.
                 </p>
               </div>
             </div>
 
-            <div style="display:flex; gap:14px;">
-              <button class="btn btn-success btn-lg" style="flex:1;" onclick="manualToggle('ON')" id="btnTurnOn">
+            <div style="display:flex; gap:10px;">
+              <button class="btn btn-primary" style="flex:1;" onclick="promptManualToggle('ON')" id="btnTurnOn">
                 <i class="fa-solid fa-play"></i>
                 <span>Turn ON Pump</span>
               </button>
-              <button class="btn btn-danger btn-lg" style="flex:1;" onclick="manualToggle('OFF')" id="btnTurnOff">
+              <button class="btn btn-danger" style="flex:1;" onclick="promptManualToggle('OFF')" id="btnTurnOff">
                 <i class="fa-solid fa-stop"></i>
                 <span>Turn OFF Pump</span>
               </button>
             </div>
-          </div>
-
+          </section>
         </div>
 
         <!-- Full Audit History Table -->
-        <div class="panel">
+        <section class="panel panel-flush" style="margin-bottom:0;">
           <div class="panel-header">
-            <div class="panel-title">
-              <i class="fa-solid fa-list-check"></i>
-              <span>Irrigation Actuation Audit Log</span>
+            <div>
+              <div class="panel-title">
+                <i class="fa-solid fa-list-check"></i>
+                <span>Irrigation Actuation Audit Log</span>
+              </div>
+              <div class="panel-subtitle">Verified record of automated ML evaluations and manual operator overrides</div>
             </div>
           </div>
 
@@ -198,20 +213,49 @@
                   <th>Pump State</th>
                   <th>Control Mode</th>
                   <th>Triggered By</th>
-                  <th>ML Confidence</th>
+                  <th class="num">Model Confidence</th>
                   <th>Timestamp</th>
                 </tr>
               </thead>
               <tbody></tbody>
             </table>
             <div class="empty-state" id="logEmpty" style="display:none;">
-              <i class="fa-solid fa-clipboard-list"></i>
-              No irrigation events logged yet.
+              <div class="empty-state-icon"><i class="fa-solid fa-clipboard-list"></i></div>
+              <div class="empty-state-title">No irrigation events logged yet</div>
+              <p class="empty-state-desc">Run an ML evaluation or execute a confirmed manual override above.</p>
             </div>
           </div>
-        </div>
-
+        </section>
       </main>
+    </div>
+  </div>
+
+  <!-- Equipment Actuation Confirmation Modal -->
+  <div class="modal-backdrop" id="actuationConfirmBackdrop" role="dialog" aria-modal="true" aria-labelledby="actuationModalTitle">
+    <div class="modal-dialog" style="max-width:420px;">
+      <div class="modal-header">
+        <div class="modal-title" id="actuationModalTitle">
+          <i class="fa-solid fa-faucet-drip" style="color:var(--action-green);"></i>
+          <span id="actuationModalTitleText">Confirm Pump Actuation</span>
+        </div>
+        <button type="button" class="modal-close" onclick="closeActuationModal()" aria-label="Close">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size:13.5px; color:var(--text-primary); line-height:1.5;" id="actuationModalPrompt">
+          Are you sure you want to change the main irrigation pump state?
+        </p>
+        <p style="font-size:12px; color:var(--text-secondary); margin-top:6px;">
+          This command will be sent to the backend controller and recorded in the audit log under your operator account.
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="closeActuationModal()">Cancel</button>
+        <button type="button" class="btn btn-primary" id="confirmActuationBtn" onclick="executeConfirmedToggle()">
+          Confirm Command
+        </button>
+      </div>
     </div>
   </div>
 
@@ -220,6 +264,8 @@
   <script>
     requireAuth();
     initLayout("irrigation");
+
+    let pendingManualState = null;
 
     async function loadStatus() {
       try {
@@ -235,19 +281,19 @@
 
         if (isON) {
           banner.className = "pump-status-banner pump-active";
-          pill.className = "status-pill status-on";
-          pill.textContent = "PUMP ACTIVE";
-          modeText.textContent = `Mode: ${status.mode || 'auto'}`;
+          pill.className = "status-pill success";
+          pill.innerHTML = '<span class="status-dot"></span><span>PUMP ACTIVE (ON)</span>';
+          modeText.textContent = `Mode: ${status.mode || "auto"} ${status.triggered_by ? "· By " + status.triggered_by : ""}`;
           title.textContent = "Irrigation System Discharging";
-          sub.textContent = "Active water flow through drip lines & sprinkler zones.";
+          sub.textContent = "Active water flow through primary drip lines and field sector valves.";
           ring.innerHTML = '<i class="fa-solid fa-water"></i>';
         } else {
           banner.className = "pump-status-banner pump-inactive";
-          pill.className = "status-pill status-off";
-          pill.textContent = "PUMP STANDBY";
-          modeText.textContent = `Mode: ${status.mode || 'standby'}`;
+          pill.className = "status-pill neutral";
+          pill.innerHTML = '<span class="status-dot"></span><span>PUMP STANDBY (OFF)</span>';
+          modeText.textContent = `Mode: ${status.mode || "standby"} ${status.triggered_by ? "· Last by " + status.triggered_by : ""}`;
           title.textContent = "Irrigation Valves Closed";
-          sub.textContent = "No active water discharge. System is in automated monitoring mode.";
+          sub.textContent = "No active water discharge. System is in automated telemetry monitoring mode.";
           ring.innerHTML = '<i class="fa-solid fa-faucet-drip"></i>';
         }
       } catch (e) {}
@@ -259,21 +305,23 @@
         const tbody = document.querySelector("#logTable tbody");
         tbody.innerHTML = "";
 
-        if (!history || history.length === 0) {
+        if (!Array.isArray(history) || history.length === 0) {
           document.getElementById("logEmpty").style.display = "block";
           return;
         }
 
         document.getElementById("logEmpty").style.display = "none";
         history.forEach((log) => {
+          const isON = log.status === "ON";
           const tr = document.createElement("tr");
           tr.innerHTML = `
-            <td>#${log.id}</td>
-            <td><span class="status-pill ${log.status === 'ON' ? 'status-on' : 'status-off'}">${log.status}</span></td>
-            <td><span class="status-pill ${log.mode === 'auto' ? 'status-auto' : 'status-manual'}">${log.mode}</span></td>
-            <td>${escapeHtml(log.triggered_by || "-")}</td>
-            <td>${log.confidence != null ? (log.confidence * 100).toFixed(1) + "%" : "N/A"}</td>
-            <td style="font-size:12.5px; color:var(--slate-500);">${log.created_at || "-"}</td>`;
+            <td style="font-family:var(--font-mono); font-size:12px;">#${log.id}</td>
+            <td><span class="status-pill ${isON ? "success" : "neutral"}"><span class="status-dot"></span>${escapeHtml(log.status)}</span></td>
+            <td><span class="badge ${log.mode === "auto" ? "badge-info" : "badge-neutral"}">${escapeHtml(log.mode)}</span></td>
+            <td>${escapeHtml(log.triggered_by || "—")}</td>
+            <td class="num">${log.confidence != null ? (Number(log.confidence) * 100).toFixed(1) + "%" : "Manual"}</td>
+            <td style="font-size:12px; color:var(--text-secondary);">${escapeHtml(log.created_at || "—")}</td>
+          `;
           tbody.appendChild(tr);
         });
       } catch (e) {}
@@ -282,7 +330,7 @@
     async function runMlPrediction() {
       const btn = document.getElementById("predictBtn");
       btn.disabled = true;
-      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Analyzing Sensor Telemetry...';
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> <span>Evaluating Sensor Telemetry…</span>';
 
       try {
         const res = await apiFetch("/api/irrigation/predict", { method: "POST" });
@@ -293,41 +341,78 @@
         box.style.display = "block";
 
         const badge = document.getElementById("mlResultBadge");
-        badge.className = `status-pill ${isON ? 'status-on' : 'status-off'}`;
-        badge.textContent = isON ? "IRRIGATE (PUMP ON)" : "DO NOT IRRIGATE (PUMP OFF)";
+        badge.className = `status-pill ${isON ? "warning" : "success"}`;
+        badge.innerHTML = `<span class="status-dot"></span><span>${isON ? "IRRIGATE (PUMP ON)" : "HOLD (PUMP OFF)"}</span>`;
 
         document.getElementById("mlConfidenceBar").style.width = pct + "%";
         document.getElementById("mlConfidenceVal").textContent = pct + "%";
 
         const based = res.based_on || {};
         document.getElementById("mlFactorDetails").innerHTML = `
-          <strong>Input Telemetry Analyzed:</strong><br>
-          &bull; Soil Moisture: <strong>${based.soil_moisture}%</strong> &bull; Temp: <strong>${based.temperature}°C</strong><br>
-          &bull; Humidity: <strong>${based.humidity}%</strong> &bull; Rain Probability: <strong>${based.rainfall_prob}%</strong>
+          <div style="margin-bottom:4px;"><strong>Measured Sensor Inputs:</strong> Soil Moisture <span class="num">${based.soil_moisture}%</span> · Temp <span class="num">${based.temperature}°C</span> · Humidity <span class="num">${based.humidity}%</span> · Rain Prob <span class="num">${based.rainfall_prob}%</span></div>
+          <div><strong>Classifier Used:</strong> ${escapeHtml(res.model || "Random Forest")} (Source: Capacitive Probe #1)</div>
         `;
 
-        showToast(`ML Decision: ${res.status} (${pct}% confidence)`, "success");
+        showToast(`Backend confirmed ML Decision: Pump ${res.status} (${pct}% confidence)`, "success");
         await loadStatus();
         await loadHistory();
       } catch (err) {
-        showToast(err.message, "error");
+        showToast("ML evaluation failed: " + err.message, "error");
       } finally {
         btn.disabled = false;
-        btn.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i> <span>Run ML Inference Evaluation</span>';
+        btn.innerHTML = '<i class="fa-solid fa-microchip"></i> <span>Run ML Inference Evaluation</span>';
       }
     }
 
-    async function manualToggle(state) {
+    function promptManualToggle(state) {
+      pendingManualState = state;
+      const backdrop = document.getElementById("actuationConfirmBackdrop");
+      const titleText = document.getElementById("actuationModalTitleText");
+      const promptText = document.getElementById("actuationModalPrompt");
+      const confirmBtn = document.getElementById("confirmActuationBtn");
+
+      if (state === "ON") {
+        titleText.textContent = "Confirm Pump Activation (ON)";
+        promptText.innerHTML = "Are you sure you want to <strong>open field solenoid valves and turn ON the main irrigation pump</strong>?";
+        confirmBtn.className = "btn btn-primary";
+        confirmBtn.innerHTML = '<i class="fa-solid fa-play"></i> Confirm Turn ON';
+      } else {
+        titleText.textContent = "Confirm Pump Shutdown (OFF)";
+        promptText.innerHTML = "Are you sure you want to <strong>turn OFF the main irrigation pump and close field valves</strong>?";
+        confirmBtn.className = "btn btn-danger";
+        confirmBtn.innerHTML = '<i class="fa-solid fa-stop"></i> Confirm Turn OFF';
+      }
+      backdrop.classList.add("open");
+    }
+
+    function closeActuationModal() {
+      pendingManualState = null;
+      document.getElementById("actuationConfirmBackdrop").classList.remove("open");
+    }
+
+    async function executeConfirmedToggle() {
+      if (!pendingManualState) return;
+      const targetState = pendingManualState;
+      const confirmBtn = document.getElementById("confirmActuationBtn");
+      const feedbackEl = document.getElementById("manualFeedbackText");
+      confirmBtn.disabled = true;
+
       try {
-        await apiFetch("/api/irrigation/toggle", {
+        const res = await apiFetch("/api/irrigation/toggle", {
           method: "POST",
-          body: JSON.stringify({ state })
+          body: JSON.stringify({ state: targetState })
         });
-        showToast(`Pump successfully switched ${state}`, "success");
+        closeActuationModal();
+        feedbackEl.innerHTML = `<span style="color:var(--action-green); font-weight:600;"><i class="fa-solid fa-circle-check"></i> Backend confirmed:</span> Pump switched <strong>${escapeHtml(res.status || targetState)}</strong> in manual mode.`;
+        showToast(`Backend confirmed: Pump switched ${res.status || targetState}`, "success");
         await loadStatus();
         await loadHistory();
       } catch (err) {
-        showToast(err.message, "error");
+        closeActuationModal();
+        feedbackEl.innerHTML = `<span style="color:var(--error-red); font-weight:600;"><i class="fa-solid fa-triangle-exclamation"></i> Command failed:</span> ${escapeHtml(err.message)}. Equipment state unchanged.`;
+        showToast("Actuation command failed: " + err.message, "error");
+      } finally {
+        confirmBtn.disabled = false;
       }
     }
 

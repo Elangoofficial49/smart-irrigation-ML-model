@@ -1,4 +1,10 @@
+.env
 backend-java/.env
 backend-java/target/
+target/
 *.class
+*.mv.db
+*.trace.db
 backend-java/database/*.db
+.vscode/
+backend-java/.vscode/

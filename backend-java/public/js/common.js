@@ -1,10 +1,7 @@
 // ==========================================================================
-// Smart Irrigation System - Common JavaScript Utilities & Navigation
+// Smart Irrigation System - Common JavaScript Utilities & Navigation (PWA Ready)
 // ==========================================================================
 
-// Intelligent API base URL detection:
-// When served from the backend (localhost:5000 or production server), use relative path ""
-// If running from file:// or separate frontend origin, fallback to configured URL.
 const API_BASE = (window.location.protocol.startsWith("http") && !window.location.host.includes("github.io")) 
   ? "" 
   : "https://smart-irrigation-ml-model-1.onrender.com";
@@ -34,7 +31,7 @@ function requireAuth() {
   }
 }
 
-/** Robust API fetch wrapper with token injection and error handling */
+/** Robust API fetch wrapper with token injection and offline cache fallback */
 async function apiFetch(path, options = {}) {
   const headers = options.headers || {};
   if (!headers["Content-Type"] && !(options.body instanceof FormData)) {
@@ -69,6 +66,10 @@ async function apiFetch(path, options = {}) {
     }
     return data;
   } catch (err) {
+    // Check if offline
+    if (!navigator.onLine) {
+      console.warn("[PWA Offline] Network unavailable for:", path);
+    }
     throw err;
   }
 }
@@ -122,12 +123,12 @@ function showMessage(elementId, text, isError = true) {
   const el = document.getElementById(elementId);
   if (!el) return;
   el.textContent = text;
-  el.style.color = isError ? "#ef4444" : "#10b981";
+  el.style.color = isError ? "#C44747" : "#21834A";
 }
 
 function escapeHtml(str) {
-  if (!str) return "";
-  return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  if (str === null || str === undefined) return "";
+  return String(str).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 }
 
 /** Layout and Navigation Initializer */
@@ -148,18 +149,110 @@ function initLayout(activePage) {
   if (userBadge) userBadge.textContent = username;
   if (avatarInitials) avatarInitials.textContent = username.slice(0, 2).toUpperCase();
 
-  // Mobile menu toggle logic
-  const mobileToggle = document.getElementById("mobileToggle");
   const sidebar = document.querySelector(".sidebar");
-  if (mobileToggle && sidebar) {
-    mobileToggle.addEventListener("click", () => {
+
+  // Restore desktop collapsed state
+  if (sidebar && localStorage.getItem("agropulse_sidebar_collapsed") === "1") {
+    sidebar.classList.add("collapsed");
+  }
+
+  // Mobile menu toggle (#mobileToggle or #mobileMenuBtn)
+  const mobileBtn = document.getElementById("mobileToggle") || document.getElementById("mobileMenuBtn");
+  if (mobileBtn && sidebar) {
+    mobileBtn.addEventListener("click", () => {
       sidebar.classList.toggle("open");
     });
+  }
 
-    document.addEventListener("click", (e) => {
-      if (sidebar.classList.contains("open") && !sidebar.contains(e.target) && !mobileToggle.contains(e.target)) {
-        sidebar.classList.remove("open");
-      }
+  // Desktop sidebar collapse toggle
+  let collapseBtn = document.getElementById("sidebarCollapseBtn");
+  const topLeft = document.querySelector(".top-navbar > div:first-child");
+  if (!collapseBtn && topLeft && sidebar) {
+    collapseBtn = document.createElement("button");
+    collapseBtn.id = "sidebarCollapseBtn";
+    collapseBtn.className = "sidebar-toggle-btn";
+    collapseBtn.type = "button";
+    collapseBtn.title = "Toggle sidebar (compact mode)";
+    collapseBtn.setAttribute("aria-label", "Toggle sidebar");
+    collapseBtn.innerHTML = '<i class="fa-solid fa-table-columns"></i>';
+    topLeft.insertBefore(collapseBtn, topLeft.firstChild);
+  }
+  if (collapseBtn && sidebar) {
+    collapseBtn.addEventListener("click", () => {
+      sidebar.classList.toggle("collapsed");
+      localStorage.setItem("agropulse_sidebar_collapsed", sidebar.classList.contains("collapsed") ? "1" : "0");
     });
   }
+
+  // Setup Offline / Online Listener
+  setupNetworkStatusMonitor();
 }
+
+/** Network Status Monitor & Offline Banner for Remote Farms */
+function setupNetworkStatusMonitor() {
+  let banner = document.getElementById("pwaNetworkBanner");
+  if (!banner) {
+    banner = document.createElement("div");
+    banner.id = "pwaNetworkBanner";
+    banner.style.cssText = `
+      position: fixed; top: 0; left: 0; right: 0; z-index: 99999;
+      background: #B7791F; color: #fff; text-align: center;
+      padding: 8px 16px; font-size: 13px; font-weight: 600;
+      display: none; align-items: center; justify-content: center; gap: 8px;
+      box-shadow: 0 1px 3px rgba(23,35,29,0.2);
+    `;
+    document.body.appendChild(banner);
+  }
+
+  function updateStatus() {
+    if (!navigator.onLine) {
+      banner.style.display = "flex";
+      banner.style.background = "#B7791F";
+      banner.innerHTML = '<i class="fa-solid fa-plane-slash"></i> <span><strong>Offline Mode:</strong> Network unavailable. Displaying cached farm telemetry.</span>';
+    } else {
+      if (banner.style.display === "flex") {
+        banner.style.background = "#21834A";
+        banner.innerHTML = '<i class="fa-solid fa-wifi"></i> <span><strong>Online:</strong> Connection restored.</span>';
+        setTimeout(() => { banner.style.display = "none"; }, 3000);
+      }
+    }
+  }
+
+  window.addEventListener("online", updateStatus);
+  window.addEventListener("offline", updateStatus);
+  if (!navigator.onLine) updateStatus();
+}
+
+// ==========================================================================
+// PWA Service Worker Registration & Cache Refresh
+// ==========================================================================
+if ("caches" in window) {
+  caches.keys().then((keys) => {
+    keys.forEach((k) => {
+      if (k !== "agropulse-enterprise-v3") {
+        caches.delete(k);
+      }
+    });
+  });
+}
+
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("/sw.js")
+      .then((reg) => {
+        reg.update();
+        console.log("[PWA] Service Worker registered with scope:", reg.scope);
+      })
+      .catch((err) => {
+        console.warn("[PWA] Service Worker registration failed:", err);
+      });
+  });
+}
+
+// PWA Install Prompt Handler
+let deferredPrompt = null;
+window.addEventListener("beforeinstallprompt", (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  console.log("[PWA] App can be installed.");
+});

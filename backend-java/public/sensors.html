@@ -1,163 +1,230 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sensor Monitoring &bull; Smart Irrigation AI</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sensor Monitoring • AgroPulse AI</title>
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#163D2B" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="AgroPulse AI" />
+  <link rel="apple-touch-icon" href="icons/icon-192.svg" />
+  <link rel="icon" type="image/svg+xml" href="icons/icon.svg" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/style.css?v=3" />
 </head>
 <body>
-  <div class="app-container">
-    <!-- Sidebar -->
+  <div class="app-layout">
+    <!-- Enterprise Forest-Green Sidebar -->
     <aside class="sidebar">
       <div class="sidebar-header">
-        <div class="brand-icon"><i class="fa-solid fa-leaf"></i></div>
-        <div class="brand-info">
-          <h2>AgroPulse AI</h2>
-          <span>Smart Irrigation System</span>
+        <div class="logo-icon"><i class="fa-solid fa-seedling"></i></div>
+        <div>
+          <div class="brand-title">AgroPulse AI</div>
+          <div class="brand-sub">Precision Irrigation</div>
         </div>
       </div>
 
-      <nav class="sidebar-nav">
-        <div class="nav-section-title">Telemetry & Control</div>
+      <nav class="sidebar-nav" aria-label="Main Navigation">
+        <div class="nav-section-label">Telemetry &amp; Control</div>
         <a href="dashboard.html" class="nav-item" data-page="dashboard">
-          <i class="fa-solid fa-chart-pie"></i>
-          <span>Dashboard</span>
+          <i class="fa-solid fa-chart-line"></i> <span>Dashboard</span>
         </a>
-        <a href="sensors.html" class="nav-item" data-page="sensors">
-          <i class="fa-solid fa-satellite-dish"></i>
-          <span>Sensor Monitoring</span>
+        <a href="sensors.html" class="nav-item active" data-page="sensors">
+          <i class="fa-solid fa-satellite-dish"></i> <span>Sensor Monitoring</span>
         </a>
         <a href="irrigation.html" class="nav-item" data-page="irrigation">
-          <i class="fa-solid fa-faucet-drip"></i>
-          <span>Irrigation Control</span>
+          <i class="fa-solid fa-faucet-drip"></i> <span>Irrigation Control</span>
         </a>
 
-        <div class="nav-section-title">Farm Management</div>
+        <div class="nav-section-label">Farm Management</div>
         <a href="crops.html" class="nav-item" data-page="crops">
-          <i class="fa-solid fa-wheat-awn"></i>
-          <span>Crop Inventory</span>
+          <i class="fa-solid fa-wheat-awn"></i> <span>Crop Inventory</span>
         </a>
         <a href="weather.html" class="nav-item" data-page="weather">
-          <i class="fa-solid fa-cloud-sun-rain"></i>
-          <span>Weather Intelligence</span>
+          <i class="fa-solid fa-cloud-sun-rain"></i> <span>Weather Intelligence</span>
         </a>
       </nav>
 
       <div class="sidebar-footer">
-        <div class="user-profile-card">
-          <div class="user-avatar" id="avatarInitials">US</div>
-          <div class="user-details">
+        <div class="user-card">
+          <div class="user-avatar" id="avatarInitials">EL</div>
+          <div class="user-info">
             <div class="user-name" id="userBadge">Operator</div>
-            <div class="user-role"><div class="online-dot"></div> Connected</div>
+            <div class="user-role">● Field Operations</div>
           </div>
         </div>
         <button class="btn-logout" onclick="logout()">
-          <i class="fa-solid fa-arrow-right-from-bracket"></i>
-          <span>Log Out</span>
+          <i class="fa-solid fa-right-from-bracket"></i> <span>Sign Out</span>
         </button>
       </div>
     </aside>
 
-    <!-- Main Content -->
+    <!-- Main Operations Workspace -->
     <div class="main-wrapper">
       <header class="top-navbar">
-        <div style="display:flex; align-items:center; gap:14px;">
-          <button class="mobile-menu-toggle" id="mobileToggle" aria-label="Toggle Navigation">
+        <div style="display:flex; align-items:center; gap:12px;">
+          <button class="mobile-menu-btn" id="mobileToggle" aria-label="Toggle Navigation">
             <i class="fa-solid fa-bars"></i>
           </button>
-          <div class="breadcrumb-area">
-            <span class="parent">AgroPulse</span>
-            <i class="fa-solid fa-chevron-right"></i>
+          <nav class="page-breadcrumb" aria-label="Breadcrumb">
+            <span>AgroPulse AI</span>
+            <span class="sep">/</span>
+            <span>Telemetry &amp; Control</span>
+            <span class="sep">/</span>
             <span class="current">Sensor Monitoring</span>
-          </div>
+          </nav>
         </div>
 
-        <div class="top-nav-actions">
-          <button class="btn btn-outline btn-sm" onclick="exportCsv()">
-            <i class="fa-solid fa-file-csv"></i>
-            <span>Export CSV</span>
-          </button>
-          <button class="btn btn-primary btn-sm" id="simulateBtn" onclick="simulateReading()">
-            <i class="fa-solid fa-satellite"></i>
-            <span>Simulate Telemetry</span>
-          </button>
+        <div class="top-actions">
+          <span class="status-pill neutral" id="probeHealthPill">
+            <span class="status-dot"></span>
+            <span id="probeHealthText">Checking probe status…</span>
+          </span>
         </div>
       </header>
 
-      <main class="page-content">
-        <div class="page-header">
-          <div class="page-title-group">
-            <h1>IoT Sensor Nodes & Telemetry</h1>
-            <p>Real-time ground probe metrics, environmental telemetry, and historical readings</p>
+      <main class="content-area">
+        <div class="page-header-bar">
+          <div>
+            <h1 class="page-title">Sensor Monitoring</h1>
+            <p class="page-subtitle">Field probe health, real-time volumetric soil moisture readings, timestamps, and historical telemetry.</p>
+          </div>
+          <div class="page-header-actions">
+            <button class="btn btn-secondary btn-sm" onclick="exportCsv()">
+              <i class="fa-solid fa-file-arrow-down"></i>
+              <span>Export CSV</span>
+            </button>
+            <button class="btn btn-primary btn-sm" id="simulateBtn" onclick="simulateReading()">
+              <i class="fa-solid fa-satellite-dish"></i>
+              <span>Poll Field Probe</span>
+            </button>
           </div>
         </div>
 
-        <!-- Metric Stat Cards -->
-        <div class="stats-grid">
-          <div class="stat-card">
-            <div class="stat-info">
-              <div class="stat-label">Soil Moisture Content</div>
-              <div class="stat-value" id="valMoisture">--</div>
-              <div class="stat-subtext" id="statusMoisture"><i class="fa-solid fa-droplet"></i> Capacitive probe</div>
+        <!-- Compact 4-Metric Strip -->
+        <section class="metrics-strip" aria-label="Latest Probe Readings">
+          <div class="metric-cell">
+            <div class="metric-label">
+              <span>Soil Moisture Content</span>
+              <i class="fa-solid fa-droplet" title="Capacitive Probe #1 (Plot A-1 / B-2 Sector)"></i>
             </div>
-            <div class="stat-icon"><i class="fa-solid fa-water"></i></div>
+            <div class="metric-value-row">
+              <span class="metric-value" id="valMoisture">—</span>
+            </div>
+            <div class="metric-desc" id="statusMoisture">Capacitive Probe #1 · Sector A</div>
           </div>
 
-          <div class="stat-card stat-amber">
-            <div class="stat-info">
-              <div class="stat-label">Ambient Temperature</div>
-              <div class="stat-value" id="valTemp">--</div>
-              <div class="stat-subtext"><i class="fa-solid fa-temperature-half"></i> DHT22 digital probe</div>
+          <div class="metric-cell">
+            <div class="metric-label">
+              <span>Ambient / Soil Temp</span>
+              <i class="fa-solid fa-temperature-half" title="DHT22 Digital Probe"></i>
             </div>
-            <div class="stat-icon icon-amber"><i class="fa-solid fa-temperature-high"></i></div>
+            <div class="metric-value-row">
+              <span class="metric-value" id="valTemp">—</span>
+            </div>
+            <div class="metric-desc" id="statusTemp">Digital Probe #1 · Sector A</div>
           </div>
 
-          <div class="stat-card stat-blue">
-            <div class="stat-info">
-              <div class="stat-label">Relative Humidity</div>
-              <div class="stat-value" id="valHumidity">--</div>
-              <div class="stat-subtext"><i class="fa-solid fa-wind"></i> Atmospheric sensor</div>
+          <div class="metric-cell">
+            <div class="metric-label">
+              <span>Relative Humidity</span>
+              <i class="fa-solid fa-wind" title="Atmospheric Humidity Node"></i>
             </div>
-            <div class="stat-icon icon-blue"><i class="fa-solid fa-cloud"></i></div>
+            <div class="metric-value-row">
+              <span class="metric-value" id="valHumidity">—</span>
+            </div>
+            <div class="metric-desc">Atmospheric Node · Sector A</div>
           </div>
 
-          <div class="stat-card stat-purple">
-            <div class="stat-info">
-              <div class="stat-label">Rainfall Probability</div>
-              <div class="stat-value" id="valRain">--</div>
-              <div class="stat-subtext"><i class="fa-solid fa-cloud-rain"></i> Precipitation forecast</div>
+          <div class="metric-cell">
+            <div class="metric-label">
+              <span>Rainfall Probability</span>
+              <i class="fa-solid fa-cloud-rain" title="Local Barometric / Forecast Feed"></i>
             </div>
-            <div class="stat-icon icon-purple"><i class="fa-solid fa-cloud-showers-heavy"></i></div>
+            <div class="metric-value-row">
+              <span class="metric-value" id="valRain">—</span>
+            </div>
+            <div class="metric-desc" id="lastTimestampLabel">Last sample: —</div>
           </div>
-        </div>
+        </section>
 
-        <!-- Telemetry History Chart -->
-        <div class="panel">
-          <div class="panel-header">
-            <div class="panel-title">
-              <i class="fa-solid fa-chart-line"></i>
-              <span>Multi-Sensor Telemetry Time-Series</span>
+        <!-- Device Node Registry + Multi-Sensor Time-Series -->
+        <div class="workspace-grid" style="margin-bottom:16px;">
+          <!-- Left: Multi-Sensor Telemetry Time-Series -->
+          <section class="panel" style="margin-bottom:0;">
+            <div class="panel-header">
+              <div>
+                <div class="panel-title">
+                  <i class="fa-solid fa-chart-line"></i>
+                  <span>Multi-Sensor Telemetry Time-Series</span>
+                </div>
+                <div class="panel-subtitle">Volumetric moisture, temperature, humidity, and rain probability trends</div>
+              </div>
+              <span class="badge badge-neutral" id="chartSampleCountBadge">0 samples</span>
             </div>
-            <span style="font-size:12px; color:var(--slate-500);">Ground & Atmospheric Sensors</span>
-          </div>
-          <div style="height:280px; position:relative;">
-            <canvas id="sensorHistoryChart"></canvas>
-          </div>
+            <div style="height:265px; position:relative;">
+              <canvas id="sensorHistoryChart"></canvas>
+            </div>
+          </section>
+
+          <!-- Right: Field Hardware Nodes & Health Status -->
+          <aside class="panel" style="margin-bottom:0;">
+            <div class="panel-header">
+              <div>
+                <div class="panel-title">
+                  <i class="fa-solid fa-microchip"></i>
+                  <span>Field Probe Diagnostics</span>
+                </div>
+                <div class="panel-subtitle">Hardware node association &amp; link status</div>
+              </div>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:10px;">
+              <div style="padding:10px 12px; border:1px solid var(--border-color); border-radius:var(--radius-sm); background:var(--bg-main);">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                  <span style="font-weight:600; font-size:13px; color:var(--text-primary);">Capacitive Probe #1</span>
+                  <span class="status-pill success" id="node1Badge"><span class="status-dot"></span>Healthy</span>
+                </div>
+                <div style="font-size:12px; color:var(--text-secondary);">Assigned: <strong>Plot A-1 / Plot B-2</strong> (Root depth 20 cm)</div>
+                <div style="font-size:11.5px; color:var(--text-secondary); margin-top:4px;" id="node1LastSeen">Last telemetry: —</div>
+              </div>
+
+              <div style="padding:10px 12px; border:1px solid var(--border-color); border-radius:var(--radius-sm); background:var(--bg-main);">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                  <span style="font-weight:600; font-size:13px; color:var(--text-primary);">DHT22 Microclimate Node</span>
+                  <span class="status-pill success" id="node2Badge"><span class="status-dot"></span>Healthy</span>
+                </div>
+                <div style="font-size:12px; color:var(--text-secondary);">Assigned: <strong>Primary Weather Mast</strong> (Temp &amp; RH)</div>
+                <div style="font-size:11.5px; color:var(--text-secondary); margin-top:4px;" id="node2LastSeen">Last telemetry: —</div>
+              </div>
+
+              <div style="padding:10px 12px; border:1px solid var(--border-color); border-radius:var(--radius-sm); background:var(--bg-surface);">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                  <span style="font-weight:600; font-size:13px; color:var(--text-primary);">Secondary Probe #2</span>
+                  <span class="status-pill neutral"><span class="status-dot"></span>Offline</span>
+                </div>
+                <div style="font-size:12px; color:var(--text-secondary);">Assigned: <strong>Plot C-1 (Reserve Sector)</strong></div>
+                <div style="font-size:11.5px; color:var(--text-secondary); margin-top:4px;">Status: No hardware transceiver paired</div>
+              </div>
+            </div>
+          </aside>
         </div>
 
         <!-- Historical Readings Table -->
-        <div class="panel">
+        <section class="panel panel-flush" style="margin-bottom:0;">
           <div class="panel-header">
-            <div class="panel-title">
-              <i class="fa-solid fa-database"></i>
-              <span>Historical Sensor Readings</span>
+            <div>
+              <div class="panel-title">
+                <i class="fa-solid fa-database"></i>
+                <span>Historical Sensor Readings</span>
+              </div>
+              <div class="panel-subtitle">Timestamped telemetry log from field probes</div>
             </div>
-            <div style="display:flex; gap:10px; align-items:center;">
-              <label style="font-size:12px; color:var(--slate-500);">Show: </label>
-              <select id="limitSelect" class="form-input no-icon" style="padding:6px 12px; width:auto;" onchange="loadHistory()">
+            <div style="display:flex; gap:8px; align-items:center;">
+              <label for="limitSelect" style="font-size:12px; font-weight:600; color:var(--text-secondary);">Rows:</label>
+              <select id="limitSelect" class="toolbar-select" onchange="loadHistory()">
                 <option value="10">10 records</option>
                 <option value="25" selected>25 records</option>
                 <option value="50">50 records</option>
@@ -169,23 +236,24 @@
             <table class="data-table" id="historyTable">
               <thead>
                 <tr>
-                  <th>Timestamp</th>
-                  <th>Soil Moisture</th>
-                  <th>Temperature</th>
-                  <th>Humidity</th>
-                  <th>Rain Probability</th>
-                  <th>Condition Status</th>
+                  <th>Measurement Timestamp</th>
+                  <th>Source Probe / Field</th>
+                  <th class="num">Soil Moisture</th>
+                  <th class="num">Temperature</th>
+                  <th class="num">Relative Humidity</th>
+                  <th class="num">Rain Probability</th>
+                  <th>Moisture Status</th>
                 </tr>
               </thead>
               <tbody></tbody>
             </table>
             <div class="empty-state" id="historyEmpty" style="display:none;">
-              <i class="fa-solid fa-satellite-dish"></i>
-              No sensor telemetry recorded yet. Click "Simulate Telemetry" above to generate readings.
+              <div class="empty-state-icon"><i class="fa-solid fa-satellite-dish"></i></div>
+              <div class="empty-state-title">No sensor telemetry recorded yet</div>
+              <p class="empty-state-desc">Click "Poll Field Probe" above to capture a live reading from the field transceiver.</p>
             </div>
           </div>
-        </div>
-
+        </section>
       </main>
     </div>
   </div>
@@ -200,54 +268,60 @@
     let cachedReadings = [];
 
     function renderChart(readings) {
-      const ctx = document.getElementById('sensorHistoryChart').getContext('2d');
+      const ctx = document.getElementById("sensorHistoryChart").getContext("2d");
       if (historyChart) historyChart.destroy();
 
       const rev = [...readings].reverse();
-      const labels = rev.map((r, i) => r.recorded_at ? r.recorded_at.split(" ")[1] || `Sample ${i+1}` : `Sample ${i+1}`);
-      const moisture = rev.map(r => r.soil_moisture);
-      const temp = rev.map(r => r.temperature);
-      const humidity = rev.map(r => r.humidity);
-      const rain = rev.map(r => r.rainfall_prob);
+      const labels = rev.map((r, i) => (r.recorded_at && r.recorded_at.length >= 16) ? r.recorded_at.slice(11, 16) : `T-${rev.length - i}`);
+      const moisture = rev.map((r) => r.soil_moisture);
+      const temp = rev.map((r) => r.temperature);
+      const humidity = rev.map((r) => r.humidity);
+      const rain = rev.map((r) => r.rainfall_prob);
+
+      document.getElementById("chartSampleCountBadge").textContent = `${readings.length} samples`;
 
       historyChart = new Chart(ctx, {
-        type: 'line',
+        type: "line",
         data: {
           labels: labels,
           datasets: [
             {
-              label: 'Soil Moisture (%)',
+              label: "Soil Moisture (%)",
               data: moisture,
-              borderColor: '#10b981',
-              backgroundColor: 'rgba(16, 185, 129, 0.1)',
+              borderColor: "#21834A",
+              backgroundColor: "rgba(33, 131, 74, 0.08)",
               fill: true,
               tension: 0.3,
-              borderWidth: 2
+              borderWidth: 2,
+              pointRadius: 2.5
             },
             {
-              label: 'Temperature (°C)',
+              label: "Temperature (°C)",
               data: temp,
-              borderColor: '#f59e0b',
-              backgroundColor: 'transparent',
+              borderColor: "#B7791F",
+              backgroundColor: "transparent",
               tension: 0.3,
-              borderWidth: 2
+              borderWidth: 1.75,
+              pointRadius: 2
             },
             {
-              label: 'Humidity (%)',
+              label: "Humidity (%)",
               data: humidity,
-              borderColor: '#0ea5e9',
-              backgroundColor: 'transparent',
+              borderColor: "#3478B8",
+              backgroundColor: "transparent",
               tension: 0.3,
-              borderWidth: 2
+              borderWidth: 1.75,
+              pointRadius: 2
             },
             {
-              label: 'Rainfall Prob (%)',
+              label: "Rain Prob (%)",
               data: rain,
-              borderColor: '#8b5cf6',
-              borderDash: [5, 5],
-              backgroundColor: 'transparent',
+              borderColor: "#69766D",
+              borderDash: [4, 4],
+              backgroundColor: "transparent",
               tension: 0.3,
-              borderWidth: 2
+              borderWidth: 1.5,
+              pointRadius: 2
             }
           ]
         },
@@ -255,12 +329,16 @@
           responsive: true,
           maintainAspectRatio: false,
           plugins: {
-            legend: { position: 'top' },
-            tooltip: { cornerRadius: 8 }
+            legend: {
+              position: "top",
+              align: "end",
+              labels: { boxWidth: 12, font: { family: "Inter", size: 11.5, weight: "600" }, color: "#17231D" }
+            },
+            tooltip: { cornerRadius: 6 }
           },
           scales: {
-            y: { min: 0, max: 100, grid: { color: '#f1f5f9' } },
-            x: { grid: { display: false } }
+            y: { min: 0, max: 100, grid: { color: "#E1E7E1" }, ticks: { color: "#69766D", font: { family: "Inter", size: 11 } } },
+            x: { grid: { display: false }, ticks: { color: "#69766D", font: { family: "Inter", size: 11 } } }
           }
         }
       });
@@ -269,29 +347,54 @@
     async function loadLatest() {
       try {
         const sensor = await apiFetch("/api/sensors/latest");
-        if (sensor.soil_moisture != null) {
-          document.getElementById("valMoisture").textContent = sensor.soil_moisture + " %";
-          document.getElementById("valTemp").textContent = sensor.temperature + " °C";
-          document.getElementById("valHumidity").textContent = sensor.humidity + " %";
-          document.getElementById("valRain").textContent = sensor.rainfall_prob + " %";
+        const pill = document.getElementById("probeHealthPill");
+        const pillText = document.getElementById("probeHealthText");
+
+        if (sensor && sensor.soil_moisture != null) {
+          const sm = Number(sensor.soil_moisture);
+          const temp = Number(sensor.temperature || 0);
+          const hum = Number(sensor.humidity || 0);
+          const rain = Number(sensor.rainfall_prob || 0);
+
+          document.getElementById("valMoisture").textContent = sm.toFixed(1) + "%";
+          document.getElementById("valTemp").textContent = temp.toFixed(1) + "°C";
+          document.getElementById("valHumidity").textContent = hum.toFixed(1) + "%";
+          document.getElementById("valRain").textContent = rain.toFixed(1) + "%";
+          document.getElementById("lastTimestampLabel").textContent = `Measured: ${sensor.recorded_at || "Just now"}`;
+
+          document.getElementById("node1LastSeen").textContent = `Last telemetry: ${sensor.recorded_at || "Just now"}`;
+          document.getElementById("node2LastSeen").textContent = `Last telemetry: ${sensor.recorded_at || "Just now"}`;
+
+          pill.className = "status-pill success";
+          pillText.textContent = "Probe #1 Online · Healthy";
 
           const statusEl = document.getElementById("statusMoisture");
-          if (sensor.soil_moisture < 30) {
-            statusEl.innerHTML = '<span style="color:#ef4444; font-weight:700;"><i class="fa-solid fa-triangle-exclamation"></i> Low Moisture (Dry)</span>';
-          } else if (sensor.soil_moisture > 75) {
-            statusEl.innerHTML = '<span style="color:#3b82f6; font-weight:600;"><i class="fa-solid fa-water"></i> Saturated Soil</span>';
+          if (sm < 35) {
+            statusEl.innerHTML = '<span style="color:var(--warning-amber); font-weight:600;">Low moisture (&lt; 35%) — Requires irrigation</span>';
+          } else if (sm > 75) {
+            statusEl.innerHTML = '<span style="color:var(--info-blue); font-weight:600;">Saturated (&gt; 75%) — Hold irrigation</span>';
           } else {
-            statusEl.innerHTML = '<span style="color:#10b981; font-weight:600;"><i class="fa-solid fa-circle-check"></i> Optimal Hydration</span>';
+            statusEl.innerHTML = '<span style="color:var(--action-green); font-weight:600;">Optimal root-zone hydration</span>';
           }
+        } else {
+          pill.className = "status-pill warning";
+          pillText.textContent = "No recent telemetry";
+          document.getElementById("node1Badge").className = "status-pill neutral";
+          document.getElementById("node1Badge").innerHTML = '<span class="status-dot"></span>No Data';
         }
-      } catch (e) {}
+      } catch (e) {
+        const pill = document.getElementById("probeHealthPill");
+        const pillText = document.getElementById("probeHealthText");
+        pill.className = "status-pill danger";
+        pillText.textContent = "Telemetry Link Error";
+      }
     }
 
     async function loadHistory() {
       const limit = document.getElementById("limitSelect").value || 25;
       try {
         const history = await apiFetch("/api/sensors/history?limit=" + limit);
-        cachedReadings = history || [];
+        cachedReadings = Array.isArray(history) ? history : [];
         const tbody = document.querySelector("#historyTable tbody");
         tbody.innerHTML = "";
 
@@ -304,18 +407,24 @@
         renderChart(cachedReadings);
 
         cachedReadings.forEach((r) => {
-          let badge = '<span class="status-pill status-on">Optimal</span>';
-          if (r.soil_moisture < 30) badge = '<span class="status-pill status-off">Dry Soil</span>';
-          else if (r.soil_moisture > 75) badge = '<span class="status-pill status-manual">Saturated</span>';
+          const sm = Number(r.soil_moisture || 0);
+          let badge = '<span class="status-pill success"><span class="status-dot"></span>Optimal</span>';
+          if (sm < 35) badge = '<span class="status-pill warning"><span class="status-dot"></span>Low Moisture</span>';
+          else if (sm > 75) badge = '<span class="status-pill info"><span class="status-dot"></span>Saturated</span>';
 
           const tr = document.createElement("tr");
           tr.innerHTML = `
-            <td style="font-size:12.5px; color:var(--slate-500);">${r.recorded_at || "-"}</td>
-            <td><strong>${r.soil_moisture}%</strong></td>
-            <td>${r.temperature}°C</td>
-            <td>${r.humidity}%</td>
-            <td>${r.rainfall_prob}%</td>
-            <td>${badge}</td>`;
+            <td style="font-family:var(--font-mono); font-size:12px; color:var(--text-secondary);">${escapeHtml(r.recorded_at || "—")}</td>
+            <td>
+              <div class="cell-primary">Capacitive Probe #1</div>
+              <div class="cell-secondary">Sector A (Plot A-1 / B-2)</div>
+            </td>
+            <td class="num"><strong>${sm.toFixed(1)}%</strong></td>
+            <td class="num">${Number(r.temperature || 0).toFixed(1)}°C</td>
+            <td class="num">${Number(r.humidity || 0).toFixed(1)}%</td>
+            <td class="num">${Number(r.rainfall_prob || 0).toFixed(1)}%</td>
+            <td>${badge}</td>
+          `;
           tbody.appendChild(tr);
         });
       } catch (e) {}
@@ -324,39 +433,39 @@
     async function simulateReading() {
       const btn = document.getElementById("simulateBtn");
       btn.disabled = true;
-      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Reading Sensors...';
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> <span>Polling Probe…</span>';
 
       try {
         await apiFetch("/api/sensors/simulate", { method: "POST" });
-        showToast("New telemetry sample recorded from probes!", "success");
+        showToast("Captured new telemetry sample from Capacitive Probe #1.", "success");
         await loadLatest();
         await loadHistory();
       } catch (err) {
         showToast(err.message, "error");
       } finally {
         btn.disabled = false;
-        btn.innerHTML = '<i class="fa-solid fa-satellite"></i> <span>Simulate Telemetry</span>';
+        btn.innerHTML = '<i class="fa-solid fa-satellite-dish"></i> <span>Poll Field Probe</span>';
       }
     }
 
     function exportCsv() {
       if (!cachedReadings || cachedReadings.length === 0) {
-        showToast("No sensor data available to export", "warning");
+        showToast("No sensor telemetry available to export.", "warning");
         return;
       }
-      let csv = "ID,Soil_Moisture_Pct,Temperature_C,Humidity_Pct,Rainfall_Prob_Pct,Recorded_At\n";
-      cachedReadings.forEach(r => {
-        csv += `${r.id},${r.soil_moisture},${r.temperature},${r.humidity},${r.rainfall_prob},"${r.recorded_at}"\n`;
+      let csv = "ID,Probe_Node,Soil_Moisture_Pct,Temperature_C,Humidity_Pct,Rainfall_Prob_Pct,Recorded_At\n";
+      cachedReadings.forEach((r) => {
+        csv += `${r.id},"Capacitive Probe #1",${r.soil_moisture},${r.temperature},${r.humidity},${r.rainfall_prob},"${r.recorded_at}"\n`;
       });
 
-      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `sensor_telemetry_${Date.now()}.csv`;
+      a.download = `agropulse_sensor_telemetry_${new Date().toISOString().slice(0, 10)}.csv`;
       a.click();
       URL.revokeObjectURL(url);
-      showToast("Telemetry CSV exported successfully", "success");
+      showToast("Exported sensor telemetry CSV.", "success");
     }
 
     loadLatest();

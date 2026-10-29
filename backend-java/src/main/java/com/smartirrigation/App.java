@@ -59,6 +59,7 @@ public class App {
         server.createContext("/api/irrigation/toggle", irrigation.toggle());
         server.createContext("/api/irrigation/status", irrigation.status());
         server.createContext("/api/irrigation/history", irrigation.history());
+        server.createContext("/api/irrigation/model", irrigation.modelInfo());
 
         // ---- Crops ----
         server.createContext("/api/crops/", crops.item());   // /api/crops/{id}  (DELETE)
