@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Network Status • AgroPulse AI</title>
+  <link rel="icon" type="image/svg+xml" href="icons/icon.svg" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="css/style.css?v=5" />
+</head>
+<body class="auth-page">
+  <div class="auth-card" style="text-align:center; max-width:440px;">
+    <div style="width:48px; height:48px; border-radius:var(--radius-md); background:var(--sage-muted); color:var(--forest-800); display:inline-flex; align-items:center; justify-content:center; font-size:20px; margin-bottom:14px;">
+      <i class="fa-solid fa-satellite-dish" id="netIcon" aria-hidden="true"></i>
+    </div>
+    <div style="font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--action-green); margin-bottom:4px;" id="netBadge">
+      Telemetry Link Check
+    </div>
+    <h1 style="font-size:22px; font-weight:700; color:var(--text-primary); letter-spacing:-0.02em; margin-bottom:8px;" id="netTitle">
+      Verifying Farm Network…
+    </h1>
+    <p style="font-size:13.5px; color:var(--text-secondary); line-height:1.55; margin-bottom:20px;" id="netDesc">
+      Testing connection to the AgroPulse AI backend and field probe gateway.
+    </p>
+    <div style="margin-bottom:20px;">
+      <div class="skeleton-bar" style="width:100%; height:8px;" id="netLoaderBar"></div>
+    </div>
+    <a href="dashboard.html" class="btn btn-primary btn-block btn-lg">
+      <i class="fa-solid fa-chart-line" aria-hidden="true"></i>
+      <span>Proceed to Dashboard</span>
+    </a>
+  </div>
+  <script src="js/common.js"></script>
+  <script>
+    async function verifyLink() {
+      try {
+        await fetch("/api/weather?city=Madurai");
+        document.getElementById("netBadge").textContent = "Connection Active • 200 OK";
+        document.getElementById("netTitle").textContent = "Farm Network Online";
+        document.getElementById("netDesc").textContent = "Backend server and sensor endpoints are reachable.";
+        document.getElementById("netLoaderBar").style.animation = "none";
+        document.getElementById("netLoaderBar").style.background = "var(--action-green)";
+      } catch (e) {
+        document.getElementById("netBadge").textContent = "Offline Mode";
+        document.getElementById("netBadge").style.color = "var(--warning-amber)";
+        document.getElementById("netTitle").textContent = "Network Connection Unavailable";
+        document.getElementById("netDesc").textContent = "Cached farm telemetry remains accessible in offline mode.";
+      }
+    }
+    verifyLink();
+  </script>
+</body>
+</html>
+

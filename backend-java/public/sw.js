@@ -4,7 +4,7 @@
  * and background revalidation.
  */
 
-const CACHE_NAME = "agropulse-enterprise-v3";
+const CACHE_NAME = "agropulse-enterprise-v5";
 
 const APP_SHELL = [
   "/",
@@ -16,6 +16,8 @@ const APP_SHELL = [
   "/login.html",
   "/signup.html",
   "/forgot-password.html",
+  "/404.html",
+  "/network.html",
   "/css/style.css",
   "/js/common.js",
   "/js/ai-assistant.js",

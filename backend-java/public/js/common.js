@@ -1,17 +1,19 @@
 // ==========================================================================
-// Smart Irrigation System - Common JavaScript Utilities & Navigation (PWA Ready)
+// AgroPulse AI — Common Utilities, Skeleton & Network Loader, 1-to-1 Routing
 // ==========================================================================
 
 const API_BASE = (window.location.protocol.startsWith("http") && !window.location.host.includes("github.io")) 
   ? "" 
   : "https://smart-irrigation-ml-model-1.onrender.com";
 
+let activeNetworkRequests = 0;
+
 function getToken() {
   return localStorage.getItem("token");
 }
 
 function getUsername() {
-  return localStorage.getItem("username") || "User";
+  return localStorage.getItem("username") || "Operator";
 }
 
 function saveSession(token, username) {
@@ -24,14 +26,61 @@ function clearSession() {
   localStorage.removeItem("username");
 }
 
-/** Redirects to login if user is not authenticated */
+/** Redirects 1-to-1 to login.html if user is not authenticated */
 function requireAuth() {
   if (!getToken()) {
-    window.location.href = "login.html";
+    window.location.replace("login.html");
   }
 }
 
-/** Robust API fetch wrapper with token injection and offline cache fallback */
+/** Top Network Loading Progress Bar */
+function startNetworkLoader() {
+  activeNetworkRequests++;
+  let bar = document.getElementById("networkLoadingBar");
+  if (!bar) {
+    bar = document.createElement("div");
+    bar.id = "networkLoadingBar";
+    document.body.appendChild(bar);
+  }
+  bar.style.opacity = "1";
+  bar.style.width = "72%";
+}
+
+function stopNetworkLoader() {
+  activeNetworkRequests = Math.max(0, activeNetworkRequests - 1);
+  if (activeNetworkRequests === 0) {
+    const bar = document.getElementById("networkLoadingBar");
+    if (bar) {
+      bar.style.width = "100%";
+      setTimeout(() => {
+        if (activeNetworkRequests === 0) {
+          bar.style.opacity = "0";
+          setTimeout(() => {
+            if (activeNetworkRequests === 0) bar.style.width = "0%";
+          }, 200);
+        }
+      }, 160);
+    }
+  }
+}
+
+/** Render Skeleton Loading rows inside any table while fetching data */
+function renderTableSkeleton(tbodySelector, colCount = 5, rowCount = 4) {
+  const tbody = typeof tbodySelector === "string" ? document.querySelector(tbodySelector) : tbodySelector;
+  if (!tbody) return;
+  let html = "";
+  for (let r = 0; r < rowCount; r++) {
+    html += '<tr class="skeleton-row">';
+    for (let c = 0; c < colCount; c++) {
+      const width = c === 0 ? "75%" : (c === colCount - 1 ? "55%" : "65%");
+      html += `<td><div class="skeleton-bar" style="width:${width};"></div></td>`;
+    }
+    html += "</tr>";
+  }
+  tbody.innerHTML = html;
+}
+
+/** Robust API fetch wrapper with token injection, network loader, and offline fallback */
 async function apiFetch(path, options = {}) {
   const headers = options.headers || {};
   if (!headers["Content-Type"] && !(options.body instanceof FormData)) {
@@ -43,6 +92,7 @@ async function apiFetch(path, options = {}) {
     headers["Authorization"] = "Bearer " + token;
   }
 
+  startNetworkLoader();
   try {
     const response = await fetch(API_BASE + path, { ...options, headers });
     let data = null;
@@ -54,10 +104,10 @@ async function apiFetch(path, options = {}) {
 
     if (response.status === 401) {
       clearSession();
-      showToast("Session expired. Please log in again.", "warning");
+      showToast("Session expired. Redirecting to Sign In…", "warning");
       setTimeout(() => {
-        window.location.href = "login.html";
-      }, 1000);
+        window.location.replace("login.html");
+      }, 700);
       throw new Error("Not authenticated");
     }
 
@@ -66,15 +116,16 @@ async function apiFetch(path, options = {}) {
     }
     return data;
   } catch (err) {
-    // Check if offline
     if (!navigator.onLine) {
       console.warn("[PWA Offline] Network unavailable for:", path);
     }
     throw err;
+  } finally {
+    stopNetworkLoader();
   }
 }
 
-/** User logout action */
+/** User logout action -> 1-to-1 redirect to login.html */
 async function logout() {
   try {
     await apiFetch("/api/logout", { method: "POST" });
@@ -82,7 +133,7 @@ async function logout() {
     /* ignore network errors on logout */
   }
   clearSession();
-  window.location.href = "login.html";
+  window.location.replace("login.html");
 }
 
 /** Toast Notification System */
@@ -131,9 +182,9 @@ function escapeHtml(str) {
   return String(str).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 }
 
-/** Layout and Navigation Initializer */
+/** Layout and Navigation Initializer (Hover-Expand Compact Sidebar) */
 function initLayout(activePage) {
-  // Highlight active link
+  // Highlight active sidebar link
   document.querySelectorAll(".nav-item").forEach((link) => {
     if (link.dataset.page === activePage) {
       link.classList.add("active");
@@ -151,12 +202,7 @@ function initLayout(activePage) {
 
   const sidebar = document.querySelector(".sidebar");
 
-  // Restore desktop collapsed state
-  if (sidebar && localStorage.getItem("agropulse_sidebar_collapsed") === "1") {
-    sidebar.classList.add("collapsed");
-  }
-
-  // Mobile menu toggle (#mobileToggle or #mobileMenuBtn)
+  // Mobile menu toggle (#mobileToggle) for small screens only
   const mobileBtn = document.getElementById("mobileToggle") || document.getElementById("mobileMenuBtn");
   if (mobileBtn && sidebar) {
     mobileBtn.addEventListener("click", () => {
@@ -164,31 +210,11 @@ function initLayout(activePage) {
     });
   }
 
-  // Desktop sidebar collapse toggle
-  let collapseBtn = document.getElementById("sidebarCollapseBtn");
-  const topLeft = document.querySelector(".top-navbar > div:first-child");
-  if (!collapseBtn && topLeft && sidebar) {
-    collapseBtn = document.createElement("button");
-    collapseBtn.id = "sidebarCollapseBtn";
-    collapseBtn.className = "sidebar-toggle-btn";
-    collapseBtn.type = "button";
-    collapseBtn.title = "Toggle sidebar (compact mode)";
-    collapseBtn.setAttribute("aria-label", "Toggle sidebar");
-    collapseBtn.innerHTML = '<i class="fa-solid fa-table-columns"></i>';
-    topLeft.insertBefore(collapseBtn, topLeft.firstChild);
-  }
-  if (collapseBtn && sidebar) {
-    collapseBtn.addEventListener("click", () => {
-      sidebar.classList.toggle("collapsed");
-      localStorage.setItem("agropulse_sidebar_collapsed", sidebar.classList.contains("collapsed") ? "1" : "0");
-    });
-  }
-
-  // Setup Offline / Online Listener
+  // Setup Network Status Monitor
   setupNetworkStatusMonitor();
 }
 
-/** Network Status Monitor & Offline Banner for Remote Farms */
+/** Network Loading / Offline Status Monitor */
 function setupNetworkStatusMonitor() {
   let banner = document.getElementById("pwaNetworkBanner");
   if (!banner) {
@@ -198,7 +224,7 @@ function setupNetworkStatusMonitor() {
       position: fixed; top: 0; left: 0; right: 0; z-index: 99999;
       background: #B7791F; color: #fff; text-align: center;
       padding: 8px 16px; font-size: 13px; font-weight: 600;
-      display: none; align-items: center; justify-content: center; gap: 8px;
+      display: none; align-items: center; justify-content: center; gap: 10px;
       box-shadow: 0 1px 3px rgba(23,35,29,0.2);
     `;
     document.body.appendChild(banner);
@@ -208,12 +234,12 @@ function setupNetworkStatusMonitor() {
     if (!navigator.onLine) {
       banner.style.display = "flex";
       banner.style.background = "#B7791F";
-      banner.innerHTML = '<i class="fa-solid fa-plane-slash"></i> <span><strong>Offline Mode:</strong> Network unavailable. Displaying cached farm telemetry.</span>';
+      banner.innerHTML = '<i class="fa-solid fa-wifi"></i> <span><strong>Network Offline:</strong> Waiting for connection — displaying cached farm telemetry.</span> <a href="network.html" style="color:#fff; text-decoration:underline; margin-left:6px;">Diagnostics</a>';
     } else {
       if (banner.style.display === "flex") {
         banner.style.background = "#21834A";
-        banner.innerHTML = '<i class="fa-solid fa-wifi"></i> <span><strong>Online:</strong> Connection restored.</span>';
-        setTimeout(() => { banner.style.display = "none"; }, 3000);
+        banner.innerHTML = '<i class="fa-solid fa-circle-check"></i> <span><strong>Network Online:</strong> Live telemetry link restored.</span>';
+        setTimeout(() => { banner.style.display = "none"; }, 2500);
       }
     }
   }
@@ -229,7 +255,7 @@ function setupNetworkStatusMonitor() {
 if ("caches" in window) {
   caches.keys().then((keys) => {
     keys.forEach((k) => {
-      if (k !== "agropulse-enterprise-v3") {
+      if (k !== "agropulse-enterprise-v5") {
         caches.delete(k);
       }
     });
@@ -241,18 +267,7 @@ if ("serviceWorker" in navigator) {
     navigator.serviceWorker.register("/sw.js")
       .then((reg) => {
         reg.update();
-        console.log("[PWA] Service Worker registered with scope:", reg.scope);
       })
-      .catch((err) => {
-        console.warn("[PWA] Service Worker registration failed:", err);
-      });
+      .catch(() => {});
   });
 }
-
-// PWA Install Prompt Handler
-let deferredPrompt = null;
-window.addEventListener("beforeinstallprompt", (e) => {
-  e.preventDefault();
-  deferredPrompt = e;
-  console.log("[PWA] App can be installed.");
-});

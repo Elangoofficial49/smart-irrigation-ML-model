@@ -9,7 +9,7 @@ import com.sun.net.httpserver.HttpHandler;
 
 /**
  * Serves the static frontend (HTML/CSS/JS/PWA assets) from the public/ folder.
- * Includes PWA Service Worker caching headers and correct MIME types.
+ * Supports 1-to-1 clean route resolution and custom 404.html fallback.
  */
 public class StaticFileHandler implements HttpHandler {
 
@@ -22,7 +22,15 @@ public class StaticFileHandler implements HttpHandler {
     @Override
     public void handle(HttpExchange exchange) throws IOException {
         String path = exchange.getRequestURI().getPath();
-        if (path.equals("/")) path = "/login.html";
+        if (path == null || path.equals("/") || path.equals("/index.html")) {
+            path = "/login.html";
+        } else if (!path.contains(".")) {
+            // Support clean 1-to-1 extensionless paths (e.g., /dashboard -> /dashboard.html)
+            File candidate = new File(publicDir, path + ".html").getCanonicalFile();
+            if (candidate.exists() && candidate.isFile() && candidate.getPath().startsWith(publicDir.getCanonicalPath())) {
+                path = path + ".html";
+            }
+        }
 
         File file = new File(publicDir, path).getCanonicalFile();
 
@@ -33,8 +41,18 @@ public class StaticFileHandler implements HttpHandler {
         }
 
         if (!file.exists() || file.isDirectory()) {
-            exchange.sendResponseHeaders(404, -1);
-            exchange.getResponseBody().close();
+            File notFoundPage = new File(publicDir, "404.html").getCanonicalFile();
+            if (notFoundPage.exists() && notFoundPage.isFile()) {
+                byte[] errBytes = Files.readAllBytes(notFoundPage.toPath());
+                exchange.getResponseHeaders().set("Content-Type", "text/html; charset=utf-8");
+                exchange.getResponseHeaders().set("Cache-Control", "no-cache, no-store, must-revalidate");
+                exchange.sendResponseHeaders(404, errBytes.length);
+                exchange.getResponseBody().write(errBytes);
+                exchange.getResponseBody().close();
+            } else {
+                exchange.sendResponseHeaders(404, -1);
+                exchange.getResponseBody().close();
+            }
             return;
         }
 

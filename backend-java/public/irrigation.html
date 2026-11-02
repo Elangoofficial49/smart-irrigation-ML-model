@@ -12,14 +12,14 @@
   <link rel="apple-touch-icon" href="icons/icon-192.svg" />
   <link rel="icon" type="image/svg+xml" href="icons/icon.svg" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-  <link rel="stylesheet" href="css/style.css?v=3" />
+  <link rel="stylesheet" href="css/style.css?v=5" />
 </head>
 <body>
   <div class="app-layout">
-    <!-- Enterprise Forest-Green Sidebar -->
+    <!-- Compact Hover-Expand Left Sidebar -->
     <aside class="sidebar">
       <div class="sidebar-header">
-        <div class="logo-icon"><i class="fa-solid fa-seedling"></i></div>
+        <div class="logo-icon"><i class="fa-solid fa-seedling" aria-hidden="true"></i></div>
         <div>
           <div class="brand-title">AgroPulse AI</div>
           <div class="brand-sub">Precision Irrigation</div>
@@ -28,22 +28,22 @@
 
       <nav class="sidebar-nav" aria-label="Main Navigation">
         <div class="nav-section-label">Telemetry &amp; Control</div>
-        <a href="dashboard.html" class="nav-item" data-page="dashboard">
-          <i class="fa-solid fa-chart-line"></i> <span>Dashboard</span>
+        <a href="dashboard.html" class="nav-item" data-page="dashboard" title="Dashboard">
+          <i class="fa-solid fa-chart-line" aria-hidden="true"></i> <span>Dashboard</span>
         </a>
-        <a href="sensors.html" class="nav-item" data-page="sensors">
-          <i class="fa-solid fa-satellite-dish"></i> <span>Sensor Monitoring</span>
+        <a href="sensors.html" class="nav-item" data-page="sensors" title="Sensor Monitoring">
+          <i class="fa-solid fa-satellite-dish" aria-hidden="true"></i> <span>Sensor Monitoring</span>
         </a>
-        <a href="irrigation.html" class="nav-item active" data-page="irrigation">
-          <i class="fa-solid fa-faucet-drip"></i> <span>Irrigation Control</span>
+        <a href="irrigation.html" class="nav-item active" data-page="irrigation" title="Irrigation Control">
+          <i class="fa-solid fa-faucet-drip" aria-hidden="true"></i> <span>Irrigation Control</span>
         </a>
 
         <div class="nav-section-label">Farm Management</div>
-        <a href="crops.html" class="nav-item" data-page="crops">
-          <i class="fa-solid fa-wheat-awn"></i> <span>Crop Inventory</span>
+        <a href="crops.html" class="nav-item" data-page="crops" title="Crop Inventory">
+          <i class="fa-solid fa-wheat-awn" aria-hidden="true"></i> <span>Crop Inventory</span>
         </a>
-        <a href="weather.html" class="nav-item" data-page="weather">
-          <i class="fa-solid fa-cloud-sun-rain"></i> <span>Weather Intelligence</span>
+        <a href="weather.html" class="nav-item" data-page="weather" title="Weather Intelligence">
+          <i class="fa-solid fa-cloud-sun-rain" aria-hidden="true"></i> <span>Weather Intelligence</span>
         </a>
       </nav>
 
@@ -55,8 +55,8 @@
             <div class="user-role">● Field Operations</div>
           </div>
         </div>
-        <button class="btn-logout" onclick="logout()">
-          <i class="fa-solid fa-right-from-bracket"></i> <span>Sign Out</span>
+        <button class="btn-logout" onclick="logout()" title="Sign Out">
+          <i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i> <span>Sign Out</span>
         </button>
       </div>
     </aside>
@@ -66,22 +66,24 @@
       <header class="top-navbar">
         <div style="display:flex; align-items:center; gap:12px;">
           <button class="mobile-menu-btn" id="mobileToggle" aria-label="Toggle Navigation">
-            <i class="fa-solid fa-bars"></i>
+            <i class="fa-solid fa-bars" aria-hidden="true"></i>
           </button>
           <nav class="page-breadcrumb" aria-label="Breadcrumb">
             <span>AgroPulse AI</span>
-            <span class="sep">/</span>
-            <span>Telemetry &amp; Control</span>
             <span class="sep">/</span>
             <span class="current">Irrigation Control</span>
           </nav>
         </div>
 
         <div class="top-actions">
-          <span class="status-pill success">
+          <span class="status-pill neutral" id="bannerStatusPill" aria-live="polite">
             <span class="status-dot"></span>
-            <span>Solenoid Relay Controller Ready</span>
+            <span>PUMP STANDBY (OFF)</span>
           </span>
+          <a href="crops.html" class="btn btn-secondary btn-sm" title="Proceed to Crop Inventory">
+            <span>Crop Inventory</span>
+            <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+          </a>
         </div>
       </header>
 
@@ -91,29 +93,9 @@
             <h1 class="page-title">Irrigation Control</h1>
             <p class="page-subtitle">Manage main pump actuation, autonomous Random Forest irrigation evaluations, and audit logs.</p>
           </div>
-          <div class="page-header-actions">
-            <button type="button" class="btn btn-secondary btn-sm" onclick="loadStatus(); loadHistory(); showToast('Refreshed pump state and audit log.', 'info');">
-              <i class="fa-solid fa-rotate"></i> Refresh State
-            </button>
-          </div>
         </div>
 
-        <!-- Live Pump State Banner -->
-        <div class="pump-status-banner pump-inactive" id="pumpBanner">
-          <div>
-            <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
-              <span class="status-pill neutral" id="bannerStatusPill"><span class="status-dot"></span>PUMP OFF</span>
-              <span style="font-size:12px; color:var(--text-secondary); font-weight:500;" id="bannerModeText">Mode: Standby</span>
-            </div>
-            <h3 id="bannerTitle" style="font-size:16px; font-weight:700; color:var(--text-primary); margin-bottom:2px;">Irrigation Valves Closed</h3>
-            <p id="bannerSubtitle" style="font-size:13px; color:var(--text-secondary);">No active water discharge. System is in automated telemetry monitoring mode.</p>
-          </div>
-          <div class="pump-visual-ring" id="bannerVisualRing">
-            <i class="fa-solid fa-faucet-drip"></i>
-          </div>
-        </div>
-
-        <!-- ML & Manual Control Grid -->
+        <!-- Clean 2-Column ML & Manual Control Grid -->
         <div class="grid-2" style="margin-bottom:16px;">
           <!-- ML Autonomous Decision Engine -->
           <section class="panel" style="margin-bottom:0; display:flex; flex-direction:column; justify-content:space-between;">
@@ -121,7 +103,7 @@
               <div class="panel-header">
                 <div>
                   <div class="panel-title">
-                    <i class="fa-solid fa-microchip"></i>
+                    <i class="fa-solid fa-microchip" aria-hidden="true"></i>
                     <span>AgroPulse AI Autonomous Evaluation</span>
                   </div>
                   <div class="panel-subtitle">Random Forest ensemble (60 trees) + agronomic safety guardrails</div>
@@ -152,24 +134,24 @@
             </div>
 
             <button class="btn btn-primary btn-block" id="predictBtn" onclick="runMlPrediction()">
-              <i class="fa-solid fa-microchip"></i>
+              <i class="fa-solid fa-microchip" aria-hidden="true"></i>
               <span>Run ML Inference Evaluation</span>
             </button>
           </section>
 
-          <!-- Manual Override Station -->
+          <!-- Manual Override Station with Integrated Live Pump State -->
           <section class="panel" style="margin-bottom:0; display:flex; flex-direction:column; justify-content:space-between;">
             <div>
               <div class="panel-header">
                 <div>
                   <div class="panel-title">
-                    <i class="fa-solid fa-sliders"></i>
-                    <span>Manual Valve &amp; Pump Override</span>
+                    <i class="fa-solid fa-sliders" aria-hidden="true"></i>
+                    <span id="bannerTitle">Manual Valve &amp; Pump Override</span>
                   </div>
-                  <div class="panel-subtitle">Direct operator actuation with backend state verification</div>
+                  <div class="panel-subtitle" id="bannerModeText">Mode: Standby · Direct operator actuation</div>
                 </div>
               </div>
-              <p style="font-size:13px; color:var(--text-secondary); line-height:1.55; margin-bottom:12px;">
+              <p style="font-size:13px; color:var(--text-secondary); line-height:1.55; margin-bottom:12px;" id="bannerSubtitle">
                 Directly engage or close the main irrigation solenoid relay. State updates are applied only after backend confirmation and logged with operator credentials.
               </p>
               <div style="background:var(--bg-main); border:1px solid var(--border-color); border-radius:var(--radius-sm); padding:10px 12px; margin-bottom:14px;">
@@ -181,12 +163,12 @@
             </div>
 
             <div style="display:flex; gap:10px;">
-              <button class="btn btn-primary" style="flex:1;" onclick="promptManualToggle('ON')" id="btnTurnOn">
-                <i class="fa-solid fa-play"></i>
+              <button class="btn btn-secondary" style="flex:1;" onclick="promptManualToggle('ON')" id="btnTurnOn">
+                <i class="fa-solid fa-play" style="color:var(--action-green);" aria-hidden="true"></i>
                 <span>Turn ON Pump</span>
               </button>
               <button class="btn btn-danger" style="flex:1;" onclick="promptManualToggle('OFF')" id="btnTurnOff">
-                <i class="fa-solid fa-stop"></i>
+                <i class="fa-solid fa-stop" aria-hidden="true"></i>
                 <span>Turn OFF Pump</span>
               </button>
             </div>
@@ -198,7 +180,7 @@
           <div class="panel-header">
             <div>
               <div class="panel-title">
-                <i class="fa-solid fa-list-check"></i>
+                <i class="fa-solid fa-list-check" aria-hidden="true"></i>
                 <span>Irrigation Actuation Audit Log</span>
               </div>
               <div class="panel-subtitle">Verified record of automated ML evaluations and manual operator overrides</div>
@@ -220,7 +202,7 @@
               <tbody></tbody>
             </table>
             <div class="empty-state" id="logEmpty" style="display:none;">
-              <div class="empty-state-icon"><i class="fa-solid fa-clipboard-list"></i></div>
+              <div class="empty-state-icon"><i class="fa-solid fa-clipboard-list" aria-hidden="true"></i></div>
               <div class="empty-state-title">No irrigation events logged yet</div>
               <p class="empty-state-desc">Run an ML evaluation or execute a confirmed manual override above.</p>
             </div>
@@ -235,11 +217,11 @@
     <div class="modal-dialog" style="max-width:420px;">
       <div class="modal-header">
         <div class="modal-title" id="actuationModalTitle">
-          <i class="fa-solid fa-faucet-drip" style="color:var(--action-green);"></i>
+          <i class="fa-solid fa-faucet-drip" style="color:var(--action-green);" aria-hidden="true"></i>
           <span id="actuationModalTitleText">Confirm Pump Actuation</span>
         </div>
         <button type="button" class="modal-close" onclick="closeActuationModal()" aria-label="Close">
-          <i class="fa-solid fa-xmark"></i>
+          <i class="fa-solid fa-xmark" aria-hidden="true"></i>
         </button>
       </div>
       <div class="modal-body">
@@ -272,34 +254,29 @@
         const status = await apiFetch("/api/irrigation/status");
         const isON = status.status === "ON";
 
-        const banner = document.getElementById("pumpBanner");
         const pill = document.getElementById("bannerStatusPill");
         const modeText = document.getElementById("bannerModeText");
         const title = document.getElementById("bannerTitle");
         const sub = document.getElementById("bannerSubtitle");
-        const ring = document.getElementById("bannerVisualRing");
 
         if (isON) {
-          banner.className = "pump-status-banner pump-active";
           pill.className = "status-pill success";
           pill.innerHTML = '<span class="status-dot"></span><span>PUMP ACTIVE (ON)</span>';
           modeText.textContent = `Mode: ${status.mode || "auto"} ${status.triggered_by ? "· By " + status.triggered_by : ""}`;
-          title.textContent = "Irrigation System Discharging";
+          title.textContent = "Irrigation System Discharging (ON)";
           sub.textContent = "Active water flow through primary drip lines and field sector valves.";
-          ring.innerHTML = '<i class="fa-solid fa-water"></i>';
         } else {
-          banner.className = "pump-status-banner pump-inactive";
           pill.className = "status-pill neutral";
           pill.innerHTML = '<span class="status-dot"></span><span>PUMP STANDBY (OFF)</span>';
           modeText.textContent = `Mode: ${status.mode || "standby"} ${status.triggered_by ? "· Last by " + status.triggered_by : ""}`;
-          title.textContent = "Irrigation Valves Closed";
+          title.textContent = "Manual Valve & Pump Override (OFF)";
           sub.textContent = "No active water discharge. System is in automated telemetry monitoring mode.";
-          ring.innerHTML = '<i class="fa-solid fa-faucet-drip"></i>';
         }
       } catch (e) {}
     }
 
     async function loadHistory() {
+      renderTableSkeleton("#logTable tbody", 6, 4);
       try {
         const history = await apiFetch("/api/irrigation/history");
         const tbody = document.querySelector("#logTable tbody");

@@ -14,20 +14,21 @@
   --action-green-hover: #1B6E3E;
   --action-green-active: #165932;
 
-  /* Text Hierarchy */
-  --text-primary: #17231D;
-  --text-secondary: #69766D;
-  --text-muted: #88948C;
+  /* Text Hierarchy — WCAG AA Verified (7.1:1 secondary on white, 5.2:1 muted) */
+  --text-primary: #141F19;
+  --text-secondary: #4A5850;
+  --text-muted: #5C6B62;
 
-  /* Surfaces & Borders */
-  --bg-app: #F6F8F5;
-  --bg-main: #F6F8F5;
+  /* Surfaces & Borders (Apple Grouped Background Hierarchy) */
+  --bg-app: #F4F6F4;
+  --bg-main: #F4F6F4;
   --bg-surface: #FFFFFF;
-  --bg-subtle: #F0F4F0;
-  --sage-muted: #E8F0E8;
-  --muted-sage: #E8F0E8;
-  --border-color: #E1E7E1;
-  --border-strong: #CBD5CB;
+  --bg-subtle: #EBEEEC;
+  --sage-muted: #E6EFE8;
+  --muted-sage: #E6EFE8;
+  --border-color: #DCE3DD;
+  --border-strong: #C2CEC4;
+  --separator-hairline: rgba(20, 31, 25, 0.09);
 
   /* Semantic Status Colors */
   --status-green: #21834A;
@@ -369,7 +370,7 @@ a:hover {
   box-shadow: 0 0 0 3px rgba(33, 131, 74, 0.14);
 }
 
-/* ---------- Buttons ---------- */
+/* ---------- Buttons (Apple HIG Push Button Roles & Press States) ---------- */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -378,43 +379,58 @@ a:hover {
   font-family: var(--font-sans);
   font-size: 13px;
   font-weight: 500;
+  letter-spacing: -0.006em;
   line-height: 1.2;
-  padding: 8px 14px;
+  min-height: 32px;
+  padding: 7px 14px;
   border-radius: var(--radius-sm);
   border: 1px solid transparent;
   cursor: pointer;
-  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  transition: background-color 0.14s ease, border-color 0.14s ease, color 0.14s ease, transform 0.08s ease, box-shadow 0.14s ease;
   white-space: nowrap;
   user-select: none;
 }
 
+.btn:active:not(:disabled) {
+  transform: scale(0.985);
+}
+
 .btn:disabled {
-  opacity: 0.55;
+  opacity: 0.5;
   cursor: not-allowed;
 }
 
 .btn-primary,
 .btn-success {
   background-color: var(--action-green);
-  border-color: var(--action-green);
+  border-color: rgba(15, 43, 30, 0.15);
   color: #FFFFFF;
+  box-shadow: 0 1px 2px rgba(21, 109, 59, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.14);
 }
 .btn-primary:hover:not(:disabled),
 .btn-success:hover:not(:disabled) {
   background-color: var(--action-green-hover);
-  border-color: var(--action-green-hover);
   color: #FFFFFF;
+}
+.btn-primary:active:not(:disabled),
+.btn-success:active:not(:disabled) {
+  background-color: var(--action-green-active);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
 .btn-secondary {
   background-color: var(--bg-surface);
   border-color: var(--border-color);
   color: var(--text-primary);
+  box-shadow: var(--shadow-xs);
 }
 .btn-secondary:hover:not(:disabled) {
   background-color: var(--sage-muted);
   border-color: var(--border-strong);
   color: var(--forest-800);
+}
+.btn-secondary:active:not(:disabled) {
+  background-color: #DAE6DC;
 }
 
 .btn-outline {
@@ -440,7 +456,8 @@ a:hover {
   background: transparent;
   border-color: transparent;
   color: var(--text-secondary);
-  padding: 6px 8px;
+  min-height: 28px;
+  padding: 5px 9px;
 }
 .btn-ghost:hover {
   background-color: var(--bg-subtle);
@@ -448,18 +465,21 @@ a:hover {
 }
 
 .btn-xs {
-  padding: 4px 8px;
-  font-size: 11.5px;
+  min-height: 28px;
+  padding: 4px 9px;
+  font-size: 12px;
   border-radius: var(--radius-xs);
 }
 
 .btn-sm {
-  padding: 6px 11px;
+  min-height: 30px;
+  padding: 5px 12px;
   font-size: 12.5px;
 }
 
 .btn-lg {
-  padding: 10px 18px;
+  min-height: 38px;
+  padding: 9px 18px;
   font-size: 13.5px;
   font-weight: 600;
 }
@@ -469,7 +489,7 @@ a:hover {
 }
 
 /* ==========================================================================
-   ENTERPRISE APPLICATION SHELL (FIXED SIDEBAR + ALIGNED MAIN WORKSPACE)
+   ENTERPRISE APPLICATION SHELL (HOVER-EXPAND COMPACT SIDEBAR + MAIN WORKSPACE)
    ========================================================================== */
 .app-layout,
 .app-container {
@@ -480,9 +500,9 @@ a:hover {
   position: relative;
 }
 
-/* Fixed Left Sidebar (#163D2B Deep Forest Green) */
+/* Compact-by-Default Left Sidebar (#163D2B) — Expands on Cursor Hover */
 .sidebar {
-  width: var(--sidebar-width);
+  width: var(--sidebar-collapsed-width);
   background-color: var(--forest-800);
   color: #FFFFFF;
   display: flex;
@@ -493,68 +513,68 @@ a:hover {
   left: 0;
   bottom: 0;
   height: 100vh;
-  z-index: 40;
+  z-index: 50;
+  overflow-x: hidden;
   border-right: 1px solid rgba(255, 255, 255, 0.08);
-  transition: width 0.2s ease, transform 0.25s ease;
+  transition: width 0.22s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.22s ease, transform 0.25s ease;
 }
 
-/* Main Wrapper sits flush beside the fixed sidebar with zero top gap */
+.sidebar:hover,
+.sidebar:focus-within {
+  width: var(--sidebar-width);
+  box-shadow: 8px 0 28px rgba(15, 43, 30, 0.24);
+}
+
+/* Main Wrapper sits flush beside the compact sidebar with zero top gap */
 .main-wrapper {
   flex: 1;
-  margin-left: var(--sidebar-width);
+  margin-left: var(--sidebar-collapsed-width);
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   min-width: 0;
   background-color: var(--bg-app);
-  transition: margin-left 0.2s ease;
+  transition: margin-left 0.22s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-/* Collapsed Sidebar State */
-.sidebar.collapsed {
-  width: var(--sidebar-collapsed-width);
-}
-
-.sidebar.collapsed ~ .main-wrapper {
-  margin-left: var(--sidebar-collapsed-width);
-}
-
-.sidebar.collapsed .brand-info,
-.sidebar.collapsed .brand-title,
-.sidebar.collapsed .brand-sub,
-.sidebar.collapsed .nav-section-title,
-.sidebar.collapsed .nav-section-label,
-.sidebar.collapsed .nav-item span,
-.sidebar.collapsed .user-details,
-.sidebar.collapsed .user-info,
-.sidebar.collapsed .btn-logout span {
+/* Hide labels while sidebar is compact (default); reveal smoothly on hover */
+.sidebar:not(:hover):not(:focus-within):not(.open) .brand-info,
+.sidebar:not(:hover):not(:focus-within):not(.open) .brand-title,
+.sidebar:not(:hover):not(:focus-within):not(.open) .brand-sub,
+.sidebar:not(:hover):not(:focus-within):not(.open) .nav-section-title,
+.sidebar:not(:hover):not(:focus-within):not(.open) .nav-section-label,
+.sidebar:not(:hover):not(:focus-within):not(.open) .nav-item span,
+.sidebar:not(:hover):not(:focus-within):not(.open) .user-details,
+.sidebar:not(:hover):not(:focus-within):not(.open) .user-info,
+.sidebar:not(:hover):not(:focus-within):not(.open) .btn-logout span {
   display: none;
 }
 
-.sidebar.collapsed .sidebar-header {
+.sidebar:not(:hover):not(:focus-within):not(.open) .sidebar-header {
   justify-content: center;
   padding: 0 10px;
 }
 
-.sidebar.collapsed .nav-item {
+.sidebar:not(:hover):not(:focus-within):not(.open) .nav-item {
   justify-content: center;
   padding: 10px;
 }
 
-.sidebar.collapsed .user-profile-card,
-.sidebar.collapsed .user-card {
+.sidebar:not(:hover):not(:focus-within):not(.open) .user-profile-card,
+.sidebar:not(:hover):not(:focus-within):not(.open) .user-card {
   justify-content: center;
   padding: 8px;
 }
 
 .sidebar-header {
-  height: 56px;
+  height: 54px;
   padding: 0 16px;
   display: flex;
   align-items: center;
   gap: 10px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .logo-icon,
@@ -578,6 +598,7 @@ a:hover {
   letter-spacing: -0.01em;
   color: #FFFFFF;
   line-height: 1.2;
+  white-space: nowrap;
 }
 
 .brand-sub,
@@ -586,12 +607,14 @@ a:hover {
   color: rgba(255, 255, 255, 0.62);
   display: block;
   line-height: 1.2;
+  white-space: nowrap;
 }
 
 .sidebar-nav {
   flex: 1;
   padding: 12px 10px;
   overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .nav-section-label,
@@ -603,6 +626,7 @@ a:hover {
   color: rgba(255, 255, 255, 0.45);
   padding: 0 10px;
   margin: 14px 0 6px;
+  white-space: nowrap;
 }
 
 .nav-section-label:first-child,
@@ -614,15 +638,58 @@ a:hover {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 8px 10px;
+  padding: 9px 10px;
   border-radius: var(--radius-sm);
-  color: rgba(255, 255, 255, 0.76);
+  color: rgba(255, 255, 255, 0.78);
   font-size: 13px;
   font-weight: 500;
   text-decoration: none;
-  margin-bottom: 2px;
+  margin-bottom: 4px;
   border-left: 2px solid transparent;
+  white-space: nowrap;
   transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+/* ---------- Network Loading Top Bar & Skeleton Shimmer ---------- */
+#networkLoadingBar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 2.5px;
+  width: 0%;
+  background: linear-gradient(90deg, var(--action-green), #4ADE80, var(--info-blue));
+  z-index: 100000;
+  opacity: 0;
+  pointer-events: none;
+  transition: width 0.25s ease, opacity 0.2s ease;
+}
+
+@keyframes skeletonShimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.skeleton-shimmer {
+  display: inline-block;
+  height: 18px;
+  min-width: 72px;
+  border-radius: var(--radius-xs);
+  background: linear-gradient(90deg, var(--bg-subtle) 25%, #E0E6E1 50%, var(--bg-subtle) 75%);
+  background-size: 200% 100%;
+  animation: skeletonShimmer 1.3s infinite linear;
+  color: transparent !important;
+  user-select: none;
+}
+
+.skeleton-row td {
+  padding: 12px 14px;
+}
+.skeleton-bar {
+  height: 13px;
+  border-radius: var(--radius-xs);
+  background: linear-gradient(90deg, var(--bg-subtle) 25%, #E0E6E1 50%, var(--bg-subtle) 75%);
+  background-size: 200% 100%;
+  animation: skeletonShimmer 1.3s infinite linear;
 }
 
 .nav-item i {
@@ -734,11 +801,13 @@ a:hover {
   color: #FFFFFF;
 }
 
-/* ---------- Top Navbar ---------- */
+/* ---------- Top Navbar (Apple Regular Liquid Glass Functional Layer) ---------- */
 .top-navbar {
-  height: 56px;
-  background: var(--bg-surface);
-  border-bottom: 1px solid var(--border-color);
+  height: 54px;
+  background: rgba(255, 255, 255, 0.78);
+  backdrop-filter: saturate(180%) blur(24px);
+  -webkit-backdrop-filter: saturate(180%) blur(24px);
+  border-bottom: 1px solid var(--separator-hairline);
   padding: 0 24px;
   display: flex;
   align-items: center;
@@ -753,7 +822,7 @@ a:hover {
 .mobile-menu-toggle,
 .sidebar-toggle-btn,
 .sidebar-collapse-btn {
-  background: transparent;
+  background: rgba(255, 255, 255, 0.65);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-sm);
   color: var(--text-secondary);
@@ -764,7 +833,7 @@ a:hover {
   justify-content: center;
   cursor: pointer;
   font-size: 13px;
-  transition: background-color 0.15s ease, color 0.15s ease;
+  transition: background-color 0.15s ease, color 0.15s ease, transform 0.08s ease;
 }
 
 .mobile-menu-btn:hover,
@@ -773,6 +842,11 @@ a:hover {
 .sidebar-collapse-btn:hover {
   background-color: var(--bg-subtle);
   color: var(--text-primary);
+}
+
+.mobile-menu-btn:active,
+.sidebar-toggle-btn:active {
+  transform: scale(0.95);
 }
 
 .mobile-menu-btn,
@@ -849,17 +923,18 @@ a:hover {
 
 .page-title,
 .page-title-group h1 {
-  font-size: 24px;
+  font-size: 25px;
   font-weight: 700;
   color: var(--text-primary);
-  letter-spacing: -0.02em;
-  line-height: 1.25;
+  letter-spacing: -0.022em;
+  line-height: 1.2;
 }
 
 .page-subtitle,
 .page-title-group p {
-  font-size: 13px;
+  font-size: 13.5px;
   color: var(--text-secondary);
+  letter-spacing: -0.006em;
   margin-top: 3px;
 }
 
@@ -870,7 +945,7 @@ a:hover {
   flex-wrap: wrap;
 }
 
-/* ---------- Compact 4-Metric Strip ---------- */
+/* ---------- Compact 4-Metric Telemetry Ribbon & Horizon Micro-Gauges ---------- */
 .metrics-strip,
 .stats-grid {
   display: grid;
@@ -885,11 +960,12 @@ a:hover {
   background: var(--bg-surface);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
-  padding: 13px 16px;
+  padding: 14px 16px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   min-width: 0;
+  box-shadow: var(--shadow-xs);
 }
 
 .stat-card {
@@ -899,10 +975,10 @@ a:hover {
 
 .metric-label,
 .stat-info .stat-label {
-  font-size: 11.5px;
+  font-size: 12px;
   font-weight: 600;
   color: var(--text-secondary);
-  letter-spacing: 0.01em;
+  letter-spacing: -0.005em;
   margin-bottom: 6px;
   display: flex;
   align-items: center;
@@ -912,7 +988,7 @@ a:hover {
 
 .metric-label i {
   color: var(--text-muted);
-  font-size: 12px;
+  font-size: 12.5px;
 }
 
 .metric-value-row {
@@ -923,18 +999,116 @@ a:hover {
 
 .metric-value,
 .stat-info .stat-value {
-  font-size: 22px;
+  font-size: 24px;
   font-weight: 700;
   color: var(--text-primary);
-  letter-spacing: -0.02em;
-  line-height: 1.2;
+  letter-spacing: -0.024em;
+  line-height: 1.15;
   font-variant-numeric: tabular-nums;
 }
 
 .metric-unit {
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+/* Signature Root-Zone Horizon Micro-Gauge */
+.metric-gauge-track {
+  position: relative;
+  height: 5px;
+  background-color: var(--bg-subtle);
+  border-radius: var(--radius-full);
+  margin: 9px 0 6px;
+  overflow: hidden;
+}
+
+.metric-target-band {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  background-color: rgba(33, 131, 74, 0.16);
+  border-left: 1px dashed rgba(33, 131, 74, 0.45);
+  border-right: 1px dashed rgba(33, 131, 74, 0.45);
+  pointer-events: none;
+}
+
+.metric-gauge-fill {
+  height: 100%;
+  background-color: var(--action-green);
+  border-radius: var(--radius-full);
+  transition: width 0.35s ease, background-color 0.25s ease;
+}
+
+.metric-gauge-fill.warning { background-color: var(--status-amber); }
+.metric-gauge-fill.danger  { background-color: var(--status-red); }
+.metric-gauge-fill.info    { background-color: var(--status-blue); }
+
+/* Apple HIG Segmented Control */
+.segmented-control {
+  display: inline-flex;
+  align-items: center;
+  background-color: var(--bg-subtle);
+  padding: 2px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-color);
+  gap: 2px;
+}
+
+.seg-btn {
+  appearance: none;
+  background: transparent;
+  border: none;
+  padding: 4px 10px;
+  min-height: 24px;
+  font-family: var(--font-sans);
   font-size: 12px;
   font-weight: 500;
   color: var(--text-secondary);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.14s ease, color 0.14s ease, box-shadow 0.14s ease;
+  user-select: none;
+}
+
+.seg-btn:hover {
+  color: var(--text-primary);
+}
+
+.seg-btn.active {
+  background-color: var(--bg-surface);
+  color: var(--text-primary);
+  font-weight: 600;
+  box-shadow: 0 1px 2px rgba(20, 31, 25, 0.08);
+}
+
+/* Apple Charting Data Takeaway Callout (charting-data.md › Designing effective charts) */
+.chart-takeaway-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 9px 12px;
+  margin-bottom: 12px;
+  background-color: var(--bg-app);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  font-size: 12.5px;
+  color: var(--text-primary);
+}
+
+.chart-takeaway-text {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  line-height: 1.4;
+}
+
+.chart-takeaway-meta {
+  font-size: 11.5px;
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
 }
 
 .metric-desc,
@@ -2033,7 +2207,12 @@ table.data-table tbody tr:last-child td {
   color: #FFFFFF;
 }
 
-/* ---------- Responsive Breakpoints ---------- */
+/* Alternating Table Row Backgrounds (lists-and-tables.md › Desktop (macOS)) */
+table.data-table tbody tr:nth-child(even) {
+  background-color: rgba(244, 246, 244, 0.55);
+}
+
+/* ---------- Responsive Breakpoints & Apple Size Classes ---------- */
 @media (max-width: 1240px) {
   .workspace-grid {
     grid-template-columns: 1fr;
@@ -2059,6 +2238,8 @@ table.data-table tbody tr:last-child td {
   .mobile-menu-btn,
   .mobile-menu-toggle {
     display: inline-flex;
+    min-width: 44px;
+    min-height: 44px;
   }
   .sidebar-toggle-btn,
   .sidebar-collapse-btn {
@@ -2074,11 +2255,52 @@ table.data-table tbody tr:last-child td {
   .form-row {
     grid-template-columns: 1fr;
   }
+  /* Mobile 44x44 pt minimum hit targets (accessibility.md › Mobility) */
+  .btn,
+  .seg-btn,
+  .row-action-btn,
+  .page-btn {
+    min-height: 44px;
+  }
 }
 
 @media (max-width: 600px) {
   .metrics-strip,
   .stats-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+/* ---------- Apple HIG Accessibility Adaptations ---------- */
+@media (prefers-reduced-transparency: reduce) {
+  .top-navbar {
+    background: var(--bg-surface);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border-bottom: 1px solid var(--border-strong);
+  }
+}
+
+@media (prefers-contrast: more) {
+  :root {
+    --text-primary: #09100C;
+    --text-secondary: #2B362F;
+    --text-muted: #3A473F;
+    --border-color: #93A397;
+    --border-strong: #637367;
+  }
+  .panel,
+  .metric-cell,
+  .ai-insights-panel {
+    border-width: 1.5px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

@@ -1,24 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Smart Irrigation System</title>
-  <!-- PWA Meta Tags & Web App Manifest -->
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#059669">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="AgroSmart">
-  <link rel="apple-touch-icon" href="icons/icon-192.svg">
-  <link rel="icon" type="image/svg+xml" href="icons/icon.svg">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AgroPulse AI • Precision Irrigation</title>
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#163D2B" />
+  <link rel="icon" type="image/svg+xml" href="icons/icon.svg" />
+  <link rel="stylesheet" href="css/style.css?v=5" />
   <script src="js/common.js"></script>
-</head>
-<body style="margin:0; background:#0f172a; font-family:sans-serif; display:flex; align-items:center; justify-content:center; height:100vh; color:#fff;">
-  <div style="text-align:center;">
-    <div style="font-size:36px; margin-bottom:12px;">🌱</div>
-    <div style="font-size:16px; font-weight:600;">Loading AgroPulse AI...</div>
-  </div>
   <script>
     if (getToken()) {
       window.location.replace("dashboard.html");
@@ -26,6 +16,6 @@
       window.location.replace("login.html");
     }
   </script>
-</body>
+</head>
+<body></body>
 </html>
-
