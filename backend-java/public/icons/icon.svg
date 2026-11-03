@@ -1,26 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
-  <defs>
-    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#059669;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#064e3b;stop-opacity:1" />
-    </linearGradient>
-    <linearGradient id="water" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#38bdf8;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#0284c7;stop-opacity:1" />
-    </linearGradient>
-  </defs>
-  <rect width="512" height="512" rx="110" fill="url(#grad)" />
-  <circle cx="256" cy="256" r="210" fill="none" stroke="#34d399" stroke-width="8" stroke-dasharray="16 12" opacity="0.4" />
-  
-  <!-- Plant Sprout -->
-  <path d="M 256 380 L 256 220" stroke="#a7f3d0" stroke-width="18" stroke-linecap="round" />
-  <path d="M 256 280 C 190 280 160 220 170 160 C 230 160 256 220 256 280 Z" fill="#34d399" />
-  <path d="M 256 250 C 320 250 350 190 340 130 C 280 130 256 190 256 250 Z" fill="#10b981" />
-  
-  <!-- Water Drop -->
-  <path d="M 256 110 C 256 110 206 175 206 215 C 206 242.6 228.4 265 256 265 C 283.6 265 306 242.6 306 215 C 306 175 256 110 256 110 Z" fill="url(#water)" opacity="0.9" />
-  
-  <!-- AI Sparkles -->
-  <path d="M 380 90 L 390 115 L 415 125 L 390 135 L 380 160 L 370 135 L 345 125 L 370 115 Z" fill="#fef08a" />
-  <path d="M 120 330 L 128 348 L 146 356 L 128 364 L 120 382 L 112 364 L 94 356 L 112 348 Z" fill="#fef08a" />
+  <rect width="512" height="512" rx="64" fill="#163D2B" />
+  <rect x="32" y="32" width="448" height="448" rx="44" fill="none" stroke="#21834A" stroke-width="8" />
+  <!-- Stem and Agricultural Leaf -->
+  <path d="M 256 392 L 256 216" stroke="#E6EFE8" stroke-width="20" stroke-linecap="round" />
+  <path d="M 256 292 C 188 292 156 232 168 168 C 228 168 256 228 256 292 Z" fill="#21834A" />
+  <path d="M 256 260 C 324 260 356 200 344 136 C 284 136 256 196 256 260 Z" fill="#E6EFE8" />
+  <!-- Precision Water Droplet -->
+  <path d="M 256 104 C 256 104 214 160 214 194 C 214 217.2 232.8 236 256 236 C 279.2 236 298 217.2 298 194 C 298 160 256 104 256 104 Z" fill="#3478B8" />
 </svg>

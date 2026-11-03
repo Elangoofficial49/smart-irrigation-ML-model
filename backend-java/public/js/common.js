@@ -1,5 +1,5 @@
 // ==========================================================================
-// AgroPulse AI — Common Utilities, Skeleton & Network Loader, 1-to-1 Routing
+// AgroPulse: Common Utilities, Skeleton & Network Loader, 1-to-1 Routing
 // ==========================================================================
 
 const API_BASE = (window.location.protocol.startsWith("http") && !window.location.host.includes("github.io")) 
@@ -104,7 +104,7 @@ async function apiFetch(path, options = {}) {
 
     if (response.status === 401) {
       clearSession();
-      showToast("Session expired. Redirecting to Sign In…", "warning");
+      showToast("Session expired. Redirecting to Sign In...", "warning");
       setTimeout(() => {
         window.location.replace("login.html");
       }, 700);
@@ -234,7 +234,7 @@ function setupNetworkStatusMonitor() {
     if (!navigator.onLine) {
       banner.style.display = "flex";
       banner.style.background = "#B7791F";
-      banner.innerHTML = '<i class="fa-solid fa-wifi"></i> <span><strong>Network Offline:</strong> Waiting for connection — displaying cached farm telemetry.</span> <a href="network.html" style="color:#fff; text-decoration:underline; margin-left:6px;">Diagnostics</a>';
+      banner.innerHTML = '<i class="fa-solid fa-wifi"></i> <span><strong>Network Offline:</strong> Waiting for connection. Displaying cached farm telemetry.</span> <a href="network.html" style="color:#fff; text-decoration:underline; margin-left:6px;">Diagnostics</a>';
     } else {
       if (banner.style.display === "flex") {
         banner.style.background = "#21834A";

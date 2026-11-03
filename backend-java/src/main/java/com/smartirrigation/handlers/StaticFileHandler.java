@@ -24,6 +24,8 @@ public class StaticFileHandler implements HttpHandler {
         String path = exchange.getRequestURI().getPath();
         if (path == null || path.equals("/") || path.equals("/index.html")) {
             path = "/login.html";
+        } else if (path.equals("/favicon.ico")) {
+            path = "/icons/icon.svg";
         } else if (!path.contains(".")) {
             // Support clean 1-to-1 extensionless paths (e.g., /dashboard -> /dashboard.html)
             File candidate = new File(publicDir, path + ".html").getCanonicalFile();

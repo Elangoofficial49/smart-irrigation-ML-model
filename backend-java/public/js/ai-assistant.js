@@ -1,19 +1,16 @@
 /**
- * Smart Precision Irrigation AI Assistant ("AgroBot" / "விவசாய வழிகாட்டி")
- * Powered by Google Gemini 3.6 Flash when online +
- * Embedded Offline Tamil Agricultural NLP Engine for low-network field areas.
- * Features PWA offline voice synthesis and interactive crop controls.
+ * AgroPulse Field Guide ("விவசாய வழிகாட்டி")
+ * Bilingual Tamil and English agronomic reference and offline NLP engine.
  */
 
 (function () {
-  let currentLang = localStorage.getItem("agrobot_lang") || "ta"; // Default to Tamil
-  let voiceEnabled = localStorage.getItem("agrobot_voice") !== "false"; // default true
+  let currentLang = localStorage.getItem("agrobot_lang") || "ta";
+  let voiceEnabled = localStorage.getItem("agrobot_voice") !== "false";
   let isListening = false;
   let recognition = null;
   let synth = window.speechSynthesis;
   let currentAudio = null;
 
-  // Initialize Speech Recognition if supported
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (SpeechRecognition) {
     recognition = new SpeechRecognition();
@@ -21,24 +18,21 @@
     recognition.interimResults = false;
   }
 
-  // Inject Widget DOM
   function injectWidget() {
     if (document.getElementById("agrobotWidget")) return;
 
     const widgetDiv = document.createElement("div");
     widgetDiv.id = "agrobotWidget";
     widgetDiv.innerHTML = `
-      <!-- Floating Trigger Button -->
-      <button id="agrobotToggleBtn" class="agrobot-trigger" title="AI Farm Assistant | விவசாய வழிகாட்டி" aria-label="Open AI Assistant">
+      <!-- Floating Trigger Button (No AI Badge) -->
+      <button id="agrobotToggleBtn" class="agrobot-trigger" title="Field Guide | விவசாய வழிகாட்டி" aria-label="Open Agronomic Field Guide">
         <div class="agrobot-trigger-avatar">
-          <i class="fa-solid fa-robot"></i>
+          <i class="fa-solid fa-comments" aria-hidden="true"></i>
         </div>
-        <span class="agrobot-trigger-badge">AI</span>
       </button>
 
       <!-- Chat Window -->
       <div id="agrobotWindow" class="agrobot-window">
-        <!-- Header -->
         <div class="agrobot-header">
           <div class="agrobot-header-info">
             <div class="agrobot-status-indicator"></div>
@@ -48,46 +42,38 @@
             </div>
           </div>
           <div class="agrobot-header-actions">
-            <!-- Language Switcher -->
             <div class="agrobot-lang-switch">
               <button type="button" class="lang-btn ${currentLang === 'ta' ? 'active' : ''}" data-lang="ta" title="தமிழ்">தமிழ்</button>
               <button type="button" class="lang-btn ${currentLang === 'en' ? 'active' : ''}" data-lang="en" title="English">EN</button>
             </div>
-            <!-- Voice Mute Toggle -->
             <button type="button" id="agrobotVoiceToggle" class="agrobot-icon-btn ${voiceEnabled ? 'active' : ''}" title="Toggle Voice Output">
-              <i class="fa-solid ${voiceEnabled ? 'fa-volume-high' : 'fa-volume-xmark'}"></i>
+              <i class="fa-solid ${voiceEnabled ? 'fa-volume-high' : 'fa-volume-xmark'}" aria-hidden="true"></i>
             </button>
-            <!-- Close Button -->
             <button type="button" id="agrobotCloseBtn" class="agrobot-icon-btn" title="Close">
-              <i class="fa-solid fa-xmark"></i>
+              <i class="fa-solid fa-xmark" aria-hidden="true"></i>
             </button>
           </div>
         </div>
 
-        <!-- Live Speaking Indicator -->
         <div id="agrobotSpeakingBar" class="agrobot-speaking-bar" style="display:none;">
           <div class="sound-wave">
             <span></span><span></span><span></span><span></span><span></span>
           </div>
-          <span id="agrobotSpeakingText">AgroBot பேசுகிறது...</span>
-          <button type="button" id="agrobotStopSpeechBtn" class="btn-stop-speech" title="Stop Voice"><i class="fa-solid fa-stop"></i></button>
+          <span id="agrobotSpeakingText">Speaking...</span>
+          <button type="button" id="agrobotStopSpeechBtn" class="btn-stop-speech" title="Stop Voice"><i class="fa-solid fa-stop" aria-hidden="true"></i></button>
         </div>
 
-        <!-- Messages Container -->
         <div id="agrobotMessages" class="agrobot-messages"></div>
 
-        <!-- Quick Prompt Chips -->
         <div id="agrobotChips" class="agrobot-chips"></div>
 
-        <!-- Input Area -->
         <form id="agrobotForm" class="agrobot-input-area">
-          <!-- Voice Input Mic Button -->
-          <button type="button" id="agrobotMicBtn" class="agrobot-mic-btn" title="Speak into Microphone (Voice Input)">
-            <i class="fa-solid fa-microphone"></i>
+          <button type="button" id="agrobotMicBtn" class="agrobot-mic-btn" title="Voice Input">
+            <i class="fa-solid fa-microphone" aria-hidden="true"></i>
           </button>
           <input type="text" id="agrobotInput" class="agrobot-input" placeholder="${translations[currentLang].placeholder}" autocomplete="off">
           <button type="submit" id="agrobotSendBtn" class="agrobot-send-btn" title="Send message">
-            <i class="fa-solid fa-paper-plane"></i>
+            <i class="fa-solid fa-paper-plane" aria-hidden="true"></i>
           </button>
         </form>
       </div>
@@ -101,35 +87,35 @@
 
   const translations = {
     ta: {
-      title: "AgroBot விவசாய வழிகாட்டி",
-      subtitle: "துல்லிய AI &bull; தமிழ் & ஆஃப்லைன் NLP",
+      title: "விவசாய வழிகாட்டி",
+      subtitle: "தமிழ் &bull; ஆஃப்லைன் உழவர் உதவி",
       placeholder: "மண் ஈரப்பதம், நீர்ப்பாசனம் அல்லது பயிர் பற்றி கேளுங்கள்...",
-      speaking: "AgroBot பேசுகிறது...",
+      speaking: "குரல் வழிகாட்டி இயங்குகிறது...",
       listening: "கேட்கிறது... இப்போது பேசுங்கள்",
-      welcome: "வணக்கம்! 🙏 நான் உங்கள் **AgroBot விவசாய வழிகாட்டி**. உங்கள் பயிர் மற்றும் நீர்ப்பாசனத்திற்கு நான் எவ்வாறு உதவ வேண்டும்?",
+      welcome: "வணக்கம். நான் உங்கள் **விவசாய வழிகாட்டி**. மண் ஈரப்பதம், நீர்ப்பாசனம் மற்றும் பயிர் மேலாண்மை குறித்த விவரங்களை இங்கே கேட்கலாம்.",
       chips: [
-        { label: "💧 தண்ணீர் பாய்ச்சலாமா?", text: "இப்போது தண்ணீர் பாய்ச்சலாமா?" },
-        { label: "📊 மண் ஈரப்பதம்", text: "மண் ஈரப்பதம் எவ்வளவு இருக்கிறது?" },
-        { label: "🌿 உர மேலாண்மை", text: "உர மேலாண்மை எவ்வாறு செய்வது?" },
-        { label: "🎋 கரும்பு பராமரிப்பு", text: "கரும்பு பயிருக்கு நீர் மேலாண்மை எப்படி செய்வது?" },
-        { label: "🌾 நெல் சாகுபடி", text: "நெல் பயிருக்கான நீர் பரிந்துரை என்ன?" },
-        { label: "🐛 பூச்சி கட்டுப்பாடு", text: "இயற்கை முறையில் பூச்சிகளை கட்டுப்படுத்துவது எப்படி?" }
+        { label: "தண்ணீர் பாய்ச்சலாமா?", text: "இப்போது தண்ணீர் பாய்ச்சலாமா?" },
+        { label: "மண் ஈரப்பதம்", text: "மண் ஈரப்பதம் எவ்வளவு இருக்கிறது?" },
+        { label: "உர மேலாண்மை", text: "உர மேலாண்மை எவ்வாறு செய்வது?" },
+        { label: "கரும்பு பராமரிப்பு", text: "கரும்பு பயிருக்கு நீர் மேலாண்மை எப்படி செய்வது?" },
+        { label: "நெல் சாகுபடி", text: "நெல் பயிருக்கான நீர் பரிந்துரை என்ன?" },
+        { label: "பூச்சி கட்டுப்பாடு", text: "இயற்கை முறையில் பூச்சிகளை கட்டுப்படுத்துவது எப்படி?" }
       ]
     },
     en: {
-      title: "AgroBot AI Assistant",
-      subtitle: "Precision Agriculture &bull; Offline NLP Ready",
-      placeholder: "Ask anything about your farm, moisture, weather...",
-      speaking: "AgroBot is speaking...",
+      title: "AgroPulse Field Guide",
+      subtitle: "Agronomic Reference &bull; Offline Ready",
+      placeholder: "Ask about soil moisture, irrigation schedules, or crops...",
+      speaking: "Reading response aloud...",
       listening: "Listening... Speak now",
-      welcome: "Hello! 👋 I am **AgroBot**, your Precision Agriculture Guide. How can I assist your crops and irrigation today?",
+      welcome: "Welcome to the **AgroPulse Field Guide**. Ask about current soil moisture readings, pump schedules, or crop water requirements.",
       chips: [
-        { label: "💧 Irrigate Now?", text: "Should I turn on irrigation now?" },
-        { label: "📊 Soil Moisture", text: "What is the current soil moisture reading?" },
-        { label: "🌿 Fertilizers", text: "How to manage crop fertilizers and NPK?" },
-        { label: "🎋 Sugarcane Care", text: "How to manage sugarcane irrigation?" },
-        { label: "🌾 Paddy Care", text: "What is the best irrigation for paddy?" },
-        { label: "🐛 Pest Control", text: "How to control farm pests naturally?" }
+        { label: "Irrigate Now?", text: "Should I turn on irrigation now?" },
+        { label: "Soil Moisture", text: "What is the current soil moisture reading?" },
+        { label: "Fertilizers", text: "How to manage crop fertilizers and NPK?" },
+        { label: "Sugarcane Care", text: "How to manage sugarcane irrigation?" },
+        { label: "Paddy Care", text: "What is the best irrigation for paddy?" },
+        { label: "Pest Control", text: "How to control farm pests naturally?" }
       ]
     }
   };
@@ -176,7 +162,7 @@
       voiceToggle.classList.toggle("active", voiceEnabled);
       voiceToggle.querySelector("i").className = voiceEnabled ? "fa-solid fa-volume-high" : "fa-solid fa-volume-xmark";
       if (!voiceEnabled) stopSpeaking();
-      showToast(voiceEnabled ? (currentLang === 'ta' ? "குரல் ஒலி இயக்கப்பட்டது 🔊" : "Voice output enabled 🔊") : (currentLang === 'ta' ? "குரல் ஒலி முடக்கப்பட்டது 🔇" : "Voice output muted 🔇"), "info");
+      showToast(voiceEnabled ? (currentLang === 'ta' ? "குரல் ஒலி இயக்கப்பட்டது" : "Voice output enabled") : (currentLang === 'ta' ? "குரல் ஒலி முடக்கப்பட்டது" : "Voice output muted"), "info");
     });
 
     stopSpeechBtn.addEventListener("click", stopSpeaking);
@@ -204,8 +190,7 @@
         }
       };
 
-      recognition.onerror = (e) => {
-        console.warn("Speech recognition error:", e.error);
+      recognition.onerror = () => {
         stopListening();
       };
 
@@ -222,14 +207,12 @@
           recognition.lang = currentLang === "ta" ? "ta-IN" : "en-IN";
           try {
             recognition.start();
-          } catch (err) {
-            console.warn(err);
-          }
+          } catch (err) {}
         }
       });
     } else {
       micBtn.style.opacity = "0.4";
-      micBtn.title = "Voice recognition not supported on this browser (Chrome / Edge recommended)";
+      micBtn.title = "Voice recognition requires Chrome or Edge";
     }
   }
 
@@ -247,7 +230,7 @@
     document.getElementById("agrobotHeaderSubtitle").innerHTML = t.subtitle;
     document.getElementById("agrobotInput").placeholder = t.placeholder;
     renderChips();
-    
+
     const msgContainer = document.getElementById("agrobotMessages");
     msgContainer.innerHTML = "";
     sendGreeting();
@@ -291,7 +274,7 @@
 
       removeTypingBubble(typingId);
 
-      const reply = res.reply || "Sorry, I could not process that request.";
+      const reply = res.reply || "Request could not be processed.";
       appendMessage("bot", reply);
 
       if (voiceEnabled && res.speech_text) {
@@ -299,14 +282,10 @@
       }
     } catch (err) {
       removeTypingBubble(typingId);
-      
-      // Execute Client-Side Offline Tamil NLP Engine
-      console.log("[AgroBot] Running Client-side Offline Tamil NLP Engine for query:", text);
       const offlineRes = processOfflineTamilNlp(text, currentLang);
-      
-      const offlineBadge = `<div style="margin-top:6px; font-size:11px; opacity:0.8; color:#34d399;"><i class="fa-solid fa-bolt"></i> ${currentLang === 'ta' ? 'ஆஃப்லைன் AI பயன்முறை (Offline NLP)' : 'Offline NLP Mode'}</div>`;
+      const offlineBadge = `<div style="margin-top:6px; font-size:11px; color:var(--action-green);"><i class="fa-solid fa-bolt"></i> ${currentLang === 'ta' ? 'ஆஃப்லைன் பயன்முறை' : 'Offline Reference Mode'}</div>`;
       appendMessage("bot", offlineRes.reply + offlineBadge);
-      
+
       if (voiceEnabled && offlineRes.speech_text) {
         fallbackToBrowserSynth(offlineRes.speech_text, currentLang === 'ta' ? 'ta-IN' : 'en-IN');
       }
@@ -316,15 +295,10 @@
     }
   }
 
-  /**
-   * Embedded Client-Side Tamil Natural Language Processing (NLP) Engine
-   * Executes instantly in remote agricultural fields with 0% internet connectivity.
-   */
   function processOfflineTamilNlp(query, lang) {
     const q = query.toLowerCase().trim();
     const isTa = lang === "ta" || /[\u0B80-\u0BFF]/.test(query);
 
-    // Read cached telemetry
     const cachedMoisture = localStorage.getItem("last_soil_moisture") || "48.5";
     const cachedTemp = localStorage.getItem("last_temp") || "30.0";
     const cachedPump = localStorage.getItem("last_pump_status") || "OFF";
@@ -332,81 +306,68 @@
     if (isTa) {
       if (containsAny(q, "ஆன் பண்ணு", "ஆன் செய்", "மோட்டார் போடு", "பம்பை ஆன்", "ஆன் பண்ண முடியுமா", "turn on")) {
         return {
-          reply: `⚡ **ஆம், நிச்சயமாக!** மோட்டாரை இயக்க **Irrigation Control** பக்கத்தில் உள்ள **'Turn Pump ON'** பட்டனை அழுத்தவும்.\nதற்போதைய மண் ஈரப்பதம்: **${cachedMoisture}%**.`,
-          speech_text: `ஆம் நிச்சயமாக! மோட்டாரை இயக்க நீர்ப்பாசன பக்கத்தில் Turn Pump ON பட்டனை அழுத்தவும். மண் ஈரப்பதம் ${cachedMoisture} சதவீதம்.`
+          reply: `**மோட்டாரை இயக்க:** **Irrigation Control** பக்கத்தில் உள்ள **'Turn ON Pump'** பொத்தானை அழுத்தவும்.\nதற்போதைய மண் ஈரப்பதம்: **${cachedMoisture}%**.`,
+          speech_text: `மோட்டாரை இயக்க நீர்ப்பாசன பக்கத்தில் Turn ON Pump பட்டனை அழுத்தவும். மண் ஈரப்பதம் ${cachedMoisture} சதவீதம்.`
         };
       }
       if (containsAny(q, "ஆப் பண்ணு", "ஆப் செய்", "நிறுத்து", "turn off")) {
         return {
-          reply: `🛑 **மோட்டாரை நிறுத்த:** **Irrigation Control** பக்கத்தில் உள்ள **'Turn Pump OFF'** பட்டனை அழுத்தவும்.`,
-          speech_text: `மோட்டாரை நிறுத்த நீர்ப்பாசன பக்கத்தில் Turn Pump OFF பட்டனை அழுத்தவும்.`
+          reply: `**மோட்டாரை நிறுத்த:** **Irrigation Control** பக்கத்தில் உள்ள **'Turn OFF Pump'** பொத்தானை அழுத்தவும்.`,
+          speech_text: `மோட்டாரை நிறுத்த நீர்ப்பாசன பக்கத்தில் Turn OFF Pump பட்டனை அழுத்தவும்.`
         };
       }
       if (containsAny(q, "தண்ணீர் பாய்ச்சலாமா", "தண்ணி பாய்ச்ச", "நீர் மேலாண்மை", "irrigate")) {
         const m = parseFloat(cachedMoisture);
         if (m < 35) {
           return {
-            reply: `💧 **நீர்ப்பாசன பரிந்துரை (ஆஃப்லைன்):** உங்கள் வயலின் மண் ஈரப்பதம் குறைவாக உள்ளது (**${cachedMoisture}%**). இப்போது மோட்டாரை இயக்கி தண்ணீர் பாய்ச்சவும்.`,
+            reply: `**நீர்ப்பாசன பரிந்துரை:** வயலின் மண் ஈரப்பதம் குறைவாக உள்ளது (**${cachedMoisture}%**). இப்போது மோட்டாரை இயக்கி தண்ணீர் பாய்ச்சவும்.`,
             speech_text: `உங்கள் வயலின் மண் ஈரப்பதம் குறைவாக உள்ளது ${cachedMoisture} சதவீதம். இப்போது தண்ணீர் பாய்ச்ச பரிந்துரைக்கப்படுகிறது.`
           };
         } else {
           return {
-            reply: `✅ **மண் ஈரப்பதம் போதுமானது (ஆஃப்லைன்):** தற்போதைய மண் ஈரப்பதம் **${cachedMoisture}%**. தற்போது நீர் பாய்ச்ச தேவையில்லை.`,
+            reply: `**மண் ஈரப்பதம் போதுமானது:** தற்போதைய மண் ஈரப்பதம் **${cachedMoisture}%**. தற்போது நீர் பாய்ச்ச தேவையில்லை.`,
             speech_text: `மண் ஈரப்பதம் போதுமான அளவில் உள்ளது ${cachedMoisture} சதவீதம். தற்போது தண்ணீர் பாய்ச்ச தேவையில்லை.`
           };
         }
       }
       if (containsAny(q, "மண் ஈரம்", "ஈரப்பதம்", "சென்சார்", "sensor", "moisture")) {
         return {
-          reply: `🌱 **நேரலை சென்சார் விவரங்கள் (தற்காலிக நினைவகம்):**\n• 💧 மண் ஈரப்பதம்: **${cachedMoisture}%**\n• 🌡️ வெப்பநிலை: **${cachedTemp}°C**\n• ⚡ மோட்டார் நிலை: **${cachedPump}**`,
+          reply: `**சென்சார் விவரங்கள்:**\n• மண் ஈரப்பதம்: **${cachedMoisture}%**\n• வெப்பநிலை: **${cachedTemp}°C**\n• மோட்டார் நிலை: **${cachedPump}**`,
           speech_text: `மண் ஈரப்பதம் ${cachedMoisture} சதவீதம். வெப்பநிலை ${cachedTemp} டிகிரி செல்சியஸ். மோட்டார் நிலை ${cachedPump}.`
         };
       }
       if (containsAny(q, "உரம்", "யூரியா", "டிஏபி", "பொட்டாஷ்", "பஞ்சகாவ்யா", "fertilizer")) {
         return {
-          reply: `🌿 **உர மேலாண்மை வழிகாட்டல் (ஆஃப்லைன்):**\n• **அடிப்படை உரம்:** தொழு உரம் அல்லது மண்புழு உரம் இடவும்.\n• **NPK உரம்:** சொட்டுநீர் உரப்பாசனம் மூலம் நீரில் கரையும் உரங்களை இடுவது 40% உரத்தை சேமிக்கும்.\n• **இயற்கை உரம்:** 3% பஞ்சகாவ்யா தெளிக்கவும்.`,
+          reply: `**உர மேலாண்மை வழிகாட்டல்:**\n• **அடிப்படை உரம்:** தொழு உரம் அல்லது மண்புழு உரம் இடவும்.\n• **NPK உரம்:** சொட்டுநீர் உரப்பாசனம் மூலம் நீரில் கரையும் உரங்களை இடுவது 40% உரத்தை சேமிக்கும்.\n• **இயற்கை உரம்:** 3% பஞ்சகாவ்யா தெளிக்கவும்.`,
           speech_text: `தொழு உரம் அல்லது மண்புழு உரம் இட்டு சொட்டுநீர் உரப்பாசனம் மூலம் நீரில் கரையும் உரங்களை இடவும்.`
         };
       }
       if (containsAny(q, "பூச்சி", "புழு", "நோய்", "pest", "disease")) {
         return {
-          reply: `🐛 **இயற்கை பூச்சி மேலாண்மை (ஆஃப்லைன்):**\n• 3% வேப்பெண்ணெய் கரைசல் தெளிப்பது சாறு உறிஞ்சும் பூச்சிகளைக் கட்டுப்படுத்தும்.\n• மஞ்சள் மற்றும் நீல நிற ஒட்டும் பொறிகளை வயலில் வைக்கவும்.`,
+          reply: `**இயற்கை பூச்சி மேலாண்மை:**\n• 3% வேப்பெண்ணெய் கரைசல் தெளிப்பது சாறு உறிஞ்சும் பூச்சிகளைக் கட்டுப்படுத்தும்.\n• மஞ்சள் மற்றும் நீல நிற ஒட்டும் பொறிகளை வயலில் வைக்கவும்.`,
           speech_text: `மூன்று சதவீதம் வேப்பெண்ணெய் கரைசல் தெளிப்பது சாறு உறிஞ்சும் பூச்சிகளைக் கட்டுப்படுத்தும்.`
         };
       }
       if (containsAny(q, "கரும்பு", "sugarcane")) {
         return {
-          reply: `🎋 **கரும்பு பயிர் வழிகாட்டி (ஆஃப்லைன்):**\n• முளைப்பு பருவத்தில் 7 நாட்களுக்கு ஒருமுறை நீர் பாய்ச்சவும்.\n• மண் ஈரப்பதம் 50-60% இருக்குமாறு சொட்டுநீர்ப்பாசனம் அமைப்பது 45% நீரைச் சேமிக்கும்.`,
+          reply: `**கரும்பு பயிர் வழிகாட்டி:**\n• முளைப்பு பருவத்தில் 7 நாட்களுக்கு ஒருமுறை நீர் பாய்ச்சவும்.\n• மண் ஈரப்பதம் 50% முதல் 60% இருக்குமாறு சொட்டுநீர்ப்பாசனம் அமைப்பது 45% நீரைச் சேமிக்கும்.`,
           speech_text: `கரும்பு பயிருக்கு மண் ஈரப்பதம் ஐம்பது முதல் அறுபது சதவீதம் இருக்குமாறு சொட்டுநீர்ப்பாசனம் அமைக்கவும்.`
         };
       }
       if (containsAny(q, "நெல்", "paddy", "rice")) {
         return {
-          reply: `🌾 **நெல் பயிர் வழிகாட்டி (ஆஃப்லைன்):**\n• தூர் கட்டும் பருவத்தில் மாறி மாறி நனைத்து உலர்த்தும் (AWD) முறையைப் பயன்படுத்தி நீரைச் சேமிக்கவும்.`,
+          reply: `**நெல் பயிர் வழிகாட்டி:**\n• தூர் கட்டும் பருவத்தில் மாறி மாறி நனைத்து உலர்த்தும் (AWD) முறையைப் பயன்படுத்தி நீரைச் சேமிக்கவும்.`,
           speech_text: `நெல் பயிருக்கு மாறி மாறி நனைத்து உலர்த்தும் முறையைப் பயன்படுத்தி நீரைச் சேமிக்கவும்.`
         };
       }
-      if (containsAny(q, "நன்றி", "thanks", "ok")) {
-        return {
-          reply: `மகிழ்ச்சி! 🙏 உங்கள் விவசாயம் செழிக்க வாழ்த்துகள். ஆஃப்லைன் முறையிலும் நான் உங்களுக்கு உதவத் தயாராக உள்ளேன்!`,
-          speech_text: `மகிழ்ச்சி! உங்கள் விவசாயம் செழிக்க வாழ்த்துகள்.`
-        };
-      }
-      if (containsAny(q, "நாளை", "வரேன்", "பாய்", "bye")) {
-        return {
-          reply: `சரிங்க! 👍 நாளை காலை வாருங்கள். உங்கள் பண்ணைத் தரவுகளை நான் தொடர்ந்து கண்காணிப்பேன்!`,
-          speech_text: `சரிங்க! நாளை காலை வாருங்கள். உங்கள் பண்ணைத் தரவுகளை நான் தொடர்ந்து கண்காணிப்பேன்.`
-        };
-      }
       return {
-        reply: `வணக்கம்! 🙏 ஆஃப்லைன் AI முறை செயல்படுகிறது.\n• மண் ஈரப்பதம்: **${cachedMoisture}%**\n• மோட்டார் நிலை: **${cachedPump}**\nநீர்ப்பாசனம், உரம், பூச்சி மேலாண்மை அல்லது பயிர் பராமரிப்பு பற்றி கேளுங்கள்!`,
-        speech_text: `வணக்கம்! ஆஃப்லைன் முறை செயல்படுகிறது. மண் ஈரப்பதம் ${cachedMoisture} சதவீதம்.`
+        reply: `**ஆஃப்லைன் உழவர் வழிகாட்டி:**\n• மண் ஈரப்பதம்: **${cachedMoisture}%**\n• மோட்டார் நிலை: **${cachedPump}**\nநீர்ப்பாசனம், உரம், பூச்சி மேலாண்மை அல்லது பயிர் பராமரிப்பு பற்றி கேளுங்கள்.`,
+        speech_text: `ஆஃப்லைன் முறை செயல்படுகிறது. மண் ஈரப்பதம் ${cachedMoisture} சதவீதம்.`
       };
     } else {
-      // English Offline NLP
       return {
-        reply: `🌱 **AgroBot Offline NLP Mode:**\n• Soil Moisture: **${cachedMoisture}%**\n• Temperature: **${cachedTemp}°C**\n• Pump: **${cachedPump}**\nAsk about irrigation schedules, fertilizers, pests, or crop guides!`,
-        speech_text: `AgroBot offline mode. Current soil moisture is ${cachedMoisture} percent.`
+        reply: `**AgroPulse Offline Reference:**\n• Soil Moisture: **${cachedMoisture}%**\n• Temperature: **${cachedTemp}°C**\n• Pump State: **${cachedPump}**\nAsk about irrigation thresholds, fertilizer application, pest control, or crop schedules.`,
+        speech_text: `Offline reference mode. Current soil moisture is ${cachedMoisture} percent.`
       };
     }
   }
@@ -441,7 +402,7 @@
     const div = document.createElement("div");
     div.id = id;
     div.className = "agrobot-msg bot typing";
-    div.innerHTML = `<div class="agrobot-msg-content"><div class="typing-dots"><span></span><span></span><span></span></div></div>`;
+    div.innerHTML = `<div class="agrobot-msg-content">Processing...</div>`;
     msgContainer.appendChild(div);
     msgContainer.scrollTop = msgContainer.scrollHeight;
     return id;
@@ -454,6 +415,7 @@
 
   function formatMarkdown(text) {
     return text
+      .replace(/[\u2014\u2013]/g, "-")
       .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
       .replace(/\*(.*?)\*/g, "<em>$1</em>")
       .replace(/`([^`]+)`/g, "<code>$1</code>")
@@ -466,7 +428,6 @@
       .replace(/\n/g, "<br>");
   }
 
-  // Speaks aloud using Server Audio Stream (/api/tts) or Web Speech API
   function speakText(text, lang) {
     stopSpeaking();
     if (!voiceEnabled) return;
@@ -476,7 +437,7 @@
     const speakingText = document.getElementById("agrobotSpeakingText");
 
     if (speakingBar) {
-      speakingText.textContent = isTamil ? "AgroBot பேசுகிறது..." : "AgroBot is speaking...";
+      speakingText.textContent = isTamil ? "குரல் வழிகாட்டி..." : "Reading aloud...";
       speakingBar.style.display = "flex";
     }
 
@@ -491,7 +452,6 @@
       cleanText = cleanText.substring(0, 200);
     }
 
-    // Priority 1: High-Clarity Audio Stream from Server Endpoint (/api/tts) if online
     if (navigator.onLine) {
       const ttsUrl = `${API_BASE}/api/tts?lang=${isTamil ? 'ta' : 'en'}&text=${encodeURIComponent(cleanText)}`;
       currentAudio = new Audio(ttsUrl);
@@ -505,11 +465,10 @@
         fallbackToBrowserSynth(cleanText, isTamil ? 'ta-IN' : 'en-IN');
       };
 
-      currentAudio.play().catch(err => {
+      currentAudio.play().catch(() => {
         fallbackToBrowserSynth(cleanText, isTamil ? 'ta-IN' : 'en-IN');
       });
     } else {
-      // Offline fallback: Direct Browser Speech Synthesis
       fallbackToBrowserSynth(cleanText, isTamil ? 'ta-IN' : 'en-IN');
     }
   }

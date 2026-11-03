@@ -3,10 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Network Status • AgroPulse AI</title>
+  <title>Network Status • AgroPulse</title>
+  <link rel="canonical" href="https://agropulse.farm/network" />
   <link rel="icon" type="image/svg+xml" href="icons/icon.svg" />
+  <link rel="shortcut icon" href="favicon.ico" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-  <link rel="stylesheet" href="css/style.css?v=5" />
+  <link rel="stylesheet" href="css/style.css?v=6" />
 </head>
 <body class="auth-page">
   <div class="auth-card" style="text-align:center; max-width:440px;">
@@ -17,10 +19,10 @@
       Telemetry Link Check
     </div>
     <h1 style="font-size:22px; font-weight:700; color:var(--text-primary); letter-spacing:-0.02em; margin-bottom:8px;" id="netTitle">
-      Verifying Farm Network…
+      Verifying Farm Network...
     </h1>
     <p style="font-size:13.5px; color:var(--text-secondary); line-height:1.55; margin-bottom:20px;" id="netDesc">
-      Testing connection to the AgroPulse AI backend and field probe gateway.
+      Testing connection to the AgroPulse backend and field probe gateway.
     </p>
     <div style="margin-bottom:20px;">
       <div class="skeleton-bar" style="width:100%; height:8px;" id="netLoaderBar"></div>
@@ -29,6 +31,11 @@
       <i class="fa-solid fa-chart-line" aria-hidden="true"></i>
       <span>Proceed to Dashboard</span>
     </a>
+    <div class="auth-footer" style="margin-top:16px;">
+      <a href="privacy.html" style="color:var(--text-secondary); font-weight:500;">Privacy Policy</a>
+      <span style="margin:0 6px;">&middot;</span>
+      <a href="terms.html" style="color:var(--text-secondary); font-weight:500;">Terms &amp; Conditions</a>
+    </div>
   </div>
   <script src="js/common.js"></script>
   <script>
@@ -51,4 +58,3 @@
   </script>
 </body>
 </html>
-

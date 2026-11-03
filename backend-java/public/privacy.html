@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Privacy Policy • AgroPulse</title>
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#163D2B" />
+  <link rel="apple-touch-icon" href="icons/icon-192.svg" />
+  <link rel="icon" type="image/svg+xml" href="icons/icon.svg" />
+  <link rel="shortcut icon" href="favicon.ico" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="css/style.css?v=6" />
+</head>
+<body style="background:var(--bg-app); min-height:100vh; display:flex; flex-direction:column;">
+  <header class="top-navbar" style="position:sticky; top:0;">
+    <div style="display:flex; align-items:center; gap:10px;">
+      <div class="logo-icon"><i class="fa-solid fa-seedling" aria-hidden="true"></i></div>
+      <nav class="page-breadcrumb" aria-label="Breadcrumb">
+        <span>AgroPulse</span>
+        <span class="sep">/</span>
+        <span class="current">Privacy Policy</span>
+      </nav>
+    </div>
+    <div class="top-actions">
+      <a href="terms.html" class="btn btn-secondary btn-sm">Terms &amp; Conditions</a>
+      <a href="dashboard.html" class="btn btn-primary btn-sm">
+        <span>Return to Workspace</span>
+        <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+      </a>
+    </div>
+  </header>
+
+  <main class="content-area" style="max-width:860px; padding-top:28px; padding-bottom:48px;">
+    <section class="panel" style="padding:28px 32px;">
+      <div style="border-bottom:1px solid var(--border-color); padding-bottom:16px; margin-bottom:20px;">
+        <div style="font-size:11.5px; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:var(--action-green); margin-bottom:4px;">
+          Data Governance &amp; Telemetry Protection
+        </div>
+        <h1 class="page-title" style="font-size:24px;">Privacy Policy</h1>
+        <p class="page-subtitle">Effective Date: November 3, 2026 • Domain: agropulse.farm</p>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:18px; font-size:13.5px; color:var(--text-primary); line-height:1.65;">
+        <div>
+          <h2 style="font-size:15px; font-weight:600; margin-bottom:6px;">1. Scope of Collected Information</h2>
+          <p style="color:var(--text-secondary);">
+            AgroPulse collects only the operational records required to run field irrigation and crop management:
+            operator account credentials (username, registered email address, and salted password hash), capacitive probe telemetry (volumetric soil moisture, ambient temperature, relative humidity, and precipitation probability), field plot allocations, and pump actuation audit logs.
+          </p>
+        </div>
+
+        <div>
+          <h2 style="font-size:15px; font-weight:600; margin-bottom:6px;">2. Geographic Coordinates and Weather Queries</h2>
+          <p style="color:var(--text-secondary);">
+            When an operator initiates a live GPS weather query on the Weather Intelligence page, browser geolocation coordinates are used solely to request localized 7-day meteorological forecasts from the Open-Meteo service. Coordinates are not sold, shared with advertising networks, or tracked in the background.
+          </p>
+        </div>
+
+        <div>
+          <h2 style="font-size:15px; font-weight:600; margin-bottom:6px;">3. Database Storage and Offline Caching</h2>
+          <p style="color:var(--text-secondary);">
+            Farm records are stored in your configured PostgreSQL or local embedded H2 database instance. For field operations in low-connectivity rural areas, recent sensor readings and session tokens are cached locally in browser storage so operators can review last-known field status while offline.
+          </p>
+        </div>
+
+        <div>
+          <h2 style="font-size:15px; font-weight:600; margin-bottom:6px;">4. Data Retention and Export Rights</h2>
+          <p style="color:var(--text-secondary);">
+            Operators retain full ownership of all crop inventory records and sensor logs. Telemetry and plot registries can be exported to standard CSV format or deleted directly from the Crop Inventory workspace at any time.
+          </p>
+        </div>
+
+        <div>
+          <h2 style="font-size:15px; font-weight:600; margin-bottom:6px;">5. Security Controls</h2>
+          <p style="color:var(--text-secondary);">
+            Authenticated API endpoints require bearer token verification, and password recovery uses time-bound 6-digit verification codes. All pump actuation events are logged with operator attribution and timestamps.
+          </p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="app-legal-footer">
+    <span>&copy; 2026 AgroPulse Precision Irrigation (agropulse.farm)</span>
+    <div class="footer-links">
+      <a href="privacy.html">Privacy Policy</a>
+      <a href="terms.html">Terms &amp; Conditions</a>
+      <a href="dashboard.html">Workspace</a>
+    </div>
+  </footer>
+</body>
+</html>
+

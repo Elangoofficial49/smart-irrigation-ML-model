@@ -3,17 +3,19 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sensor Monitoring • AgroPulse AI</title>
+  <title>Sensor Monitoring • AgroPulse</title>
+  <link rel="canonical" href="https://agropulse.farm/sensors" />
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#163D2B" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="AgroPulse AI" />
+  <meta name="apple-mobile-web-app-title" content="AgroPulse" />
   <link rel="apple-touch-icon" href="icons/icon-192.svg" />
   <link rel="icon" type="image/svg+xml" href="icons/icon.svg" />
+  <link rel="shortcut icon" href="favicon.ico" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <link rel="stylesheet" href="css/style.css?v=5" />
+  <link rel="stylesheet" href="css/style.css?v=6" />
 </head>
 <body>
   <div class="app-layout">
@@ -22,7 +24,7 @@
       <div class="sidebar-header">
         <div class="logo-icon"><i class="fa-solid fa-seedling" aria-hidden="true"></i></div>
         <div>
-          <div class="brand-title">AgroPulse AI</div>
+          <div class="brand-title">AgroPulse</div>
           <div class="brand-sub">Precision Irrigation</div>
         </div>
       </div>
@@ -53,7 +55,7 @@
           <div class="user-avatar" id="avatarInitials">EL</div>
           <div class="user-info">
             <div class="user-name" id="userBadge">Operator</div>
-            <div class="user-role">● Field Operations</div>
+            <div class="user-role">Field Operations</div>
           </div>
         </div>
         <button class="btn-logout" onclick="logout()" title="Sign Out">
@@ -70,7 +72,7 @@
             <i class="fa-solid fa-bars" aria-hidden="true"></i>
           </button>
           <nav class="page-breadcrumb" aria-label="Breadcrumb">
-            <span>AgroPulse AI</span>
+            <span>AgroPulse</span>
             <span class="sep">/</span>
             <span class="current">Sensor Monitoring</span>
           </nav>
@@ -79,7 +81,7 @@
         <div class="top-actions">
           <span class="status-pill neutral" id="probeHealthPill" aria-live="polite">
             <span class="status-dot"></span>
-            <span id="probeHealthText">Checking probe status…</span>
+            <span id="probeHealthText">Checking probe status...</span>
           </span>
           <a href="irrigation.html" class="btn btn-secondary btn-sm" title="Proceed to Irrigation Control">
             <span>Irrigation Control</span>
@@ -149,7 +151,7 @@
             <div class="metric-value-row">
               <span class="metric-value skeleton-shimmer" id="valRain">00.0%</span>
             </div>
-            <div class="metric-desc" id="lastTimestampLabel">Last sample: —</div>
+            <div class="metric-desc" id="lastTimestampLabel">Last sample: N/A</div>
           </div>
         </section>
 
@@ -213,6 +215,14 @@
           </div>
         </section>
       </main>
+
+      <footer class="app-legal-footer">
+        <div>&copy; 2026 AgroPulse Operations (<a href="https://agropulse.farm" style="color:inherit; text-decoration:none;">agropulse.farm</a>). Precision Irrigation Telemetry.</div>
+        <div class="footer-links">
+          <a href="privacy.html">Privacy Policy</a>
+          <a href="terms.html">Terms &amp; Conditions</a>
+        </div>
+      </footer>
     </div>
   </div>
 
@@ -328,9 +338,9 @@
 
           const statusEl = document.getElementById("statusMoisture");
           if (sm < 35) {
-            statusEl.innerHTML = '<span style="color:var(--warning-amber); font-weight:600;">Low moisture (&lt; 35%) — Requires irrigation</span>';
+            statusEl.innerHTML = '<span style="color:var(--warning-amber); font-weight:600;">Low moisture (&lt; 35%): Requires irrigation</span>';
           } else if (sm > 75) {
-            statusEl.innerHTML = '<span style="color:var(--info-blue); font-weight:600;">Saturated (&gt; 75%) — Hold irrigation</span>';
+            statusEl.innerHTML = '<span style="color:var(--info-blue); font-weight:600;">Saturated (&gt; 75%): Hold irrigation</span>';
           } else {
             statusEl.innerHTML = '<span style="color:var(--action-green); font-weight:600;">Optimal root-zone hydration</span>';
           }
@@ -371,7 +381,7 @@
 
           const tr = document.createElement("tr");
           tr.innerHTML = `
-            <td style="font-family:var(--font-mono); font-size:12px; color:var(--text-secondary);">${escapeHtml(r.recorded_at || "—")}</td>
+            <td style="font-family:var(--font-mono); font-size:12px; color:var(--text-secondary);">${escapeHtml(r.recorded_at || "N/A")}</td>
             <td>
               <div class="cell-primary">Capacitive Probe #1</div>
               <div class="cell-secondary">Sector A (Plot A-1 / B-2)</div>
@@ -390,7 +400,7 @@
     async function simulateReading() {
       const btn = document.getElementById("simulateBtn");
       btn.disabled = true;
-      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> <span>Polling Probe…</span>';
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> <span>Polling Probe...</span>';
 
       try {
         await apiFetch("/api/sensors/simulate", { method: "POST" });

@@ -230,38 +230,38 @@ public class WeatherHandler extends BaseHandler {
     private String getWeatherDescription(int code, boolean tamil) {
         switch (code) {
             case 0:
-                return tamil ? "தெளிவான வானம் / வெயில்" : "Clear Sky ☀️";
+                return tamil ? "தெளிவான வானம் / வெயில்" : "Clear Sky";
             case 1:
-                return tamil ? "பெரும்பாலும் தெளிவான வானம்" : "Mainly Clear 🌤️";
+                return tamil ? "பெரும்பாலும் தெளிவான வானம்" : "Mainly Clear";
             case 2:
-                return tamil ? "பகுதி மேகமூட்டம்" : "Partly Cloudy ⛅";
+                return tamil ? "பகுதி மேகமூட்டம்" : "Partly Cloudy";
             case 3:
-                return tamil ? "முழு மேகமூட்டம்" : "Overcast ☁️";
+                return tamil ? "முழு மேகமூட்டம்" : "Overcast";
             case 45:
             case 48:
-                return tamil ? "பனிமூட்டம்" : "Foggy 🌫️";
+                return tamil ? "பனிமூட்டம்" : "Foggy";
             case 51:
             case 53:
             case 55:
-                return tamil ? "லேசான தூறல்" : "Drizzle 🌦️";
+                return tamil ? "லேசான தூறல்" : "Drizzle";
             case 61:
             case 63:
             case 65:
-                return tamil ? "மிதமான மழை" : "Rain 🌧️";
+                return tamil ? "மிதமான மழை" : "Rain";
             case 71:
             case 73:
             case 75:
-                return tamil ? "பனிப்பொழிவு" : "Snow Fall ❄️";
+                return tamil ? "பனிப்பொழிவு" : "Snow Fall";
             case 80:
             case 81:
             case 82:
-                return tamil ? "கனமழை தூறல்" : "Rain Showers 🌧️";
+                return tamil ? "கனமழை தூறல்" : "Rain Showers";
             case 95:
             case 96:
             case 99:
-                return tamil ? "இடி மின்னலுடன் மழை" : "Thunderstorm ⛈️";
+                return tamil ? "இடி மின்னலுடன் மழை" : "Thunderstorm";
             default:
-                return tamil ? "இயல்பான வானிலை" : "Fair Weather 🌤️";
+                return tamil ? "இயல்பான வானிலை" : "Fair Weather";
         }
     }
 

@@ -266,14 +266,14 @@ public class ChatHandler extends BaseHandler {
                 togglePumpState(username, "ON");
                 if (isTamil) {
                     return """
-                            ⚡ **ஆம், நிச்சயமாக!** நான் இப்போது உங்கள் மோட்டாரை **ON (இயக்கம்)** செய்துவிட்டேன்.
+                            **ஆம், நிச்சயமாக!** நான் இப்போது உங்கள் மோட்டாரை **ON (இயக்கம்)** செய்துவிட்டேன்.
                             தண்ணீர் பாய்ச்சுவதை நிறுத்த அல்லது கண்காணிக்க:
                             1. இடதுபுற மெனுவில் **Irrigation Control (நீர்ப்பாசன கட்டுப்பாடு)** பக்கத்திற்குச் செல்லவும்.
                             2. அங்குள்ள **Manual Pump Override** மூலம் நீங்கள் எப்போது வேண்டுமானாலும் **OFF** செய்து கொள்ளலாம்.
                             தற்போதைய மண் ஈரப்பதம்: **""" + Math.round(ctx.moisture) + "%**.";
                 } else {
                     return """
-                            ⚡ **Yes, certainly!** I have engaged the irrigation pump to **ON** for you.
+                            **Yes, certainly!** I have engaged the irrigation pump to **ON** for you.
                             To monitor or toggle pump controls:
                             1. Navigate to the **Irrigation Control** tab on the left sidebar.
                             2. Use the **Manual Override** buttons to switch between **ON / OFF** anytime.
@@ -282,16 +282,16 @@ public class ChatHandler extends BaseHandler {
             } else {
                 if (isTamil) {
                     return """
-                            💡 **நீங்கள் சுலபமாக மோட்டாரை இயக்கலாம்:**
+                            **நீங்கள் சுலபமாக மோட்டாரை இயக்கலாம்:**
                             1. இடதுபுற மெனுவில் **Irrigation Control (நீர்ப்பாசன கட்டுப்பாடு)** பக்கத்தைத் திறக்கவும்.
                             2. அங்குள்ள **'Turn Pump ON' (பம்பை இயக்கு)** என்ற பச்சை நிற பட்டனை கிளிக் செய்யவும்.
                             3. அல்லது **'Evaluate ML Decision'** கிளிக் செய்தால், தற்போதைய மண் ஈரப்பதம் (""" + Math.round(ctx.moisture) + "%) மற்றும் வானிலைக்கு ஏற்ப கணினி தானாகவே நீர்ப்பாசனத்தை முடிவு செய்யும்!";
                 } else {
                     return """
-                            💡 **Here is how you can manage your irrigation:**
+                            **Here is how you can manage your irrigation:**
                             1. Click on the **Irrigation Control** tab in the left sidebar.
                             2. Click the green **'Turn Pump ON'** button under Manual Controls.
-                            3. Alternatively, click **'Evaluate ML Decision'** to let the AI automatically regulate water based on soil moisture (""" + Math.round(ctx.moisture) + "%).";
+                            3. Alternatively, click **'Evaluate ML Decision'** to let the Random Forest model regulate water based on soil moisture (""" + Math.round(ctx.moisture) + "%).";
                 }
             }
         }
@@ -299,9 +299,9 @@ public class ChatHandler extends BaseHandler {
         if (matchesAny(q, "turn off", "stop pump", "switch off", "ஆப் பண்ணு", "ஆப் செய்", "நிறுத்து", "மோட்டாரை நிறுத்து")) {
             togglePumpState(username, "OFF");
             if (isTamil) {
-                return "🛑 **மோட்டார் வெற்றிகரமாக நிறுத்தப்பட்டது (Pump Turned OFF)!**\nநீர் பாய்ச்சல் நிறுத்தப்பட்டு கணினி தானியங்கி கண்காணிப்பு முறைக்கு மாற்றப்பட்டுள்ளது.";
+                return "**மோட்டார் வெற்றிகரமாக நிறுத்தப்பட்டது (Pump Turned OFF)!**\nநீர் பாய்ச்சல் நிறுத்தப்பட்டு கணினி தானியங்கி கண்காணிப்பு முறைக்கு மாற்றப்பட்டுள்ளது.";
             } else {
-                return "🛑 **Irrigation pump successfully switched OFF!**\nValves are closed and system has returned to automated monitoring mode.";
+                return "**Irrigation pump successfully switched OFF!**\nValves are closed and system has returned to automated monitoring mode.";
             }
         }
 
@@ -309,25 +309,25 @@ public class ChatHandler extends BaseHandler {
                 "ok ok", "okay okay", "alright", "got it", "fine", "cool", "super",
                 "நன்றி", "மிக்க நன்றி", "சரி நன்றி", "ரொம்ப நன்றி", "ஓகே", "சரி சரி", "புரிந்தது", "சூப்பர்")) {
             if (isTamil) {
-                return "மகிழ்ச்சி! 🙏 மிக்க நன்றி. உங்கள் பயிர்கள், மண் ஈரப்பதம் அல்லது நீர்ப்பாசனம் குறித்து எப்போது வேண்டுமானாலும் என்னிடம் கேட்கலாம். உங்கள் விவசாயம் சிறக்க வாழ்த்துகள்!";
+                return "மகிழ்ச்சி! மிக்க நன்றி. உங்கள் பயிர்கள், மண் ஈரப்பதம் அல்லது நீர்ப்பாசனம் குறித்து எப்போது வேண்டுமானாலும் என்னிடம் கேட்கலாம். உங்கள் விவசாயம் சிறக்க வாழ்த்துகள்!";
             } else {
-                return "You're very welcome! 😊 Always happy to assist your farm. Feel free to ask me anytime about your soil moisture, crop health, or weather!";
+                return "You're very welcome! Always happy to assist your farm. Feel free to ask me anytime about your soil moisture, crop health, or weather!";
             }
         }
 
         if (matchesAny(q, "hi", "hello", "hey", "who are you", "வணக்கம்", "ஹலோ", "நீ யார்")) {
             if (isTamil) {
-                return "வணக்கம்! 🙏 நான் **AgroBot**, உங்கள் பண்ணையின் AI விவசாய வழிகாட்டி. நான் உங்கள் மண் ஈரப்பதம் (" + Math.round(ctx.moisture) + "%), வானிலை (" + Math.round(ctx.temp) + "°C), மற்றும் பயிர்களைக் கண்காணித்து வழிகாட்டுகிறேன். உங்களுக்கு என்ன உதவி வேண்டும்?";
+                return "வணக்கம்! நான் **AgroBot**, உங்கள் பண்ணையின் விவசாய வழிகாட்டி. நான் உங்கள் மண் ஈரப்பதம் (" + Math.round(ctx.moisture) + "%), வானிலை (" + Math.round(ctx.temp) + "°C), மற்றும் பயிர்களைக் கண்காணித்து வழிகாட்டுகிறேன். உங்களுக்கு என்ன உதவி வேண்டும்?";
             } else {
-                return "Hello! 👋 I am **AgroBot**, your Precision Agricultural AI Assistant. I monitor your soil moisture (" + Math.round(ctx.moisture) + "%), weather, and crops in real time. How can I assist you today?";
+                return "Hello! I am **AgroBot**, your precision irrigation field guide. I monitor your soil moisture (" + Math.round(ctx.moisture) + "%), weather, and crops in real time. How can I assist you today?";
             }
         }
 
         if (matchesAny(q, "நாளைக்கு", "வரேன்", "பாய்", "bye", "goodbye", "see you tomorrow", "tomorrow")) {
             if (isTamil) {
-                return "சரிங்க! 👍 நாளை காலை தாராளமாக வாருங்கள். நான் உங்கள் வயலின் மண் ஈரப்பதம் மற்றும் மோட்டார் செயல்பாடுகளைத் தொடர்ந்து கண்காணித்து வருகிறேன். நாளை சந்திப்போம்!";
+                return "சரிங்க! நாளை காலை தாராளமாக வாருங்கள். நான் உங்கள் வயலின் மண் ஈரப்பதம் மற்றும் மோட்டார் செயல்பாடுகளைத் தொடர்ந்து கண்காணித்து வருகிறேன். நாளை சந்திப்போம்!";
             } else {
-                return "Sounds great! 👍 See you tomorrow. I will keep monitoring your soil telemetry and irrigation in the meantime. Have a great day!";
+                return "Sounds great! See you tomorrow. I will keep monitoring your soil telemetry and irrigation in the meantime. Have a great day!";
             }
         }
 

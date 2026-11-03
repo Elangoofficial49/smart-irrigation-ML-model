@@ -97,9 +97,9 @@ public class EmailService {
             });
 
             Message message = new MimeMessage(session);
-            message.setFrom(new InternetAddress(from != null ? from : authUser, "Smart Irrigation System"));
+            message.setFrom(new InternetAddress(from != null ? from : authUser, "AgroPulse"));
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(recipientEmail));
-            message.setSubject("Your Password Reset Code - Smart Irrigation System");
+            message.setSubject("Your Password Reset Code - AgroPulse");
 
             String htmlBody = buildOtpHtmlEmail(otpCode);
             message.setContent(htmlBody, "text/html; charset=utf-8");
@@ -125,36 +125,36 @@ public class EmailService {
                 + "<meta charset='UTF-8'>"
                 + "<meta name='viewport' content='width=device-width, initial-scale=1.0'>"
                 + "<style>"
-                + "body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f1f5f9; margin: 0; padding: 20px; color: #1e293b; }"
-                + ".container { max-width: 520px; margin: 0 auto; background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.06); border: 1px solid #e2e8f0; }"
-                + ".header { background: linear-gradient(135deg, #064e3b 0%, #059669 100%); padding: 32px 24px; text-align: center; color: #ffffff; }"
-                + ".header h1 { margin: 0; font-size: 22px; font-weight: 700; letter-spacing: -0.5px; }"
-                + ".header p { margin: 6px 0 0; font-size: 13px; opacity: 0.85; }"
-                + ".content { padding: 32px 28px; }"
-                + ".otp-box { background: #f0fdf4; border: 2px dashed #10b981; border-radius: 12px; padding: 18px; text-align: center; margin: 24px 0; }"
-                + ".otp-code { font-family: 'Courier New', monospace; font-size: 36px; font-weight: 800; letter-spacing: 8px; color: #047857; margin: 0; }"
-                + ".badge { display: inline-block; background: #dcfce7; color: #15803d; font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 20px; margin-top: 8px; }"
-                + ".note { font-size: 13px; color: #64748b; line-height: 1.6; margin: 20px 0; }"
-                + ".footer { background: #f8fafc; padding: 20px 24px; text-align: center; font-size: 12px; color: #94a3b8; border-top: 1px solid #e2e8f0; }"
+                + "body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #F6F8F5; margin: 0; padding: 20px; color: #17231D; }"
+                + ".container { max-width: 520px; margin: 0 auto; background: #ffffff; border-radius: 8px; overflow: hidden; border: 1px solid #E1E7E1; }"
+                + ".header { background: #163D2B; padding: 24px; text-align: left; color: #ffffff; }"
+                + ".header h1 { margin: 0; font-size: 18px; font-weight: 700; letter-spacing: -0.2px; }"
+                + ".header p { margin: 4px 0 0; font-size: 12px; opacity: 0.8; }"
+                + ".content { padding: 28px 24px; }"
+                + ".otp-box { background: #E8F0E8; border: 1px solid #E1E7E1; border-radius: 6px; padding: 18px; text-align: center; margin: 24px 0; }"
+                + ".otp-code { font-family: 'Courier New', monospace; font-size: 32px; font-weight: 700; letter-spacing: 8px; color: #163D2B; margin: 0; }"
+                + ".validity { font-size: 12px; color: #69766D; margin-top: 8px; }"
+                + ".note { font-size: 13px; color: #69766D; line-height: 1.6; margin: 20px 0; }"
+                + ".footer { background: #F6F8F5; padding: 16px 24px; text-align: center; font-size: 12px; color: #69766D; border-top: 1px solid #E1E7E1; }"
                 + "</style>"
                 + "</head>"
                 + "<body>"
                 + "<div class='container'>"
                 + "  <div class='header'>"
-                + "    <h1>🌱 Smart Irrigation System</h1>"
-                + "    <p>Precision Agricultural Intelligence Platform</p>"
+                + "    <h1>AgroPulse</h1>"
+                + "    <p>Precision Irrigation Management</p>"
                 + "  </div>"
                 + "  <div class='content'>"
-                + "    <h2 style='font-size: 18px; margin-top: 0; color: #0f172a;'>Password Reset Request</h2>"
-                + "    <p style='font-size: 14px; color: #334155; line-height: 1.5;'>We received a request to reset the password for your Smart Irrigation account. Use the one-time verification code below to proceed:</p>"
+                + "    <h2 style='font-size: 16px; margin-top: 0; color: #17231D;'>Password Reset Request</h2>"
+                + "    <p style='font-size: 14px; color: #17231D; line-height: 1.5;'>We received a request to reset the password for your AgroPulse account. Use the one-time verification code below to proceed:</p>"
                 + "    <div class='otp-box'>"
                 + "      <div class='otp-code'>" + otpCode + "</div>"
-                + "      <div class='badge'>⏱️ Valid for 10 minutes</div>"
+                + "      <div class='validity'>Valid for 10 minutes</div>"
                 + "    </div>"
                 + "    <p class='note'>If you did not request this password reset, please ignore this email. Your password will remain unchanged.</p>"
                 + "  </div>"
                 + "  <div class='footer'>"
-                + "    &copy; Smart Irrigation System &bull; Precision Farming IoT & ML"
+                + "    &copy; AgroPulse &bull; agropulse.farm"
                 + "  </div>"
                 + "</div>"
                 + "</body>"

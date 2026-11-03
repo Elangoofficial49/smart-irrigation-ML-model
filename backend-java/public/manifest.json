@@ -1,12 +1,12 @@
 {
-  "name": "Smart Irrigation & Tamil AI Assistant",
-  "short_name": "AgroSmart",
-  "description": "Precision agriculture IoT platform with multilingual Tamil/English AI guide and offline farming support.",
+  "name": "AgroPulse Precision Irrigation",
+  "short_name": "AgroPulse",
+  "description": "Precision agriculture telemetry, soil moisture monitoring, and automated irrigation control.",
   "start_url": "/dashboard.html",
   "scope": "/",
   "display": "standalone",
-  "background_color": "#064e3b",
-  "theme_color": "#059669",
+  "background_color": "#163D2B",
+  "theme_color": "#163D2B",
   "orientation": "any",
   "categories": ["agriculture", "productivity", "utilities"],
   "icons": [
@@ -25,24 +25,24 @@
   ],
   "shortcuts": [
     {
-      "name": "Farm Dashboard",
+      "name": "Operational Dashboard",
       "url": "/dashboard.html",
-      "description": "View live soil moisture and telemetry KPI counters."
+      "description": "View live soil moisture and field telemetry."
     },
     {
       "name": "Irrigation Control",
       "url": "/irrigation.html",
-      "description": "ML-driven automated pump toggle & scheduling."
+      "description": "Pump actuation and audit logs."
     },
     {
-      "name": "GPS Weather Radar",
+      "name": "Weather Intelligence",
       "url": "/weather.html",
-      "description": "7-day localized farm climate and rain probability."
+      "description": "7-day localized farm weather forecast."
     },
     {
       "name": "Crop Inventory",
       "url": "/crops.html",
-      "description": "Crop acreage & growth management."
+      "description": "Field plot registry and growth stage tracking."
     }
   ]
 }
