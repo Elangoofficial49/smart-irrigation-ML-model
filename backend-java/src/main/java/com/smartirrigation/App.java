@@ -4,6 +4,7 @@ import java.io.File;
 import java.net.InetSocketAddress;
 import java.util.concurrent.Executors;
 
+import com.smartirrigation.handlers.AdminHandler;
 import com.smartirrigation.handlers.AuthHandler;
 import com.smartirrigation.handlers.ChatHandler;
 import com.smartirrigation.handlers.CropHandler;
@@ -12,6 +13,7 @@ import com.smartirrigation.handlers.SensorHandler;
 import com.smartirrigation.handlers.StaticFileHandler;
 import com.smartirrigation.handlers.TtsHandler;
 import com.smartirrigation.handlers.WeatherHandler;
+import com.smartirrigation.handlers.WebhookHandler;
 import com.smartirrigation.model.IrrigationModel;
 import com.sun.net.httpserver.HttpServer;
 
@@ -37,6 +39,8 @@ public class App {
         IrrigationHandler irrigation = new IrrigationHandler(model);
         CropHandler crops = new CropHandler();
         WeatherHandler weather = new WeatherHandler();
+        AdminHandler admin = new AdminHandler();
+        WebhookHandler webhook = new WebhookHandler();
 
         ChatHandler chat = new ChatHandler();
         TtsHandler tts = new TtsHandler();
@@ -45,9 +49,18 @@ public class App {
         server.createContext("/api/signup", auth.signup());
         server.createContext("/api/login", auth.login());
         server.createContext("/api/logout", auth.logout());
+        server.createContext("/api/auth/me", auth.me());
         server.createContext("/api/auth/forgot-password/request", auth.forgotPasswordRequest());
         server.createContext("/api/auth/forgot-password/verify", auth.forgotPasswordVerify());
         server.createContext("/api/auth/forgot-password/reset", auth.forgotPasswordReset());
+
+        // ---- Admin (Protected behind login & admin role) ----
+        server.createContext("/api/admin/audit-logs", admin.auditLogs());
+        server.createContext("/api/admin/users", admin.users());
+        server.createContext("/api/admin/stats", admin.stats());
+
+        // ---- Verified Inbound Webhooks ----
+        server.createContext("/api/webhooks/telemetry", webhook.receiveTelemetry());
 
         // ---- Sensor monitoring ----
         server.createContext("/api/sensors/latest", sensors.latest());

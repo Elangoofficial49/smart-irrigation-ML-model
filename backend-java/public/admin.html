@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Console &bull; AgroPulse</title>
+  <link rel="canonical" href="https://agropulse.farm/admin" />
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#163D2B" />
+  <link rel="icon" type="image/svg+xml" href="icons/icon.svg" />
+  <link rel="shortcut icon" href="favicon.ico" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="css/style.css?v=6" />
+  <style>
+    .admin-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 3px 8px;
+      border-radius: 4px;
+      background: var(--muted-sage);
+      color: var(--forest-green);
+    }
+  </style>
+</head>
+<body>
+  <div class="app-layout">
+    <!-- Compact Hover-Expand Left Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="logo-icon"><i class="fa-solid fa-seedling" aria-hidden="true"></i></div>
+        <div>
+          <div class="brand-title">AgroPulse</div>
+          <div class="brand-sub">Precision Irrigation</div>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav" aria-label="Main Navigation">
+        <div class="nav-section-label">Telemetry &amp; Control</div>
+        <a href="dashboard.html" class="nav-item" data-page="dashboard" title="Dashboard">
+          <i class="fa-solid fa-chart-line" aria-hidden="true"></i> <span>Dashboard</span>
+        </a>
+        <a href="sensors.html" class="nav-item" data-page="sensors" title="Sensor Monitoring">
+          <i class="fa-solid fa-satellite-dish" aria-hidden="true"></i> <span>Sensor Monitoring</span>
+        </a>
+        <a href="irrigation.html" class="nav-item" data-page="irrigation" title="Irrigation Control">
+          <i class="fa-solid fa-faucet-drip" aria-hidden="true"></i> <span>Irrigation Control</span>
+        </a>
+
+        <div class="nav-section-label">Farm Management</div>
+        <a href="crops.html" class="nav-item" data-page="crops" title="Crop Inventory">
+          <i class="fa-solid fa-wheat-awn" aria-hidden="true"></i> <span>Crop Inventory</span>
+        </a>
+        <a href="weather.html" class="nav-item" data-page="weather" title="Weather Intelligence">
+          <i class="fa-solid fa-cloud-sun-rain" aria-hidden="true"></i> <span>Weather Intelligence</span>
+        </a>
+
+        <div class="nav-section-label" id="adminNavSection">Administration</div>
+        <a href="admin.html" class="nav-item active" data-page="admin" title="Admin Console">
+          <i class="fa-solid fa-shield-halved" aria-hidden="true"></i> <span>Admin Console</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-card">
+          <div class="user-avatar" id="avatarInitials">AD</div>
+          <div class="user-info">
+            <div class="user-name" id="userBadge">Administrator</div>
+            <div class="user-role" id="userRoleBadge">Security &amp; Admin</div>
+          </div>
+        </div>
+        <button class="btn-logout" onclick="logout()" title="Sign Out">
+          <i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i> <span>Sign Out</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Operations Workspace -->
+    <div class="main-wrapper">
+      <header class="top-navbar">
+        <div style="display:flex; align-items:center; gap:12px;">
+          <button class="mobile-menu-btn" id="mobileToggle" aria-label="Toggle Navigation">
+            <i class="fa-solid fa-bars" aria-hidden="true"></i>
+          </button>
+          <nav class="page-breadcrumb" aria-label="Breadcrumb">
+            <span>AgroPulse</span>
+            <span class="sep">/</span>
+            <span class="current">Security &amp; Audit Console</span>
+          </nav>
+        </div>
+
+        <div class="top-actions">
+          <span class="status-pill success" id="securityStatusPill">
+            <span class="status-dot"></span>
+            <span>RLS Active &bull; Audit Logging Enabled</span>
+          </span>
+        </div>
+      </header>
+
+      <main class="content-area">
+        <div class="page-header-bar">
+          <div>
+            <h1 class="page-title">Security &amp; Access Audit Trail</h1>
+            <p class="page-subtitle">Track record-level access events, inspect authenticated operators, and monitor verified webhook activity.</p>
+          </div>
+          <div class="page-header-actions">
+            <button class="btn btn-secondary btn-sm" onclick="loadAdminData()" id="refreshBtn">
+              <i class="fa-solid fa-arrows-rotate" aria-hidden="true"></i>
+              <span>Refresh Trail</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 4-Stat Overview Strip -->
+        <section class="metrics-strip" aria-label="System Security Metrics">
+          <div class="metric-cell">
+            <div class="metric-label">
+              <span>Audit Access Events</span>
+              <i class="fa-solid fa-eye" aria-hidden="true"></i>
+            </div>
+            <div class="metric-value-row">
+              <span class="metric-value" id="statAuditEvents">0</span>
+            </div>
+            <div class="metric-desc">Logged record accesses</div>
+          </div>
+
+          <div class="metric-cell">
+            <div class="metric-label">
+              <span>Registered Users</span>
+              <i class="fa-solid fa-users" aria-hidden="true"></i>
+            </div>
+            <div class="metric-value-row">
+              <span class="metric-value" id="statUsers">0</span>
+            </div>
+            <div class="metric-desc">Admins &amp; Field Operators</div>
+          </div>
+
+          <div class="metric-cell">
+            <div class="metric-label">
+              <span>Managed Crop Plots</span>
+              <i class="fa-solid fa-wheat-awn" aria-hidden="true"></i>
+            </div>
+            <div class="metric-value-row">
+              <span class="metric-value" id="statCrops">0</span>
+            </div>
+            <div class="metric-desc">Row-Level Isolated Plots</div>
+          </div>
+
+          <div class="metric-cell">
+            <div class="metric-label">
+              <span>Telemetry Ingests</span>
+              <i class="fa-solid fa-satellite-dish" aria-hidden="true"></i>
+            </div>
+            <div class="metric-value-row">
+              <span class="metric-value" id="statTelemetry">0</span>
+            </div>
+            <div class="metric-desc">Probes &amp; Verified Webhooks</div>
+          </div>
+        </section>
+
+        <!-- Access Audit Log Table -->
+        <section class="panel panel-flush" style="margin-bottom:20px;">
+          <div class="panel-header">
+            <div>
+              <div class="panel-title">
+                <i class="fa-solid fa-clipboard-user" aria-hidden="true"></i>
+                <span>Who Opened Each Record (Access Audit Trail)</span>
+              </div>
+              <div class="panel-subtitle">Chronological record of user reads, queries, updates, and deletes</div>
+            </div>
+            <span class="admin-badge"><i class="fa-solid fa-lock"></i> Protected</span>
+          </div>
+
+          <div class="table-responsive">
+            <table class="data-table" id="auditTable">
+              <thead>
+                <tr>
+                  <th>Event ID</th>
+                  <th>Operator / User</th>
+                  <th>Entity Type</th>
+                  <th>Record Identifier</th>
+                  <th>Action Performed</th>
+                  <th>Client IP</th>
+                  <th>Timestamp</th>
+                </tr>
+              </thead>
+              <tbody id="auditTableBody"></tbody>
+            </table>
+            <div class="empty-state" id="auditEmpty" style="display:none; padding:28px 16px;">
+              <div class="empty-state-title">No audit events logged yet</div>
+              <p class="empty-state-desc">Record access events will appear automatically as operators view or edit plots and sensor data.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Registered User Management Table -->
+        <section class="panel panel-flush" style="margin-bottom:0;">
+          <div class="panel-header">
+            <div>
+              <div class="panel-title">
+                <i class="fa-solid fa-user-shield" aria-hidden="true"></i>
+                <span>Registered Farm Users &amp; Roles</span>
+              </div>
+              <div class="panel-subtitle">Access controls, roles, and sign-up records</div>
+            </div>
+            <span class="badge badge-neutral" id="userCountBadge">0 users</span>
+          </div>
+
+          <div class="table-responsive">
+            <table class="data-table" id="usersTable">
+              <thead>
+                <tr>
+                  <th>User ID</th>
+                  <th>Username</th>
+                  <th>Email Address</th>
+                  <th>Assigned Role</th>
+                  <th>Member Since</th>
+                </tr>
+              </thead>
+              <tbody id="usersTableBody"></tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+
+      <footer class="app-legal-footer">
+        <div>&copy; 2026 AgroPulse Operations (<a href="https://agropulse.farm" style="color:inherit; text-decoration:none;">agropulse.farm</a>). Security &amp; Audit Console.</div>
+        <div class="footer-links">
+          <a href="privacy.html">Privacy Policy</a>
+          <a href="terms.html">Terms &amp; Conditions</a>
+        </div>
+      </footer>
+    </div>
+  </div>
+
+  <script src="js/common.js"></script>
+  <script src="js/ai-assistant.js"></script>
+  <script>
+    requireAuth();
+    initLayout("admin");
+
+    async function verifyAdminAccess() {
+      try {
+        const me = await apiFetch("/api/auth/me");
+        if (!me.is_admin) {
+          showToast("Access denied: Administrative privileges required.", "error");
+          setTimeout(() => {
+            window.location.replace("dashboard.html");
+          }, 1200);
+          return false;
+        }
+        const roleBadge = document.getElementById("userRoleBadge");
+        if (roleBadge) roleBadge.textContent = "Administrator";
+        return true;
+      } catch (err) {
+        showToast("Session expired or authentication failed.", "error");
+        setTimeout(() => window.location.replace("login.html"), 1000);
+        return false;
+      }
+    }
+
+    async function loadAdminData() {
+      const allowed = await verifyAdminAccess();
+      if (!allowed) return;
+
+      const refreshBtn = document.getElementById("refreshBtn");
+      if (refreshBtn) {
+        refreshBtn.disabled = true;
+        refreshBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> <span>Loading...</span>';
+      }
+
+      try {
+        // Load stats
+        const stats = await apiFetch("/api/admin/stats");
+        document.getElementById("statAuditEvents").textContent = stats.total_audit_events || 0;
+        document.getElementById("statUsers").textContent = stats.total_users || 0;
+        document.getElementById("statCrops").textContent = stats.total_crops || 0;
+        document.getElementById("statTelemetry").textContent = stats.total_sensor_readings || 0;
+        document.getElementById("userCountBadge").textContent = (stats.total_users || 0) + " users";
+
+        // Load audit logs
+        const logs = await apiFetch("/api/admin/audit-logs?limit=50");
+        const auditBody = document.getElementById("auditTableBody");
+        const auditEmpty = document.getElementById("auditEmpty");
+        auditBody.innerHTML = "";
+
+        if (!Array.isArray(logs) || logs.length === 0) {
+          auditEmpty.style.display = "block";
+        } else {
+          auditEmpty.style.display = "none";
+          logs.forEach((log) => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+              <td style="font-family:var(--font-mono); font-size:12px;">#${log.id}</td>
+              <td><strong>${escapeHtml(log.username)}</strong></td>
+              <td><span class="badge badge-neutral">${escapeHtml(log.entity_type)}</span></td>
+              <td style="font-family:var(--font-mono); font-size:12px;">${escapeHtml(log.entity_id)}</td>
+              <td><span class="badge badge-primary">${escapeHtml(log.action)}</span></td>
+              <td style="font-family:var(--font-mono); font-size:12px; color:var(--text-secondary);">${escapeHtml(log.ip_address || "127.0.0.1")}</td>
+              <td style="font-size:12px; color:var(--text-secondary);">${escapeHtml(log.created_at || "N/A")}</td>
+            `;
+            auditBody.appendChild(tr);
+          });
+        }
+
+        // Load users
+        const users = await apiFetch("/api/admin/users");
+        const usersBody = document.getElementById("usersTableBody");
+        usersBody.innerHTML = "";
+        if (Array.isArray(users)) {
+          users.forEach((u) => {
+            const isAdminUser = u.role === "admin";
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+              <td style="font-family:var(--font-mono); font-size:12px;">#${u.id}</td>
+              <td><strong>${escapeHtml(u.username)}</strong></td>
+              <td>${escapeHtml(u.email || "N/A")}</td>
+              <td><span class="status-pill ${isAdminUser ? "warning" : "success"}"><span class="status-dot"></span>${escapeHtml(u.role)}</span></td>
+              <td style="font-size:12px; color:var(--text-secondary);">${escapeHtml(u.created_at || "N/A")}</td>
+            `;
+            usersBody.appendChild(tr);
+          });
+        }
+
+      } catch (err) {
+        showToast("Failed to load admin data: " + err.message, "error");
+      } finally {
+        if (refreshBtn) {
+          refreshBtn.disabled = false;
+          refreshBtn.innerHTML = '<i class="fa-solid fa-arrows-rotate"></i> <span>Refresh Trail</span>';
+        }
+      }
+    }
+
+    loadAdminData();
+  </script>
+</body>
+</html>

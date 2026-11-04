@@ -27,7 +27,8 @@ public class SensorHandler extends BaseHandler {
 
     private void handleLatest(HttpExchange exchange) throws IOException {
         if (handlePreflight(exchange)) return;
-        if (currentUser(exchange) == null) {
+        String user = currentUser(exchange);
+        if (user == null) {
             sendJson(exchange, 401, Json.obj().put("error", "Not authenticated").build());
             return;
         }
@@ -41,6 +42,8 @@ public class SensorHandler extends BaseHandler {
                 sendJson(exchange, 200, Json.obj().put("message", "No sensor data yet").build());
                 return;
             }
+            int sensorId = rs.getInt("id");
+            logAccess(user, "sensor_telemetry", String.valueOf(sensorId), "READ_LATEST", exchange);
             sendJson(exchange, 200, rowToJson(rs));
         } catch (SQLException e) {
             sendJson(exchange, 500, Json.obj().put("error", e.getMessage()).build());
@@ -49,7 +52,8 @@ public class SensorHandler extends BaseHandler {
 
     private void handleHistory(HttpExchange exchange) throws IOException {
         if (handlePreflight(exchange)) return;
-        if (currentUser(exchange) == null) {
+        String user = currentUser(exchange);
+        if (user == null) {
             sendJson(exchange, 401, Json.obj().put("error", "Not authenticated").build());
             return;
         }
@@ -63,11 +67,14 @@ public class SensorHandler extends BaseHandler {
             ps.setInt(1, limit);
             try (ResultSet rs = ps.executeQuery()) {
                 boolean first = true;
+                int count = 0;
                 while (rs.next()) {
                     if (!first) arr.append(",");
                     arr.append(rowToJson(rs));
                     first = false;
+                    count++;
                 }
+                logAccess(user, "sensor_history", "LIMIT_" + limit, "READ_HISTORY (" + count + " samples)", exchange);
             }
             arr.append("]");
             sendJson(exchange, 200, arr.toString());
@@ -79,7 +86,8 @@ public class SensorHandler extends BaseHandler {
     /** Simulates a new sensor reading from "the field" (stand-in for real hardware) and stores it. */
     private void handleSimulate(HttpExchange exchange) throws IOException {
         if (handlePreflight(exchange)) return;
-        if (currentUser(exchange) == null) {
+        String user = currentUser(exchange);
+        if (user == null) {
             sendJson(exchange, 401, Json.obj().put("error", "Not authenticated").build());
             return;
         }
@@ -101,6 +109,8 @@ public class SensorHandler extends BaseHandler {
             ps.setDouble(3, humidity);
             ps.setDouble(4, rainfallProb);
             ps.executeUpdate();
+
+            logAccess(user, "sensor_telemetry", "SIMULATED", "CREATE_SAMPLE", exchange);
 
             sendJson(exchange, 201, Json.obj()
                     .put("soil_moisture", soilMoisture)

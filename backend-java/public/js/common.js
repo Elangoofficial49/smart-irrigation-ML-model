@@ -212,6 +212,38 @@ function initLayout(activePage) {
 
   // Setup Network Status Monitor
   setupNetworkStatusMonitor();
+
+  // If user is admin, reveal the Admin navigation item in sidebar
+  checkAndDisplayAdminNav();
+}
+
+/** Check if current user is admin and conditionally render Admin link */
+async function checkAndDisplayAdminNav() {
+  try {
+    const me = await apiFetch("/api/auth/me");
+    if (me && me.is_admin) {
+      const nav = document.querySelector(".sidebar-nav");
+      if (nav && !document.querySelector('a[data-page="admin"]')) {
+        const sec = document.createElement("div");
+        sec.className = "nav-section-label";
+        sec.textContent = "Administration";
+        const link = document.createElement("a");
+        link.href = "admin.html";
+        link.className = "nav-item";
+        link.dataset.page = "admin";
+        link.title = "Admin Console";
+        link.innerHTML = '<i class="fa-solid fa-shield-halved" aria-hidden="true"></i> <span>Admin Console</span>';
+        nav.appendChild(sec);
+        nav.appendChild(link);
+      }
+      const roleBadge = document.querySelector(".user-role");
+      if (roleBadge) {
+        roleBadge.textContent = "Administrator";
+      }
+    }
+  } catch (e) {
+    /* ignore session verification error during background nav enhancement */
+  }
 }
 
 /** Network Loading / Offline Status Monitor */

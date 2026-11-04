@@ -81,16 +81,30 @@ public class Database {
                     email VARCHAR(255) UNIQUE,
                     password_hash VARCHAR(255) NOT NULL,
                     salt VARCHAR(255) NOT NULL,
+                    role VARCHAR(50) DEFAULT 'operator',
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 )
             """);
 
             try {
                 st.execute("ALTER TABLE users ADD COLUMN IF NOT EXISTS email VARCHAR(255);");
+                st.execute("ALTER TABLE users ADD COLUMN IF NOT EXISTS role VARCHAR(50) DEFAULT 'operator';");
                 st.execute("DELETE FROM users a USING users b WHERE a.id < b.id AND a.email IS NOT NULL AND LOWER(a.email) = LOWER(b.email);");
                 st.execute("CREATE UNIQUE INDEX IF NOT EXISTS idx_users_email_unique ON users (LOWER(email));");
             } catch (SQLException ignored) {
             }
+
+            st.execute("""
+                CREATE TABLE IF NOT EXISTS access_audit_logs (
+                    id SERIAL PRIMARY KEY,
+                    username VARCHAR(255) NOT NULL,
+                    entity_type VARCHAR(100) NOT NULL,
+                    entity_id VARCHAR(100) NOT NULL,
+                    action VARCHAR(50) NOT NULL,
+                    ip_address VARCHAR(100),
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )
+            """);
 
             st.execute("""
                 CREATE TABLE IF NOT EXISTS password_resets (
@@ -132,6 +146,7 @@ public class Database {
             """);
 
             for (String column : new String[]{
+                    "user_id INT",
                     "username VARCHAR(255)",
                     "variety VARCHAR(255)",
                     "field_plot VARCHAR(100)",
@@ -194,12 +209,19 @@ public class Database {
                         String salt = randomSalt();
                         String hash = hashPassword("Password123", salt);
                         try (PreparedStatement ins = conn.prepareStatement(
-                                "INSERT INTO users (username, email, password_hash, salt) VALUES (?, ?, ?, ?)")) {
+                                "INSERT INTO users (username, email, password_hash, salt, role) VALUES (?, ?, ?, ?, ?)")) {
                             ins.setString(1, "elango_admin");
                             ins.setString(2, "elangoofficial8@gmail.com");
                             ins.setString(3, hash);
                             ins.setString(4, salt);
+                            ins.setString(5, "admin");
                             ins.executeUpdate();
+                        }
+                    } else {
+                        // Ensure elango_admin always has the 'admin' role
+                        try (PreparedStatement up = conn.prepareStatement("UPDATE users SET role = 'admin' WHERE username = ?")) {
+                            up.setString(1, "elango_admin");
+                            up.executeUpdate();
                         }
                     }
                 }

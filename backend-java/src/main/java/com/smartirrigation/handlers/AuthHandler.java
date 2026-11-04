@@ -10,6 +10,7 @@ import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
 import com.smartirrigation.Database;
@@ -18,11 +19,35 @@ import com.smartirrigation.util.EmailService;
 import com.smartirrigation.util.Json;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
+import io.github.cdimascio.dotenv.Dotenv;
 
 public class AuthHandler extends BaseHandler {
 
     private static final SecureRandom RANDOM = new SecureRandom();
     private static final Pattern EMAIL_PATTERN = Pattern.compile("^[A-Za-z0-9+_.-]+@(.+)$");
+
+    // Rate Limiting for Sign-up: max 5 registrations per IP per hour
+    private static final int MAX_SIGNUPS_PER_HOUR = 5;
+    private static final Map<String, LongList> signupTracker = new ConcurrentHashMap<>();
+
+    private static class LongList {
+        private final java.util.List<Long> timestamps = new java.util.concurrent.CopyOnWriteArrayList<>();
+
+        public synchronized boolean allow(long now, long windowMs, int max) {
+            timestamps.removeIf(t -> now - t > windowMs);
+            if (timestamps.size() >= max) {
+                return false;
+            }
+            timestamps.add(now);
+            return true;
+        }
+    }
+
+    private static final Dotenv dotenv = Dotenv.configure()
+            .directory(System.getProperty("user.dir"))
+            .ignoreIfMissing()
+            .load();
+    private static final String ADMIN_BOOTSTRAP_SECRET = dotenv.get("ADMIN_SECRET_KEY");
 
     public HttpHandler signup() {
         return this::handleSignup;
@@ -34,6 +59,25 @@ public class AuthHandler extends BaseHandler {
 
     public HttpHandler logout() {
         return this::handleLogout;
+    }
+
+    public HttpHandler me() {
+        return this::handleMe;
+    }
+
+    private void handleMe(HttpExchange exchange) throws IOException {
+        if (handlePreflight(exchange)) return;
+        String user = currentUser(exchange);
+        if (user == null) {
+            sendJson(exchange, 401, Json.obj().put("error", "Not authenticated").build());
+            return;
+        }
+        String role = currentUserRole(exchange);
+        sendJson(exchange, 200, Json.obj()
+                .put("username", user)
+                .put("role", role != null ? role : "operator")
+                .put("is_admin", isAdmin(exchange))
+                .build());
     }
 
     public HttpHandler forgotPasswordRequest() {
@@ -55,22 +99,50 @@ public class AuthHandler extends BaseHandler {
             return;
         }
 
+        // Apply rate limiting on sign up (by IP address)
+        String ip = clientIp(exchange);
+        LongList tracker = signupTracker.computeIfAbsent(ip, k -> new LongList());
+        long now = System.currentTimeMillis();
+        long windowOneHourMs = 3600000L;
+        if (!tracker.allow(now, windowOneHourMs, MAX_SIGNUPS_PER_HOUR)) {
+            sendJson(exchange, 429, Json.obj().put("error", "Too many accounts created from this IP address. Please try again in an hour.").build());
+            return;
+        }
+
         Map<String, String> body = Json.parseFlat(readBody(exchange));
         String username = body.getOrDefault("username", "").trim();
         String email = body.getOrDefault("email", "").trim().toLowerCase();
         String password = body.getOrDefault("password", "");
+        String adminKey = body.getOrDefault("admin_key", "").trim();
 
         if (username.isEmpty() || password.isEmpty()) {
             sendJson(exchange, 400, Json.obj().put("error", "Username and password are required").build());
             return;
         }
-        if (email.isEmpty() || !EMAIL_PATTERN.matcher(email).matches()) {
-            sendJson(exchange, 400, Json.obj().put("error", "A valid email address is required").build());
+        if (username.length() < 3 || username.length() > 50) {
+            sendJson(exchange, 400, Json.obj().put("error", "Username must be between 3 and 50 characters").build());
+            return;
+        }
+        if (!username.matches("^[A-Za-z0-9_.-]+$")) {
+            sendJson(exchange, 400, Json.obj().put("error", "Username can only contain alphanumeric characters, dots, dashes, and underscores").build());
+            return;
+        }
+        if (email.isEmpty() || !EMAIL_PATTERN.matcher(email).matches() || email.length() > 100) {
+            sendJson(exchange, 400, Json.obj().put("error", "A valid email address is required (max 100 chars)").build());
             return;
         }
         if (password.length() < 4) {
             sendJson(exchange, 400, Json.obj().put("error", "Password must be at least 4 characters").build());
             return;
+        }
+        if (password.length() > 128) {
+            sendJson(exchange, 400, Json.obj().put("error", "Password is too long (maximum 128 characters)").build());
+            return;
+        }
+
+        String assignedRole = "operator";
+        if (ADMIN_BOOTSTRAP_SECRET != null && !ADMIN_BOOTSTRAP_SECRET.isBlank() && ADMIN_BOOTSTRAP_SECRET.equals(adminKey)) {
+            assignedRole = "admin";
         }
 
         try (Connection conn = Database.connect()) {
@@ -100,13 +172,18 @@ public class AuthHandler extends BaseHandler {
             String hash = Database.hashPassword(password, salt);
 
             try (PreparedStatement ps = conn.prepareStatement(
-                    "INSERT INTO users (username, email, password_hash, salt) VALUES (?, ?, ?, ?)")) {
+                    "INSERT INTO users (username, email, password_hash, salt, role) VALUES (?, ?, ?, ?, ?)")) {
                 ps.setString(1, username);
                 ps.setString(2, email);
                 ps.setString(3, hash);
                 ps.setString(4, salt);
+                ps.setString(5, assignedRole);
                 ps.executeUpdate();
-                sendJson(exchange, 201, Json.obj().put("message", "Account created successfully").build());
+                logAccess(username, "user", username, "SIGNUP", exchange);
+                sendJson(exchange, 201, Json.obj()
+                        .put("message", "Account created successfully")
+                        .put("role", assignedRole)
+                        .build());
             }
         } catch (SQLException e) {
             String msg = e.getMessage() != null ? e.getMessage() : "";
@@ -131,7 +208,7 @@ public class AuthHandler extends BaseHandler {
 
         try (Connection conn = Database.connect();
              PreparedStatement ps = conn.prepareStatement(
-                     "SELECT username, password_hash, salt FROM users WHERE username = ? OR email = ?")) {
+                     "SELECT username, password_hash, salt, role FROM users WHERE username = ? OR email = ?")) {
             ps.setString(1, identifier);
             ps.setString(2, identifier.toLowerCase());
             try (ResultSet rs = ps.executeQuery()) {
@@ -142,6 +219,11 @@ public class AuthHandler extends BaseHandler {
                 String resolvedUsername = rs.getString("username");
                 String storedHash = rs.getString("password_hash");
                 String salt = rs.getString("salt");
+                String role = rs.getString("role");
+                if (role == null || role.isBlank()) {
+                    role = "elango_admin".equalsIgnoreCase(resolvedUsername) ? "admin" : "operator";
+                }
+
                 String attemptHash = Database.hashPassword(password, salt);
 
                 if (!attemptHash.equals(storedHash)) {
@@ -149,11 +231,14 @@ public class AuthHandler extends BaseHandler {
                     return;
                 }
 
-                String token = SessionManager.createSession(resolvedUsername);
+                String token = SessionManager.createSession(resolvedUsername, role);
+                logAccess(resolvedUsername, "user", resolvedUsername, "LOGIN", exchange);
+
                 sendJson(exchange, 200, Json.obj()
                         .put("message", "Login successful")
                         .put("token", token)
                         .put("username", resolvedUsername)
+                        .put("role", role)
                         .build());
             }
         } catch (SQLException e) {

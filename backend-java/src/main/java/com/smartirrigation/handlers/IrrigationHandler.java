@@ -91,6 +91,8 @@ public class IrrigationHandler extends BaseHandler {
                 ps.executeUpdate();
             }
 
+            logAccess(user, "irrigation_decision", status, "EVALUATE_ML (confidence " + confidence + ")", exchange);
+
             String basedOnJson = Json.obj()
                     .put("soil_moisture", soilMoisture)
                     .put("temperature", temperature)
@@ -132,6 +134,7 @@ public class IrrigationHandler extends BaseHandler {
             ps.setString(1, state);
             ps.setString(2, user);
             ps.executeUpdate();
+            logAccess(user, "irrigation_pump", state, "MANUAL_TOGGLE", exchange);
             sendJson(exchange, 200, Json.obj().put("status", state).put("mode", "manual").build());
         } catch (SQLException e) {
             sendJson(exchange, 500, Json.obj().put("error", e.getMessage()).build());
@@ -140,7 +143,8 @@ public class IrrigationHandler extends BaseHandler {
 
     private void handleStatus(HttpExchange exchange) throws IOException {
         if (handlePreflight(exchange)) return;
-        if (currentUser(exchange) == null) {
+        String user = currentUser(exchange);
+        if (user == null) {
             sendJson(exchange, 401, Json.obj().put("error", "Not authenticated").build());
             return;
         }
@@ -153,6 +157,8 @@ public class IrrigationHandler extends BaseHandler {
                 sendJson(exchange, 200, Json.obj().put("status", "OFF").put("mode", "none").build());
                 return;
             }
+            int logId = rs.getInt("id");
+            logAccess(user, "irrigation_status", String.valueOf(logId), "READ_STATUS", exchange);
             sendJson(exchange, 200, logRowToJson(rs));
         } catch (SQLException e) {
             sendJson(exchange, 500, Json.obj().put("error", e.getMessage()).build());
@@ -161,7 +167,8 @@ public class IrrigationHandler extends BaseHandler {
 
     private void handleHistory(HttpExchange exchange) throws IOException {
         if (handlePreflight(exchange)) return;
-        if (currentUser(exchange) == null) {
+        String user = currentUser(exchange);
+        if (user == null) {
             sendJson(exchange, 401, Json.obj().put("error", "Not authenticated").build());
             return;
         }
@@ -171,12 +178,15 @@ public class IrrigationHandler extends BaseHandler {
              Statement st = conn.createStatement();
              ResultSet rs = st.executeQuery("SELECT * FROM irrigation_logs ORDER BY id DESC LIMIT 30")) {
             boolean first = true;
+            int count = 0;
             while (rs.next()) {
                 if (!first) arr.append(",");
                 arr.append(logRowToJson(rs));
                 first = false;
+                count++;
             }
             arr.append("]");
+            logAccess(user, "irrigation_history", "LIMIT_30", "READ_HISTORY (" + count + " records)", exchange);
             sendJson(exchange, 200, arr.toString());
         } catch (SQLException e) {
             sendJson(exchange, 500, Json.obj().put("error", e.getMessage()).build());

@@ -40,18 +40,28 @@ public class CropHandler extends BaseHandler {
     }
 
     private void listCrops(HttpExchange exchange, String user) throws IOException {
+        boolean admin = isAdmin(exchange);
         StringBuilder arr = new StringBuilder("[");
+        // Row Level Security (RLS): Admins see all crops, operators only see records belonging to their username
+        String sql = admin
+                ? "SELECT * FROM crops ORDER BY id DESC"
+                : "SELECT * FROM crops WHERE username = ? ORDER BY id DESC";
+
         try (Connection conn = Database.connect();
-             PreparedStatement ps = conn.prepareStatement(
-                     "SELECT * FROM crops WHERE username = ? OR username IS NULL ORDER BY id DESC")) {
-            ps.setString(1, user);
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            if (!admin) {
+                ps.setString(1, user);
+            }
             try (ResultSet rs = ps.executeQuery()) {
                 boolean first = true;
+                int count = 0;
                 while (rs.next()) {
                     if (!first) arr.append(",");
                     arr.append(cropRowToJson(rs));
                     first = false;
+                    count++;
                 }
+                logAccess(user, "crop_collection", admin ? "ALL" : user, "LIST (" + count + " records)", exchange);
             }
             arr.append("]");
             sendJson(exchange, 200, arr.toString());
@@ -104,6 +114,7 @@ public class CropHandler extends BaseHandler {
             try (ResultSet keys = ps.getGeneratedKeys()) {
                 if (keys.next()) newId = keys.getInt(1);
             }
+            logAccess(user, "crop", String.valueOf(newId), "CREATE", exchange);
             sendJson(exchange, 201, Json.obj()
                     .put("id", newId)
                     .put("message", "Crop registered")
@@ -142,6 +153,7 @@ public class CropHandler extends BaseHandler {
     }
 
     private void updateCrop(HttpExchange exchange, String user, int id) throws IOException {
+        boolean admin = isAdmin(exchange);
         Map<String, String> body = Json.parseFlat(readBody(exchange));
         String cropName = body.getOrDefault("crop_name", "").trim();
         String variety = body.getOrDefault("variety", "").trim();
@@ -166,11 +178,15 @@ public class CropHandler extends BaseHandler {
         if (growthStage.isEmpty()) growthStage = "Vegetative";
         if (irrigationStatus.isEmpty()) irrigationStatus = "Optimal";
 
+        // Row Level Security (RLS): admins can update any crop; operators only update their own
+        String sql = admin
+                ? "UPDATE crops SET crop_name = ?, variety = ?, field_plot = ?, area_acres = ?, "
+                + "planting_date = ?, growth_stage = ?, irrigation_status = ?, notes = ? WHERE id = ?"
+                : "UPDATE crops SET crop_name = ?, variety = ?, field_plot = ?, area_acres = ?, "
+                + "planting_date = ?, growth_stage = ?, irrigation_status = ?, notes = ? WHERE id = ? AND username = ?";
+
         try (Connection conn = Database.connect();
-             PreparedStatement ps = conn.prepareStatement(
-                     "UPDATE crops SET crop_name = ?, variety = ?, field_plot = ?, area_acres = ?, "
-                             + "planting_date = ?, growth_stage = ?, irrigation_status = ?, notes = ? "
-                             + "WHERE id = ? AND (username = ? OR username IS NULL)")) {
+             PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, cropName);
             ps.setString(2, variety);
             ps.setString(3, fieldPlot);
@@ -180,12 +196,15 @@ public class CropHandler extends BaseHandler {
             ps.setString(7, irrigationStatus);
             ps.setString(8, notes);
             ps.setInt(9, id);
-            ps.setString(10, user);
+            if (!admin) {
+                ps.setString(10, user);
+            }
 
             int rows = ps.executeUpdate();
             if (rows == 0) {
-                sendJson(exchange, 404, Json.obj().put("error", "Crop record not found").build());
+                sendJson(exchange, 404, Json.obj().put("error", "Crop record not found or access denied").build());
             } else {
+                logAccess(user, "crop", String.valueOf(id), "UPDATE", exchange);
                 sendJson(exchange, 200, Json.obj().put("message", "Crop updated").build());
             }
         } catch (SQLException e) {
@@ -194,15 +213,23 @@ public class CropHandler extends BaseHandler {
     }
 
     private void deleteCrop(HttpExchange exchange, String user, int id) throws IOException {
+        boolean admin = isAdmin(exchange);
+        // Row Level Security (RLS): admins can delete any crop; operators only delete their own
+        String sql = admin
+                ? "DELETE FROM crops WHERE id = ?"
+                : "DELETE FROM crops WHERE id = ? AND username = ?";
+
         try (Connection conn = Database.connect();
-             PreparedStatement ps = conn.prepareStatement(
-                     "DELETE FROM crops WHERE id = ? AND (username = ? OR username IS NULL)")) {
+             PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, id);
-            ps.setString(2, user);
+            if (!admin) {
+                ps.setString(2, user);
+            }
             int rows = ps.executeUpdate();
             if (rows == 0) {
-                sendJson(exchange, 404, Json.obj().put("error", "Crop not found").build());
+                sendJson(exchange, 404, Json.obj().put("error", "Crop not found or access denied").build());
             } else {
+                logAccess(user, "crop", String.valueOf(id), "DELETE", exchange);
                 sendJson(exchange, 200, Json.obj().put("message", "Crop deleted").build());
             }
         } catch (SQLException e) {

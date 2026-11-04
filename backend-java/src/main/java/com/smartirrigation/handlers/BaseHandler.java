@@ -56,6 +56,51 @@ public abstract class BaseHandler {
         return SessionManager.usernameForToken(token);
     }
 
+    /** Returns the logged-in user's role (e.g. 'admin', 'operator'), or null if unauthenticated. */
+    protected String currentUserRole(HttpExchange exchange) {
+        String authHeader = exchange.getRequestHeaders().getFirst("Authorization");
+        String token = SessionManager.extractToken(authHeader);
+        return SessionManager.roleForToken(token);
+    }
+
+    /** Checks whether the authenticated user has administrative privileges. */
+    protected boolean isAdmin(HttpExchange exchange) {
+        String role = currentUserRole(exchange);
+        if ("admin".equalsIgnoreCase(role)) return true;
+        String user = currentUser(exchange);
+        return "elango_admin".equalsIgnoreCase(user);
+    }
+
+    /** Extracts client remote IP address (respecting X-Forwarded-For if behind a proxy). */
+    protected String clientIp(HttpExchange exchange) {
+        String xff = exchange.getRequestHeaders().getFirst("X-Forwarded-For");
+        if (xff != null && !xff.isBlank()) {
+            return xff.split(",")[0].trim();
+        }
+        if (exchange.getRemoteAddress() != null && exchange.getRemoteAddress().getAddress() != null) {
+            return exchange.getRemoteAddress().getAddress().getHostAddress();
+        }
+        return "127.0.0.1";
+    }
+
+    /** Logs an audit event recording who opened/accessed or modified each record. */
+    protected void logAccess(String username, String entityType, String entityId, String action, HttpExchange exchange) {
+        if (username == null || username.isBlank()) return;
+        String ip = clientIp(exchange);
+        try (java.sql.Connection conn = com.smartirrigation.Database.connect();
+             java.sql.PreparedStatement ps = conn.prepareStatement(
+                     "INSERT INTO access_audit_logs (username, entity_type, entity_id, action, ip_address) VALUES (?, ?, ?, ?, ?)")) {
+            ps.setString(1, username);
+            ps.setString(2, entityType);
+            ps.setString(3, entityId);
+            ps.setString(4, action);
+            ps.setString(5, ip);
+            ps.executeUpdate();
+        } catch (Exception e) {
+            System.err.println("[AuditLog] Failed to record access log: " + e.getMessage());
+        }
+    }
+
     protected Map<String, String> queryParams(HttpExchange exchange) {
         Map<String, String> params = new HashMap<>();
         String query = exchange.getRequestURI().getQuery();
