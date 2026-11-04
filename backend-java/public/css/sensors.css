@@ -1,0 +1,243 @@
+/* ==========================================================================
+   AgroPulse Sensor Monitoring - Specialized Styles
+   ========================================================================== */
+
+.sensors-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 4px 28px 28px 28px;
+}
+
+/* Row 1: KPI Cards */
+.sensors-kpi-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.kpi-target-band {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  background: rgba(15, 138, 75, 0.2);
+  border-radius: 999px;
+}
+
+.stale-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--amber);
+  background: var(--amber-soft);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+/* Row 2: Real-Time Monitoring Chart Card */
+.chart-controls-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.series-pills {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.series-pill-btn {
+  background: #FFFFFF;
+  border: 1px solid var(--card-border);
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 11.5px;
+  font-weight: 500;
+  color: var(--muted);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: inherit;
+  transition: all 0.15s ease;
+}
+
+.series-pill-btn:hover {
+  background: var(--pill);
+  color: var(--ink);
+}
+
+.series-pill-btn.active {
+  color: var(--ink);
+  font-weight: 600;
+  border-color: #D0D0D0;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+
+.series-pill-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.chart-summary-bar {
+  background: #FFFFFF;
+  border: 1px solid var(--card-border);
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-size: 12px;
+  color: var(--muted);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  width: fit-content;
+  max-width: 100%;
+}
+
+.chart-canvas-container {
+  height: 270px;
+  position: relative;
+  width: 100%;
+}
+
+/* Row 3: Bottom 2-Column Section */
+.sensors-bottom-row {
+  display: grid;
+  grid-template-columns: 1.8fr 1fr;
+  gap: 12px;
+}
+
+/* Table Toolbar Filters */
+.table-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.table-filter-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.filter-input {
+  background: #FFFFFF;
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  padding: 5px 10px;
+  font-size: 12px;
+  font-family: inherit;
+  color: var(--ink);
+  outline: none;
+}
+
+.filter-input:focus {
+  border-color: var(--green);
+}
+
+/* Right Column Cards */
+.side-cards-col {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Probe Status Card */
+.probe-meta-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.probe-meta-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: #FFFFFF;
+  border: 1px solid var(--card-border);
+  border-radius: 10px;
+  font-size: 12px;
+}
+
+.probe-meta-label {
+  color: var(--muted);
+}
+
+.probe-meta-value {
+  font-weight: 600;
+  color: var(--ink);
+}
+
+/* Alert Thresholds Card */
+.threshold-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.threshold-inputs-dual {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.threshold-num-input {
+  width: 54px;
+  background: #FFFFFF;
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  padding: 5px 6px;
+  font-size: 12px;
+  text-align: center;
+  font-family: inherit;
+  outline: none;
+}
+
+.threshold-num-input:focus {
+  border-color: var(--green);
+}
+
+.threshold-help {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+/* Responsive Rules */
+@media (max-width: 1199px) and (min-width: 768px) {
+  .sensors-kpi-row {
+    grid-template-columns: 1fr 1fr;
+  }
+  .sensors-bottom-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 767px) {
+  .sensors-container {
+    padding: 8px 16px 24px 16px;
+  }
+  .sensors-kpi-row {
+    grid-template-columns: 1fr;
+  }
+  .sensors-bottom-row {
+    grid-template-columns: 1fr;
+  }
+  .chart-canvas-container {
+    height: 230px;
+  }
+}
+

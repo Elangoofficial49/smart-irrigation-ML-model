@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reports & History • AgroPulse</title>
+  <link rel="canonical" href="https://agropulse.farm/reports" />
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#163D2B" />
+  <link rel="icon" type="image/svg+xml" href="icons/icon.svg" />
+  <link rel="shortcut icon" href="favicon.ico" />
+
+  <!-- Google Fonts & Chart.js -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Shared Styles -->
+  <link rel="stylesheet" href="css/shared.css" />
+  <style>
+    .reports-container {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 4px 28px 28px 28px;
+    }
+    .filter-bar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: #FFFFFF;
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      box-shadow: var(--shadow-subtle);
+      flex-wrap: wrap;
+    }
+    .kpi-row-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+    @media (max-width: 991px) {
+      .kpi-row-4 { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 575px) {
+      .kpi-row-4 { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard-shell" id="appShell" data-page="reports" data-title="Reports & History" data-subtitle="Audit farm water usage, evaluate ML decisions, and generate printable compliance reports.">
+    <main class="app-main">
+      <div class="reports-container">
+        <!-- 1. Sticky Filter Bar -->
+        <div class="filter-bar">
+          <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+            <div class="segmented-control" role="group" aria-label="Date Range Filter">
+              <button type="button" class="seg-btn" data-range="today">Today</button>
+              <button type="button" class="seg-btn active" data-range="7d">Last 7 Days</button>
+              <button type="button" class="seg-btn" data-range="30d">Last 30 Days</button>
+            </div>
+
+            <select id="reportPlotFilter" class="form-control" style="width:160px; padding:5px 28px 5px 10px; font-size:12px;">
+              <option value="all">All Plots (Composite)</option>
+              <option value="plot-1">Plot 1: Tomato</option>
+              <option value="plot-2">Plot 2: Chilli</option>
+            </select>
+          </div>
+
+          <div style="display:flex; align-items:center; gap:8px;">
+            <button type="button" class="btn btn-outline btn-sm" id="printReportBtn" onclick="window.print()">
+              <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+              <span>Print / Save PDF</span>
+            </button>
+            <button type="button" class="btn btn-outline btn-sm" id="exportFullCsvBtn">
+              <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+              <span>Download CSV</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 2. Four Summary KPI Cards -->
+        <div class="kpi-row-4">
+          <div class="kpi-card">
+            <span class="kpi-label">Total Water Consumed</span>
+            <div class="kpi-value-row">
+              <span class="kpi-value" id="kpiTotalWater">8,640</span>
+              <span class="kpi-unit">L</span>
+            </div>
+            <div class="kpi-footer">
+              <span class="kpi-trend up">&darr; 8.2% vs prior week</span>
+              <span>7 days</span>
+            </div>
+          </div>
+
+          <div class="kpi-card">
+            <span class="kpi-label">Irrigation Events</span>
+            <div class="kpi-value-row">
+              <span class="kpi-value" id="kpiEventCount">14</span>
+              <span class="kpi-unit">events</span>
+            </div>
+            <div class="kpi-footer">
+              <span>Avg 18 min runtime</span>
+              <span>Controlled</span>
+            </div>
+          </div>
+
+          <div class="kpi-card">
+            <span class="kpi-label">Auto vs Manual Share</span>
+            <div class="kpi-value-row">
+              <span class="kpi-value" id="kpiAutoShare">92</span>
+              <span class="kpi-unit">% Auto</span>
+            </div>
+            <div class="kpi-footer">
+              <span class="status-pill success"><span class="dot"></span>ML Guided</span>
+              <span>8% Manual</span>
+            </div>
+          </div>
+
+          <div class="kpi-card">
+            <span class="kpi-label">Avg ML Confidence</span>
+            <div class="kpi-value-row">
+              <span class="kpi-value" id="kpiAvgConf">95.8</span>
+              <span class="kpi-unit">%</span>
+            </div>
+            <div class="kpi-footer">
+              <span class="status-pill success"><span class="dot"></span>High Precision</span>
+              <span>Random Forest</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. Tab Navigation & Views -->
+        <div class="card">
+          <nav class="nav-tabs" role="tablist">
+            <button type="button" class="tab-link active" data-tab="water">Water Consumption</button>
+            <button type="button" class="tab-link" data-tab="history">Irrigation History</button>
+            <button type="button" class="tab-link" data-tab="predictions">Previous Predictions</button>
+            <button type="button" class="tab-link" data-tab="reports">Executive Summary</button>
+          </nav>
+
+          <!-- Tab 1: Water Consumption Chart & Table -->
+          <div id="tab-water" class="tab-pane">
+            <div style="height:240px; margin-bottom:16px;">
+              <canvas id="waterBarChart"></canvas>
+            </div>
+
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th class="num">Events</th>
+                    <th class="num">Total Consumed (L)</th>
+                    <th class="num">Avg per Event (L)</th>
+                  </tr>
+                </thead>
+                <tbody id="waterTableBody">
+                  <tr><td>04 Nov 2026</td><td class="num">2</td><td class="num">1,240 L</td><td class="num">620 L</td></tr>
+                  <tr><td>03 Nov 2026</td><td class="num">2</td><td class="num">1,350 L</td><td class="num">675 L</td></tr>
+                  <tr><td>02 Nov 2026</td><td class="num">2</td><td class="num">1,180 L</td><td class="num">590 L</td></tr>
+                  <tr><td>01 Nov 2026</td><td class="num">3</td><td class="num">1,820 L</td><td class="num">607 L</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Legal Footer -->
+      <footer class="app-footer">
+        <div>&copy; 2026 AgroPulse Operations (<a href="https://agropulse.farm">agropulse.farm</a>). Precision Irrigation Telemetry.</div>
+      </footer>
+    </main>
+  </div>
+
+  <script src="js/shared.js"></script>
+  <script src="js/api.js"></script>
+  <script>
+    (function () {
+      "use strict";
+
+      document.addEventListener("DOMContentLoaded", () => {
+        AgroPulse.initShell("reports", "Reports & History", "Audit farm water usage, evaluate ML decisions, and generate printable compliance reports.");
+        initChart();
+      });
+
+      function initChart() {
+        const ctx = document.getElementById("waterBarChart");
+        if (!ctx) return;
+        new Chart(ctx, {
+          type: "bar",
+          data: {
+            labels: ["29 Oct", "30 Oct", "31 Oct", "01 Nov", "02 Nov", "03 Nov", "04 Nov"],
+            datasets: [{
+              label: "Liters Consumed",
+              data: [1100, 1250, 950, 1820, 1180, 1350, 1240],
+              backgroundColor: "rgba(15, 138, 75, 0.75)",
+              borderRadius: 6
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              y: { grid: { color: "#ECECEC" }, ticks: { font: { family: "Inter", size: 11 }, color: "#8A8A8A" } },
+              x: { grid: { display: false }, ticks: { font: { family: "Inter", size: 11 }, color: "#8A8A8A" } }
+            }
+          }
+        });
+      }
+    })();
+  </script>
+</body>
+</html>
+

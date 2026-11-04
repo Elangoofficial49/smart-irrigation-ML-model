@@ -7,436 +7,326 @@
   <link rel="canonical" href="https://agropulse.farm/sensors" />
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#163D2B" />
-  <meta name="mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="AgroPulse" />
-  <link rel="apple-touch-icon" href="icons/icon-192.svg" />
   <link rel="icon" type="image/svg+xml" href="icons/icon.svg" />
   <link rel="shortcut icon" href="favicon.ico" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <!-- Google Fonts & Chart.js -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <link rel="stylesheet" href="css/style.css?v=6" />
+
+  <!-- Shared & Page Styles -->
+  <link rel="stylesheet" href="css/shared.css" />
+  <link rel="stylesheet" href="css/sensors.css" />
 </head>
 <body>
-  <div class="app-layout">
-    <!-- Compact Hover-Expand Left Sidebar -->
-    <aside class="sidebar">
-      <div class="sidebar-header">
-        <div class="logo-icon"><i class="fa-solid fa-seedling" aria-hidden="true"></i></div>
-        <div>
-          <div class="brand-title">AgroPulse</div>
-          <div class="brand-sub">Precision Irrigation</div>
+  <div class="dashboard-shell" id="appShell" data-page="sensors" data-title="Sensor Monitoring" data-subtitle="Field probe health, real-time volumetric soil moisture readings, and historical telemetry.">
+    <!-- Main Content Area (Sidebar and Header injected by shared.js) -->
+    <main class="app-main">
+      <div class="sensors-container">
+        <!-- Error State Overlay (Hidden by Default) -->
+        <div id="sensorsErrorState" class="empty-state" style="display:none; background:#FFFFFF; border:1px solid var(--card-border); border-radius:var(--card-radius); padding:32px 16px;">
+          <div class="empty-icon" style="background:var(--red-soft); color:var(--red);">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+          </div>
+          <div class="empty-title">Sensor Connection Interrupted</div>
+          <p class="empty-desc">Unable to reach the ground telemetry transceiver. Check probe power or retry connection.</p>
+          <button type="button" class="btn btn-outline btn-sm" id="errorRetryBtn" style="margin-top:12px;">Retry Connection</button>
         </div>
+
+        <!-- Row 1: Three Primary Telemetry KPI Cards -->
+        <section class="sensors-kpi-row" aria-label="Live Sensor Telemetry Gauges">
+          <!-- 1. Soil Moisture Readings -->
+          <div class="kpi-card" aria-labelledby="kpiMoistHeading">
+            <div class="kpi-header">
+              <span class="kpi-label" id="kpiMoistHeading">Soil Moisture Readings</span>
+              <span class="kpi-trend neutral" id="kpiMoistTrend" title="Trend vs previous reading">&rarr; 0.0%</span>
+            </div>
+            <div class="kpi-value-row">
+              <span class="kpi-value" id="kpiMoistVal">--</span>
+              <span class="kpi-unit">% VWC</span>
+            </div>
+            <div class="kpi-bar-track" role="img" aria-label="Optimal root-zone moisture band 35% to 75%">
+              <div class="kpi-target-band" style="left:35%; width:40%;" title="Optimal Root-Zone Band: 35% to 75%"></div>
+              <div class="kpi-bar-fill" id="kpiMoistBar" style="width:0%; background:var(--green);"></div>
+            </div>
+            <div class="kpi-footer">
+              <span class="status-pill success" id="kpiMoistStatus"><span class="dot"></span>Optimal</span>
+              <span id="kpiMoistTime">--</span>
+            </div>
+          </div>
+
+          <!-- 2. Temperature Readings -->
+          <div class="kpi-card" aria-labelledby="kpiTempHeading">
+            <div class="kpi-header">
+              <span class="kpi-label" id="kpiTempHeading">Temperature Readings</span>
+              <span class="kpi-trend neutral" id="kpiTempTrend" title="Trend vs previous reading">&rarr; 0.0°C</span>
+            </div>
+            <div class="kpi-value-row">
+              <span class="kpi-value" id="kpiTempVal">--</span>
+              <span class="kpi-unit">&deg;C</span>
+            </div>
+            <div class="kpi-bar-track" role="img" aria-label="Target thermal range 20°C to 34°C">
+              <div class="kpi-target-band" style="left:40%; width:28%;" title="Target Range: 20°C to 34°C"></div>
+              <div class="kpi-bar-fill" id="kpiTempBar" style="width:0%; background:var(--amber);"></div>
+            </div>
+            <div class="kpi-footer">
+              <span class="status-pill success" id="kpiTempStatus"><span class="dot"></span>Within Target (20-34&deg;C)</span>
+              <span id="kpiTempTime">--</span>
+            </div>
+          </div>
+
+          <!-- 3. Humidity Readings -->
+          <div class="kpi-card" aria-labelledby="kpiHumHeading">
+            <div class="kpi-header">
+              <span class="kpi-label" id="kpiHumHeading">Humidity Readings</span>
+              <span class="kpi-trend neutral" id="kpiHumTrend" title="Trend vs previous reading">&rarr; 0.0%</span>
+            </div>
+            <div class="kpi-value-row">
+              <span class="kpi-value" id="kpiHumVal">--</span>
+              <span class="kpi-unit">% RH</span>
+            </div>
+            <div class="kpi-bar-track" role="img" aria-label="Relative humidity range">
+              <div class="kpi-bar-fill" id="kpiHumBar" style="width:0%; background:var(--blue);"></div>
+            </div>
+            <div class="kpi-footer">
+              <span class="status-pill info" id="kpiHumStatus"><span class="dot"></span>Atmospheric Balance</span>
+              <span id="kpiHumTime">--</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Row 2: Real-Time Monitoring Chart Card (Full Width) -->
+        <section class="card" aria-labelledby="chartTitle">
+          <div class="card-header">
+            <div>
+              <h2 class="card-title" id="chartTitle">Real-Time Monitoring</h2>
+              <div class="card-subtitle">Capacitive Ground Probe #1 telemetry with critical 35% irrigation trigger</div>
+            </div>
+
+            <!-- Header Controls: Live Toggle, Poll Now, Range Control, Series Pills -->
+            <div class="chart-controls-wrap">
+              <!-- Live Toggle Switch -->
+              <div style="display:flex; align-items:center; gap:8px;">
+                <button type="button" class="toggle-switch active" id="liveToggleBtn" role="switch" aria-checked="true" aria-label="Toggle live telemetry polling">
+                  <span class="toggle-thumb"></span>
+                </button>
+                <span style="font-size:12px; font-weight:600; color:var(--ink);" id="liveStatusText">Live</span>
+              </div>
+
+              <!-- Poll Now Button -->
+              <button type="button" class="btn btn-outline btn-sm" id="pollNowBtn" title="Poll field probe immediately">
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+                <span>Poll now</span>
+              </button>
+
+              <!-- Segmented Range Control (10 / 25 / 50 samples) -->
+              <div class="segmented-control" role="group" aria-label="Sample Range Control">
+                <button type="button" class="seg-btn chart-seg-btn" data-limit="10">Last 10</button>
+                <button type="button" class="seg-btn chart-seg-btn active" data-limit="25">25</button>
+                <button type="button" class="seg-btn chart-seg-btn" data-limit="50">50</button>
+              </div>
+
+              <!-- Series Toggle Pills -->
+              <div class="series-pills" role="group" aria-label="Chart Series Toggles">
+                <button type="button" class="series-pill-btn active" data-series="moisture" title="Toggle Soil Moisture Series">
+                  <span class="series-pill-dot" style="color:var(--green);"></span>
+                  <span>Soil moisture</span>
+                </button>
+                <button type="button" class="series-pill-btn active" data-series="temp" title="Toggle Temperature Series">
+                  <span class="series-pill-dot" style="color:var(--amber);"></span>
+                  <span>Temperature</span>
+                </button>
+                <button type="button" class="series-pill-btn active" data-series="humidity" title="Toggle Humidity Series">
+                  <span class="series-pill-dot" style="color:var(--blue);"></span>
+                  <span>Humidity</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Summary Pill Row -->
+          <div class="chart-summary-bar" id="chartSummaryRow" aria-live="polite">
+            Loading telemetry summary...
+          </div>
+
+          <!-- Line Chart Canvas -->
+          <div class="chart-canvas-container">
+            <canvas id="realtimeChartCanvas" role="img" aria-label="Real-time multi-sensor telemetry trend chart"></canvas>
+          </div>
+        </section>
+
+        <!-- Row 3: Bottom Two-Column Section (Sensor History Table + Status/Thresholds) -->
+        <section class="sensors-bottom-row">
+          <!-- Left: Sensor History Table Card (~2/3 width) -->
+          <div class="card" aria-labelledby="historyTableHeading">
+            <div class="card-header">
+              <div>
+                <h2 class="card-title" id="historyTableHeading">Sensor History</h2>
+                <div class="card-subtitle">Timestamped field telemetry log with filter and export capabilities</div>
+              </div>
+
+              <button type="button" class="btn btn-outline btn-sm" id="exportCsvBtn" title="Export filtered records to RFC-4180 CSV">
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                <span>Export CSV</span>
+              </button>
+            </div>
+
+            <!-- Table Filters Toolbar -->
+            <div class="table-toolbar">
+              <div class="table-filter-group">
+                <label for="tableStartDate" style="font-size:12px; color:var(--muted);">From:</label>
+                <input type="date" id="tableStartDate" class="filter-input" title="Filter from date" />
+                <label for="tableEndDate" style="font-size:12px; color:var(--muted);">To:</label>
+                <input type="date" id="tableEndDate" class="filter-input" title="Filter to date" />
+              </div>
+
+              <div class="table-filter-group">
+                <label for="tableStatusFilter" style="font-size:12px; color:var(--muted);">Status:</label>
+                <select id="tableStatusFilter" class="filter-input">
+                  <option value="all">All statuses</option>
+                  <option value="optimal">Optimal</option>
+                  <option value="low">Low (&lt;35%)</option>
+                  <option value="high">High (&gt;75%)</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Table Container -->
+            <div class="table-responsive">
+              <table class="data-table" id="historyTable">
+                <thead>
+                  <tr>
+                    <th class="sortable" data-col="recorded_at" title="Click to sort by timestamp">
+                      Timestamp <span class="sort-indicator">&#x21C5;</span>
+                    </th>
+                    <th class="sortable num" data-col="soil_moisture" title="Click to sort by moisture">
+                      Soil Moisture (%) <span class="sort-indicator">&#x21C5;</span>
+                    </th>
+                    <th class="sortable num" data-col="temperature" title="Click to sort by temperature">
+                      Temperature (°C) <span class="sort-indicator">&#x21C5;</span>
+                    </th>
+                    <th class="sortable num" data-col="humidity" title="Click to sort by humidity">
+                      Humidity (%) <span class="sort-indicator">&#x21C5;</span>
+                    </th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+
+              <!-- Empty State -->
+              <div id="tableEmptyState" class="empty-state" style="display:none;">
+                <div class="empty-icon">
+                  <svg viewBox="0 0 24 24"><path d="M4.9 19.1C1 15.2 1 8.8 4.9 4.9"></path><circle cx="12" cy="12" r="2"></circle><path d="M19.1 4.9C23 8.8 23 15.1 19.1 19"></path></svg>
+                </div>
+                <div class="empty-title">No matching sensor records</div>
+                <p class="empty-desc">Try clearing date or status filters to view historical telemetry.</p>
+              </div>
+            </div>
+
+            <!-- Table Pagination Bar -->
+            <div class="table-pagination-bar">
+              <span id="tableCountSummary">Showing 1-10 of 128</span>
+              <div class="pagination-controls">
+                <button type="button" class="btn btn-outline btn-sm" id="pagePrevBtn" title="Previous Page">&larr; Prev</button>
+                <span id="pageCurrentNum" style="font-weight:600; padding:0 6px;">Page 1 of 1</span>
+                <button type="button" class="btn btn-outline btn-sm" id="pageNextBtn" title="Next Page">Next &rarr;</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: Narrow Column with Probe Status & Alert Thresholds -->
+          <div class="side-cards-col">
+            <!-- 1. Probe Status Card -->
+            <div class="card" aria-labelledby="probeStatusHeading">
+              <div class="card-header">
+                <h2 class="card-title" id="probeStatusHeading">Probe Status</h2>
+              </div>
+              <div class="probe-meta-list">
+                <div class="probe-meta-row">
+                  <span class="probe-meta-label">Probe Transceiver</span>
+                  <span class="probe-meta-value" id="probeStatusState">
+                    <span class="status-pill success"><span class="dot"></span>Online</span>
+                  </span>
+                </div>
+                <div class="probe-meta-row">
+                  <span class="probe-meta-label">Data Source</span>
+                  <span class="probe-meta-value" id="probeDataSource">Capacitive Probe #1</span>
+                </div>
+                <div class="probe-meta-row">
+                  <span class="probe-meta-label">Last Reading Time</span>
+                  <span class="probe-meta-value" id="probeLastReadingTime">--</span>
+                </div>
+                <div class="probe-meta-row">
+                  <span class="probe-meta-label">Field Sector</span>
+                  <span class="probe-meta-value">Plot A-1 (Main Horizon)</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- 2. Alert Thresholds Card -->
+            <div class="card" aria-labelledby="thresholdsHeading">
+              <div class="card-header">
+                <h2 class="card-title" id="thresholdsHeading">Alert Thresholds</h2>
+              </div>
+
+              <form id="thresholdsForm" novalidate>
+                <div class="threshold-row">
+                  <label for="threshSoilCrit" class="form-label" style="margin:0;">Soil Moisture Critical</label>
+                  <div style="display:flex; align-items:center; gap:4px;">
+                    <input type="number" id="threshSoilCrit" class="threshold-num-input" min="5" max="90" required />
+                    <span style="font-size:12px; color:var(--muted);">%</span>
+                  </div>
+                </div>
+
+                <div class="threshold-row">
+                  <span class="form-label" style="margin:0;">Temperature Range</span>
+                  <div class="threshold-inputs-dual">
+                    <input type="number" id="threshTempMin" class="threshold-num-input" title="Minimum temperature" required />
+                    <span style="font-size:12px; color:var(--muted);">&ndash;</span>
+                    <input type="number" id="threshTempMax" class="threshold-num-input" title="Maximum temperature" required />
+                    <span style="font-size:12px; color:var(--muted);">°C</span>
+                  </div>
+                </div>
+
+                <div class="threshold-row">
+                  <span class="form-label" style="margin:0;">Humidity Range</span>
+                  <div class="threshold-inputs-dual">
+                    <input type="number" id="threshHumMin" class="threshold-num-input" title="Minimum humidity" required />
+                    <span style="font-size:12px; color:var(--muted);">&ndash;</span>
+                    <input type="number" id="threshHumMax" class="threshold-num-input" title="Maximum humidity" required />
+                    <span style="font-size:12px; color:var(--muted);">%</span>
+                  </div>
+                </div>
+
+                <div class="form-error" id="thresholdsError"></div>
+                <p class="threshold-help">Critical threshold drives automatic Random Forest irrigation triggers.</p>
+
+                <button type="submit" class="btn btn-primary btn-sm" id="saveThresholdsBtn" style="width:100%; margin-top:10px;">
+                  Save Thresholds
+                </button>
+              </form>
+            </div>
+          </div>
+        </section>
       </div>
 
-      <nav class="sidebar-nav" aria-label="Main Navigation">
-        <div class="nav-section-label">Telemetry &amp; Control</div>
-        <a href="dashboard.html" class="nav-item" data-page="dashboard" title="Dashboard">
-          <i class="fa-solid fa-chart-line" aria-hidden="true"></i> <span>Dashboard</span>
-        </a>
-        <a href="sensors.html" class="nav-item active" data-page="sensors" title="Sensor Monitoring">
-          <i class="fa-solid fa-satellite-dish" aria-hidden="true"></i> <span>Sensor Monitoring</span>
-        </a>
-        <a href="irrigation.html" class="nav-item" data-page="irrigation" title="Irrigation Control">
-          <i class="fa-solid fa-faucet-drip" aria-hidden="true"></i> <span>Irrigation Control</span>
-        </a>
-
-        <div class="nav-section-label">Farm Management</div>
-        <a href="crops.html" class="nav-item" data-page="crops" title="Crop Inventory">
-          <i class="fa-solid fa-wheat-awn" aria-hidden="true"></i> <span>Crop Inventory</span>
-        </a>
-        <a href="weather.html" class="nav-item" data-page="weather" title="Weather Intelligence">
-          <i class="fa-solid fa-cloud-sun-rain" aria-hidden="true"></i> <span>Weather Intelligence</span>
-        </a>
-      </nav>
-
-      <div class="sidebar-footer">
-        <div class="user-card">
-          <div class="user-avatar" id="avatarInitials">EL</div>
-          <div class="user-info">
-            <div class="user-name" id="userBadge">Operator</div>
-            <div class="user-role">Field Operations</div>
-          </div>
-        </div>
-        <button class="btn-logout" onclick="logout()" title="Sign Out">
-          <i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i> <span>Sign Out</span>
-        </button>
-      </div>
-    </aside>
-
-    <!-- Main Operations Workspace -->
-    <div class="main-wrapper">
-      <header class="top-navbar">
-        <div style="display:flex; align-items:center; gap:12px;">
-          <button class="mobile-menu-btn" id="mobileToggle" aria-label="Toggle Navigation">
-            <i class="fa-solid fa-bars" aria-hidden="true"></i>
-          </button>
-          <nav class="page-breadcrumb" aria-label="Breadcrumb">
-            <span>AgroPulse</span>
-            <span class="sep">/</span>
-            <span class="current">Sensor Monitoring</span>
-          </nav>
-        </div>
-
-        <div class="top-actions">
-          <span class="status-pill neutral" id="probeHealthPill" aria-live="polite">
-            <span class="status-dot"></span>
-            <span id="probeHealthText">Checking probe status...</span>
-          </span>
-          <a href="irrigation.html" class="btn btn-secondary btn-sm" title="Proceed to Irrigation Control">
-            <span>Irrigation Control</span>
-            <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
-          </a>
-        </div>
-      </header>
-
-      <main class="content-area">
-        <div class="page-header-bar">
-          <div>
-            <h1 class="page-title">Sensor Monitoring</h1>
-            <p class="page-subtitle">Field probe health, real-time volumetric soil moisture readings, timestamps, and historical telemetry.</p>
-          </div>
-          <div class="page-header-actions">
-            <button class="btn btn-secondary btn-sm" onclick="exportCsv()">
-              <i class="fa-solid fa-file-arrow-down" aria-hidden="true"></i>
-              <span>Export CSV</span>
-            </button>
-            <button class="btn btn-primary btn-sm" id="simulateBtn" onclick="simulateReading()">
-              <i class="fa-solid fa-satellite-dish" aria-hidden="true"></i>
-              <span>Poll Field Probe</span>
-            </button>
-          </div>
-        </div>
-
-        <!-- Compact 4-Metric Strip -->
-        <section class="metrics-strip" aria-label="Latest Probe Readings">
-          <div class="metric-cell">
-            <div class="metric-label">
-              <span>Soil Moisture Content</span>
-              <i class="fa-solid fa-droplet" aria-hidden="true"></i>
-            </div>
-            <div class="metric-value-row">
-              <span class="metric-value skeleton-shimmer" id="valMoisture">00.0%</span>
-            </div>
-            <div class="metric-desc" id="statusMoisture">Capacitive Probe #1 · Sector A</div>
-          </div>
-
-          <div class="metric-cell">
-            <div class="metric-label">
-              <span>Ambient / Soil Temp</span>
-              <i class="fa-solid fa-temperature-half" aria-hidden="true"></i>
-            </div>
-            <div class="metric-value-row">
-              <span class="metric-value skeleton-shimmer" id="valTemp">00.0°C</span>
-            </div>
-            <div class="metric-desc" id="statusTemp">Digital Probe #1 · Sector A</div>
-          </div>
-
-          <div class="metric-cell">
-            <div class="metric-label">
-              <span>Relative Humidity</span>
-              <i class="fa-solid fa-wind" aria-hidden="true"></i>
-            </div>
-            <div class="metric-value-row">
-              <span class="metric-value skeleton-shimmer" id="valHumidity">00.0%</span>
-            </div>
-            <div class="metric-desc">Atmospheric Node · Sector A</div>
-          </div>
-
-          <div class="metric-cell">
-            <div class="metric-label">
-              <span>Rainfall Probability</span>
-              <i class="fa-solid fa-cloud-rain" aria-hidden="true"></i>
-            </div>
-            <div class="metric-value-row">
-              <span class="metric-value skeleton-shimmer" id="valRain">00.0%</span>
-            </div>
-            <div class="metric-desc" id="lastTimestampLabel">Last sample: N/A</div>
-          </div>
-        </section>
-
-        <!-- Multi-Sensor Telemetry Time-Series Panel -->
-        <section class="panel" style="margin-bottom:16px;">
-          <div class="panel-header">
-            <div>
-              <div class="panel-title">
-                <i class="fa-solid fa-chart-line" aria-hidden="true"></i>
-                <span>Multi-Sensor Telemetry Time-Series</span>
-              </div>
-              <div class="panel-subtitle">Volumetric moisture, temperature, humidity, and rain probability trends (Capacitive Probe #1 &amp; DHT22 Node)</div>
-            </div>
-            <span class="badge badge-neutral" id="chartSampleCountBadge">0 samples</span>
-          </div>
-          <div style="height:260px; position:relative;">
-            <canvas id="sensorHistoryChart"></canvas>
-          </div>
-        </section>
-
-        <!-- Historical Readings Table -->
-        <section class="panel panel-flush" style="margin-bottom:0;">
-          <div class="panel-header">
-            <div>
-              <div class="panel-title">
-                <i class="fa-solid fa-database" aria-hidden="true"></i>
-                <span>Historical Sensor Readings</span>
-              </div>
-              <div class="panel-subtitle">Timestamped telemetry log from Capacitive Probe #1 (Plot A-1 / B-2 Sector)</div>
-            </div>
-            <div style="display:flex; gap:8px; align-items:center;">
-              <label for="limitSelect" style="font-size:12px; font-weight:600; color:var(--text-secondary);">Rows:</label>
-              <select id="limitSelect" class="toolbar-select" onchange="loadHistory()">
-                <option value="10">10 records</option>
-                <option value="25" selected>25 records</option>
-                <option value="50">50 records</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="table-responsive">
-            <table class="data-table" id="historyTable">
-              <thead>
-                <tr>
-                  <th>Measurement Timestamp</th>
-                  <th>Source Probe / Field</th>
-                  <th class="num">Soil Moisture</th>
-                  <th class="num">Temperature</th>
-                  <th class="num">Relative Humidity</th>
-                  <th class="num">Rain Probability</th>
-                  <th>Moisture Status</th>
-                </tr>
-              </thead>
-              <tbody></tbody>
-            </table>
-            <div class="empty-state" id="historyEmpty" style="display:none;">
-              <div class="empty-state-icon"><i class="fa-solid fa-satellite-dish" aria-hidden="true"></i></div>
-              <div class="empty-state-title">No sensor telemetry recorded yet</div>
-              <p class="empty-state-desc">Click "Poll Field Probe" above to capture a live reading from the field transceiver.</p>
-            </div>
-          </div>
-        </section>
-      </main>
-
-      <footer class="app-legal-footer">
-        <div>&copy; 2026 AgroPulse Operations (<a href="https://agropulse.farm" style="color:inherit; text-decoration:none;">agropulse.farm</a>). Precision Irrigation Telemetry.</div>
-        <div class="footer-links">
+      <!-- Legal Footer -->
+      <footer class="app-footer">
+        <div>&copy; 2026 AgroPulse Operations (<a href="https://agropulse.farm">agropulse.farm</a>). Precision Irrigation Telemetry.</div>
+        <div style="display:flex; gap:16px;">
           <a href="privacy.html">Privacy Policy</a>
           <a href="terms.html">Terms &amp; Conditions</a>
         </div>
       </footer>
-    </div>
+    </main>
   </div>
 
-  <script src="js/common.js"></script>
-  <script src="js/ai-assistant.js"></script>
-  <script>
-    requireAuth();
-    initLayout("sensors");
-
-    let historyChart = null;
-    let cachedReadings = [];
-
-    function renderChart(readings) {
-      const ctx = document.getElementById("sensorHistoryChart").getContext("2d");
-      if (historyChart) historyChart.destroy();
-
-      const rev = [...readings].reverse();
-      const labels = rev.map((r, i) => (r.recorded_at && r.recorded_at.length >= 16) ? r.recorded_at.slice(11, 16) : `T-${rev.length - i}`);
-      const moisture = rev.map((r) => r.soil_moisture);
-      const temp = rev.map((r) => r.temperature);
-      const humidity = rev.map((r) => r.humidity);
-      const rain = rev.map((r) => r.rainfall_prob);
-
-      document.getElementById("chartSampleCountBadge").textContent = `${readings.length} samples`;
-
-      historyChart = new Chart(ctx, {
-        type: "line",
-        data: {
-          labels: labels,
-          datasets: [
-            {
-              label: "Soil Moisture (%)",
-              data: moisture,
-              borderColor: "#21834A",
-              backgroundColor: "rgba(33, 131, 74, 0.08)",
-              fill: true,
-              tension: 0.3,
-              borderWidth: 2,
-              pointRadius: 2.5
-            },
-            {
-              label: "Temperature (°C)",
-              data: temp,
-              borderColor: "#B7791F",
-              backgroundColor: "transparent",
-              tension: 0.3,
-              borderWidth: 1.75,
-              pointRadius: 2
-            },
-            {
-              label: "Humidity (%)",
-              data: humidity,
-              borderColor: "#3478B8",
-              backgroundColor: "transparent",
-              tension: 0.3,
-              borderWidth: 1.75,
-              pointRadius: 2
-            },
-            {
-              label: "Rain Prob (%)",
-              data: rain,
-              borderColor: "#4A5850",
-              borderDash: [4, 4],
-              backgroundColor: "transparent",
-              tension: 0.3,
-              borderWidth: 1.5,
-              pointRadius: 2
-            }
-          ]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: {
-              position: "top",
-              align: "end",
-              labels: { boxWidth: 12, font: { family: "Inter", size: 11.5, weight: "600" }, color: "#17231D" }
-            },
-            tooltip: { cornerRadius: 6 }
-          },
-          scales: {
-            y: { min: 0, max: 100, grid: { color: "#E1E7E1" }, ticks: { color: "#4A5850", font: { family: "Inter", size: 11 } } },
-            x: { grid: { display: false }, ticks: { color: "#4A5850", font: { family: "Inter", size: 11 } } }
-          }
-        }
-      });
-    }
-
-    async function loadLatest() {
-      try {
-        const sensor = await apiFetch("/api/sensors/latest");
-        const pill = document.getElementById("probeHealthPill");
-        const pillText = document.getElementById("probeHealthText");
-        ["valMoisture", "valTemp", "valHumidity", "valRain"].forEach((id) => {
-          document.getElementById(id).classList.remove("skeleton-shimmer");
-        });
-
-        if (sensor && sensor.soil_moisture != null) {
-          const sm = Number(sensor.soil_moisture);
-          const temp = Number(sensor.temperature || 0);
-          const hum = Number(sensor.humidity || 0);
-          const rain = Number(sensor.rainfall_prob || 0);
-
-          document.getElementById("valMoisture").textContent = sm.toFixed(1) + "%";
-          document.getElementById("valTemp").textContent = temp.toFixed(1) + "°C";
-          document.getElementById("valHumidity").textContent = hum.toFixed(1) + "%";
-          document.getElementById("valRain").textContent = rain.toFixed(1) + "%";
-          document.getElementById("lastTimestampLabel").textContent = `Measured: ${sensor.recorded_at || "Just now"}`;
-
-          pill.className = "status-pill success";
-          pillText.textContent = "Probe #1 Online · Healthy";
-
-          const statusEl = document.getElementById("statusMoisture");
-          if (sm < 35) {
-            statusEl.innerHTML = '<span style="color:var(--warning-amber); font-weight:600;">Low moisture (&lt; 35%): Requires irrigation</span>';
-          } else if (sm > 75) {
-            statusEl.innerHTML = '<span style="color:var(--info-blue); font-weight:600;">Saturated (&gt; 75%): Hold irrigation</span>';
-          } else {
-            statusEl.innerHTML = '<span style="color:var(--action-green); font-weight:600;">Optimal root-zone hydration</span>';
-          }
-        } else {
-          pill.className = "status-pill warning";
-          pillText.textContent = "No recent telemetry";
-        }
-      } catch (e) {
-        const pill = document.getElementById("probeHealthPill");
-        const pillText = document.getElementById("probeHealthText");
-        pill.className = "status-pill danger";
-        pillText.textContent = "Telemetry Link Error";
-      }
-    }
-
-    async function loadHistory() {
-      renderTableSkeleton("#historyTable tbody", 7, 4);
-      const limit = document.getElementById("limitSelect").value || 25;
-      try {
-        const history = await apiFetch("/api/sensors/history?limit=" + limit);
-        cachedReadings = Array.isArray(history) ? history : [];
-        const tbody = document.querySelector("#historyTable tbody");
-        tbody.innerHTML = "";
-
-        if (cachedReadings.length === 0) {
-          document.getElementById("historyEmpty").style.display = "block";
-          return;
-        }
-
-        document.getElementById("historyEmpty").style.display = "none";
-        renderChart(cachedReadings);
-
-        cachedReadings.forEach((r) => {
-          const sm = Number(r.soil_moisture || 0);
-          let badge = '<span class="status-pill success"><span class="status-dot"></span>Optimal</span>';
-          if (sm < 35) badge = '<span class="status-pill warning"><span class="status-dot"></span>Low Moisture</span>';
-          else if (sm > 75) badge = '<span class="status-pill info"><span class="status-dot"></span>Saturated</span>';
-
-          const tr = document.createElement("tr");
-          tr.innerHTML = `
-            <td style="font-family:var(--font-mono); font-size:12px; color:var(--text-secondary);">${escapeHtml(r.recorded_at || "N/A")}</td>
-            <td>
-              <div class="cell-primary">Capacitive Probe #1</div>
-              <div class="cell-secondary">Sector A (Plot A-1 / B-2)</div>
-            </td>
-            <td class="num"><strong>${sm.toFixed(1)}%</strong></td>
-            <td class="num">${Number(r.temperature || 0).toFixed(1)}°C</td>
-            <td class="num">${Number(r.humidity || 0).toFixed(1)}%</td>
-            <td class="num">${Number(r.rainfall_prob || 0).toFixed(1)}%</td>
-            <td>${badge}</td>
-          `;
-          tbody.appendChild(tr);
-        });
-      } catch (e) {}
-    }
-
-    async function simulateReading() {
-      const btn = document.getElementById("simulateBtn");
-      btn.disabled = true;
-      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> <span>Polling Probe...</span>';
-
-      try {
-        await apiFetch("/api/sensors/simulate", { method: "POST" });
-        showToast("Captured new telemetry sample from Capacitive Probe #1.", "success");
-        await loadLatest();
-        await loadHistory();
-      } catch (err) {
-        showToast(err.message, "error");
-      } finally {
-        btn.disabled = false;
-        btn.innerHTML = '<i class="fa-solid fa-satellite-dish"></i> <span>Poll Field Probe</span>';
-      }
-    }
-
-    function exportCsv() {
-      if (!cachedReadings || cachedReadings.length === 0) {
-        showToast("No sensor telemetry available to export.", "warning");
-        return;
-      }
-      let csv = "ID,Probe_Node,Soil_Moisture_Pct,Temperature_C,Humidity_Pct,Rainfall_Prob_Pct,Recorded_At\n";
-      cachedReadings.forEach((r) => {
-        csv += `${r.id},"Capacitive Probe #1",${r.soil_moisture},${r.temperature},${r.humidity},${r.rainfall_prob},"${r.recorded_at}"\n`;
-      });
-
-      const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `agropulse_sensor_telemetry_${new Date().toISOString().slice(0, 10)}.csv`;
-      a.click();
-      URL.revokeObjectURL(url);
-      showToast("Exported sensor telemetry CSV.", "success");
-    }
-
-    loadLatest();
-    loadHistory();
-  </script>
+  <!-- Shared & Page Logic -->
+  <script src="js/shared.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/sensors.js"></script>
 </body>
 </html>

@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ML Prediction • AgroPulse</title>
+  <link rel="canonical" href="https://agropulse.farm/prediction" />
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#163D2B" />
+  <link rel="icon" type="image/svg+xml" href="icons/icon.svg" />
+  <link rel="shortcut icon" href="favicon.ico" />
+
+  <!-- Google Fonts & Chart.js -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Shared Styles -->
+  <link rel="stylesheet" href="css/shared.css" />
+  <style>
+    .prediction-container {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 4px 28px 28px 28px;
+    }
+    .prediction-main-row {
+      display: grid;
+      grid-template-columns: 360px 1fr;
+      gap: 12px;
+    }
+    .results-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+    .results-hero-card {
+      grid-column: 1 / -1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 24px;
+    }
+    .factor-bar-row {
+      margin-bottom: 8px;
+    }
+    .factor-bar-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11.5px;
+      color: var(--muted);
+      margin-bottom: 3px;
+    }
+    .factor-track {
+      height: 6px;
+      background: #E8E8E8;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+    .factor-fill {
+      height: 100%;
+      background: var(--green);
+      border-radius: 999px;
+    }
+    @media (max-width: 991px) {
+      .prediction-main-row { grid-template-columns: 1fr; }
+      .results-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard-shell" id="appShell" data-page="prediction" data-title="ML Prediction" data-subtitle="Random Forest inference engine for automated evapotranspiration irrigation decisions.">
+    <main class="app-main">
+      <div class="prediction-container">
+        <!-- Main Top Row: Inputs (Left) and Results (Right) -->
+        <div class="prediction-main-row">
+          <!-- Model Inputs Card (~35%) -->
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h2 class="card-title">Model Inputs</h2>
+                <div class="card-subtitle">Telemetry parameters for ML evaluation</div>
+              </div>
+
+              <!-- Use Live Sensor Data Toggle -->
+              <div style="display:flex; align-items:center; gap:6px;">
+                <button type="button" class="toggle-switch active" id="useLiveToggle" role="switch" aria-checked="true" title="Lock to live sensor stream">
+                  <span class="toggle-thumb"></span>
+                </button>
+                <span style="font-size:11.5px; font-weight:600; color:var(--ink);">Live</span>
+              </div>
+            </div>
+
+            <form id="predictionForm" novalidate>
+              <div class="form-group">
+                <label for="inputSoilMoist" class="form-label">Soil Moisture (%)</label>
+                <input type="number" id="inputSoilMoist" class="form-control" step="0.1" min="0" max="100" required readonly />
+              </div>
+
+              <div class="form-group">
+                <label for="inputTemp" class="form-label">Temperature (°C)</label>
+                <input type="number" id="inputTemp" class="form-control" step="0.1" min="-10" max="60" required readonly />
+              </div>
+
+              <div class="form-group">
+                <label for="inputHumidity" class="form-label">Relative Humidity (% RH)</label>
+                <input type="number" id="inputHumidity" class="form-control" step="1" min="0" max="100" required readonly />
+              </div>
+
+              <div class="form-group">
+                <label for="inputRain" class="form-label">Rainfall Probability (%)</label>
+                <input type="number" id="inputRain" class="form-control" step="1" min="0" max="100" required readonly />
+              </div>
+
+              <div style="margin: 12px 0; padding: 10px; background: #FFFFFF; border: 1px solid var(--card-border); border-radius: 12px;">
+                <div style="font-size:11px; color:var(--muted); margin-bottom:4px;">Crop Context</div>
+                <div style="display:flex; gap:6px;">
+                  <span class="status-pill success"><span class="dot"></span>Tomato</span>
+                  <span class="status-pill info">Vegetative Stage</span>
+                </div>
+              </div>
+
+              <button type="submit" class="btn btn-primary" id="runPredictionBtn" style="width:100%;">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                <span>Run Prediction</span>
+              </button>
+            </form>
+          </div>
+
+          <!-- Results Area -->
+          <div class="results-grid">
+            <!-- 1. Watering Needed Hero Card -->
+            <div class="card results-hero-card">
+              <div>
+                <div class="card-subtitle" style="font-weight:600;">Watering Needed?</div>
+                <div class="card-title" id="resWateringNeeded" style="font-size:38px; margin:4px 0; color:var(--green);">No (Hold)</div>
+                <div class="card-subtitle" id="resDecisionReason">Root-zone moisture exceeds evapotranspiration deficit threshold.</div>
+              </div>
+              <div style="text-align:right;">
+                <span class="status-pill success" id="resReqLevelBadge" style="font-size:13px; padding:6px 14px;">Low Demand</span>
+              </div>
+            </div>
+
+            <!-- 2. Prediction Confidence Gauge -->
+            <div class="card" style="align-items:center; text-align:center;">
+              <div style="width:100%; text-align:left;">
+                <div class="card-title">Prediction Confidence</div>
+                <div class="card-subtitle">Random Forest ensemble agreement</div>
+              </div>
+              <div id="confidenceGaugeSvg" style="width:180px; height:100px; margin-top:8px;"></div>
+              <div style="font-family:var(--font-serif); font-size:28px; color:var(--ink); margin-top:-10px;" id="confidenceScoreVal">96.3%</div>
+            </div>
+
+            <!-- 3. Recommended Water Quantity -->
+            <div class="card">
+              <div class="card-title">Recommended Water Quantity</div>
+              <div class="card-subtitle">Plot A-1 demand calculation</div>
+              <div style="font-family:var(--font-serif); font-size:36px; color:var(--ink); margin:12px 0;" id="resQuantityVal">0 L</div>
+              <div class="card-subtitle">Based on plot area (2.5 ac) and vegetative crop stage.</div>
+            </div>
+
+            <!-- 4. Key Factors (Feature Importance) -->
+            <div class="card" style="grid-column: 1 / -1;" id="keyFactorsCard">
+              <div class="card-title">Key Model Factors</div>
+              <div class="card-subtitle" style="margin-bottom:12px;">Feature importance weights from Random Forest split entropy</div>
+
+              <div class="factor-bar-row">
+                <div class="factor-bar-label"><span>Soil Moisture Deficit</span><strong id="factorMoistVal">54.6%</strong></div>
+                <div class="factor-track"><div class="factor-fill" id="factorMoistFill" style="width:54.6%;"></div></div>
+              </div>
+              <div class="factor-bar-row">
+                <div class="factor-bar-label"><span>Rainfall Forecast Probability</span><strong id="factorRainVal">24.0%</strong></div>
+                <div class="factor-track"><div class="factor-fill" id="factorRainFill" style="width:24.0%; background:var(--blue);"></div></div>
+              </div>
+              <div class="factor-bar-row">
+                <div class="factor-bar-label"><span>Drought Stress Index</span><strong id="factorStressVal">15.3%</strong></div>
+                <div class="factor-track"><div class="factor-fill" id="factorStressFill" style="width:15.3%; background:var(--amber);"></div></div>
+              </div>
+            </div>
+
+            <!-- Actions Row -->
+            <div style="grid-column:1 / -1; display:flex; justify-content:flex-end; gap:10px;">
+              <button type="button" class="btn btn-outline" id="runAgainBtn">Reset Inputs</button>
+              <a href="irrigation.html" class="btn btn-primary" id="applyRecommendationBtn">Apply to Irrigation Control &rarr;</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Predictions Table -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h2 class="card-title">Recent Predictions</h2>
+              <div class="card-subtitle">Logged Random Forest inferences</div>
+            </div>
+            <a href="reports.html#predictions" class="card-link">View all &rarr;</a>
+          </div>
+
+          <div class="table-responsive">
+            <table class="data-table" id="recentPredictionsTable">
+              <thead>
+                <tr>
+                  <th>Timestamp</th>
+                  <th>Inputs (Moisture / Temp / Rain)</th>
+                  <th>Watering Needed</th>
+                  <th class="num">Confidence</th>
+                  <th class="num">Quantity</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Today, 09:44</td>
+                  <td>42.5% · 28.0°C · 10%</td>
+                  <td><span class="status-pill success"><span class="dot"></span>Hold</span></td>
+                  <td class="num">96.3%</td>
+                  <td class="num">0 L</td>
+                </tr>
+                <tr>
+                  <td>Today, 06:15</td>
+                  <td>31.2% · 24.5°C · 5%</td>
+                  <td><span class="status-pill warning"><span class="dot"></span>Irrigate</span></td>
+                  <td class="num">94.8%</td>
+                  <td class="num">450 L</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Legal Footer -->
+      <footer class="app-footer">
+        <div>&copy; 2026 AgroPulse Operations (<a href="https://agropulse.farm">agropulse.farm</a>). Precision Irrigation Telemetry.</div>
+      </footer>
+    </main>
+  </div>
+
+  <script src="js/shared.js"></script>
+  <script src="js/api.js"></script>
+  <script>
+    (function () {
+      "use strict";
+
+      let useLive = true;
+
+      document.addEventListener("DOMContentLoaded", async () => {
+        AgroPulse.initShell("prediction", "ML Prediction", "Random Forest inference engine for automated evapotranspiration irrigation decisions.");
+
+        const toggleBtn = document.getElementById("useLiveToggle");
+        const form = document.getElementById("predictionForm");
+        const runBtn = document.getElementById("runPredictionBtn");
+
+        toggleBtn.addEventListener("click", () => {
+          useLive = !useLive;
+          toggleBtn.classList.toggle("active", useLive);
+          toggleBtn.setAttribute("aria-checked", useLive ? "true" : "false");
+          toggleInputsReadOnly(!useLive);
+          if (useLive) loadLiveData();
+        });
+
+        form.addEventListener("submit", async (e) => {
+          e.preventDefault();
+          runBtn.disabled = true;
+          runBtn.innerHTML = `<span>Evaluating...</span>`;
+
+          try {
+            const inputs = {
+              soil_moisture: document.getElementById("inputSoilMoist").value,
+              temperature: document.getElementById("inputTemp").value,
+              humidity: document.getElementById("inputHumidity").value,
+              rainfall_prob: document.getElementById("inputRain").value
+            };
+            const res = await AgroPulse.api.predictIrrigation(inputs);
+            displayPredictionResult(res);
+            AgroPulse.showToast("Evaluation complete.", "success");
+          } catch (err) {
+            AgroPulse.showToast(err.message, "error");
+          } finally {
+            runBtn.disabled = false;
+            runBtn.innerHTML = `<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg><span>Run Prediction</span>`;
+          }
+        });
+
+        document.getElementById("runAgainBtn").addEventListener("click", () => {
+          if (useLive) loadLiveData();
+        });
+
+        await loadLiveData();
+        renderGauge(96.3);
+      });
+
+      async function loadLiveData() {
+        const latest = await AgroPulse.api.getLatestSensorReading();
+        if (latest) {
+          document.getElementById("inputSoilMoist").value = Number(latest.soil_moisture || 42.5).toFixed(1);
+          document.getElementById("inputTemp").value = Number(latest.temperature || 28.0).toFixed(1);
+          document.getElementById("inputHumidity").value = Math.round(Number(latest.humidity || 60));
+          document.getElementById("inputRain").value = Math.round(Number(latest.rainfall_prob || 10));
+        }
+      }
+
+      function toggleInputsReadOnly(editable) {
+        document.querySelectorAll("#predictionForm input").forEach(i => {
+          i.readOnly = !editable;
+          if (editable) i.style.background = "#FFFFFF";
+          else i.style.background = "#FAFAFA";
+        });
+      }
+
+      function displayPredictionResult(res) {
+        const isON = res.status === "ON";
+        const neededEl = document.getElementById("resWateringNeeded");
+        const reasonEl = document.getElementById("resDecisionReason");
+        const badgeEl = document.getElementById("resReqLevelBadge");
+        const qtyEl = document.getElementById("resQuantityVal");
+
+        if (isON) {
+          neededEl.textContent = "Yes (Irrigate)";
+          neededEl.style.color = "var(--amber)";
+          reasonEl.textContent = "Model detected soil moisture deficit relative to evapotranspiration demand.";
+          badgeEl.className = "status-pill warning";
+          badgeEl.textContent = "High Demand";
+          qtyEl.textContent = (res.water_quantity_liters || 450) + " L";
+        } else {
+          neededEl.textContent = "No (Hold)";
+          neededEl.style.color = "var(--green)";
+          reasonEl.textContent = "Root-zone moisture exceeds evapotranspiration deficit threshold.";
+          badgeEl.className = "status-pill success";
+          badgeEl.textContent = "Low Demand";
+          qtyEl.textContent = "0 L";
+        }
+
+        const pct = Math.round((res.confidence || 0.95) * 100);
+        document.getElementById("confidenceScoreVal").textContent = pct + "%";
+        renderGauge(pct);
+      }
+
+      function renderGauge(pct) {
+        const container = document.getElementById("confidenceGaugeSvg");
+        const cx = 90, cy = 80, r = 58;
+        const angle = Math.PI - (Math.max(0, Math.min(100, pct)) / 100) * Math.PI;
+        const endX = cx + r * Math.cos(angle);
+        const endY = cy - r * Math.sin(angle);
+        container.innerHTML = `
+          <svg viewBox="0 0 180 90" width="100%" height="100%">
+            <path d="M 32 80 A 58 58 0 0 1 148 80" fill="none" stroke="#EDEDED" stroke-width="7" stroke-linecap="round" />
+            <path d="M 32 80 A 58 58 0 0 1 ${endX.toFixed(1)} ${endY.toFixed(1)}" fill="none" stroke="#0F8A4B" stroke-width="7" stroke-linecap="round" />
+            <circle cx="${endX.toFixed(1)}" cy="${endY.toFixed(1)}" r="4.5" fill="#FFFFFF" stroke="#0F8A4B" stroke-width="2.5" />
+          </svg>
+        `;
+      }
+    })();
+  </script>
+</body>
+</html>
+
