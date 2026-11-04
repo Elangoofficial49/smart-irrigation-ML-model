@@ -23,7 +23,7 @@ public class StaticFileHandler implements HttpHandler {
     public void handle(HttpExchange exchange) throws IOException {
         String path = exchange.getRequestURI().getPath();
         if (path == null || path.equals("/") || path.equals("/index.html")) {
-            path = "/login.html";
+            path = "/index.html";
         } else if (path.equals("/favicon.ico")) {
             path = "/icons/icon.svg";
         } else if (!path.contains(".")) {

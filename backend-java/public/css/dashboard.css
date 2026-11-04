@@ -1,0 +1,1862 @@
+/* ==========================================================================
+   AgroPulse Operational Dashboard - Soft Gray Bento Design
+   Fonts: Newsreader (serif, 400/500) & Inter
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap');
+
+:root {
+  --page: #DCDCDC;
+  --page-gradient: linear-gradient(180deg, #DCDCDC 0%, #C9C9C9 100%);
+  --shell: #F2F2F2;
+  --card: #F7F7F7;
+  --card-border: #E8E8E8;
+  --card-radius: 16px;
+  --pill: #EDEDED;
+  --ink: #1A1A1A;
+  --muted: #8A8A8A;
+  --green: #0F8A4B;
+  --green-soft: #CFE7D8;
+  --blue: #2F6BFF;
+  --blue-soft: #DCE8FF;
+  --amber: #E0A030;
+  --amber-soft: #FDF1DB;
+  --red: #D9534F;
+  --red-soft: #FDE8E7;
+  --font-serif: 'Newsreader', Georgia, serif;
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --shadow-subtle: 0 2px 8px rgba(0, 0, 0, 0.04);
+  --shadow-flyout: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+/* Reset and Global Styles */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--page-gradient);
+  min-height: 100vh;
+  font-family: var(--font-sans);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  padding: 24px 16px;
+}
+
+/* Container Shell */
+.dashboard-shell {
+  max-width: 1360px;
+  margin: 0 auto;
+  background: var(--shell);
+  border-radius: 14px;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: 72px 1fr;
+  min-height: calc(100vh - 48px);
+  box-shadow: 0 4px 28px rgba(0, 0, 0, 0.06);
+}
+
+/* Sidebar (72px White Bar) */
+.sidebar {
+  width: 72px;
+  background: #FFFFFF;
+  border-right: 1px solid var(--card-border);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 0;
+  z-index: 20;
+}
+
+.sidebar-top {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+}
+
+.brand-logo-btn {
+  width: 42px;
+  height: 42px;
+  background: var(--green);
+  border-radius: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #FFFFFF;
+  text-decoration: none;
+  transition: transform 0.15s ease;
+}
+
+.brand-logo-btn:hover {
+  transform: scale(1.04);
+}
+
+.brand-logo-btn svg {
+  width: 22px;
+  height: 22px;
+  fill: currentColor;
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+}
+
+.nav-item {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+  text-decoration: none;
+  background: transparent;
+  border: 1px solid transparent;
+  transition: all 0.15s ease;
+  position: relative;
+}
+
+.nav-item svg {
+  width: 19px;
+  height: 19px;
+  fill: currentColor;
+}
+
+.nav-item:hover {
+  background: var(--pill);
+  color: var(--ink);
+}
+
+.nav-item.active {
+  background: #FFFFFF;
+  border: 1px solid var(--card-border);
+  color: var(--green);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+.nav-divider {
+  width: 32px;
+  height: 1px;
+  background: var(--card-border);
+  margin: 6px 0;
+}
+
+.sidebar-bottom {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+
+.sidebar-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: var(--green-soft);
+  color: var(--green);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 13px;
+  border: 1px solid rgba(15, 138, 75, 0.2);
+}
+
+.btn-sidebar-logout {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-sidebar-logout:hover {
+  background: var(--red-soft);
+  color: var(--red);
+}
+
+.btn-sidebar-logout svg {
+  width: 19px;
+  height: 19px;
+  fill: currentColor;
+}
+
+/* Main Content Wrapper */
+.main-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow-y: auto;
+}
+
+/* Header */
+.dashboard-header {
+  padding: 24px 28px 16px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.header-left {
+  flex: 1;
+  min-width: 260px;
+}
+
+.header-greeting {
+  font-family: var(--font-serif);
+  font-size: 29px;
+  font-weight: 400;
+  color: var(--ink);
+  line-height: 1.15;
+}
+
+.header-subtext {
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* Pill Controls */
+.chip-status-live {
+  background: #FFFFFF;
+  border: 1px solid var(--card-border);
+  padding: 7px 14px;
+  border-radius: 999px;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--ink);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: var(--shadow-subtle);
+}
+
+.pulse-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 0 0 rgba(15, 138, 75, 0.4);
+  animation: pulseGreen 2s infinite;
+}
+
+@keyframes pulseGreen {
+  0% { box-shadow: 0 0 0 0 rgba(15, 138, 75, 0.5); }
+  70% { box-shadow: 0 0 0 6px rgba(15, 138, 75, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(15, 138, 75, 0); }
+}
+
+.btn-header-pill {
+  background: #FFFFFF;
+  border: 1px solid var(--card-border);
+  padding: 7px 15px;
+  border-radius: 999px;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--ink);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  box-shadow: var(--shadow-subtle);
+  transition: all 0.15s ease;
+}
+
+.btn-header-pill:hover {
+  background: var(--pill);
+  border-color: #D6D6D6;
+}
+
+.btn-header-pill svg {
+  width: 14px;
+  height: 14px;
+  fill: currentColor;
+}
+
+.btn-header-primary {
+  background: var(--ink);
+  color: #FFFFFF;
+  border: none;
+}
+
+.btn-header-primary:hover {
+  background: #000000;
+  color: #FFFFFF;
+}
+
+/* User Card and Dropdown */
+.user-dropdown-wrap {
+  position: relative;
+}
+
+.user-card-pill {
+  background: #FFFFFF;
+  border: 1px solid var(--card-border);
+  padding: 4px 12px 4px 5px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  box-shadow: var(--shadow-subtle);
+  user-select: none;
+  transition: background 0.15s ease;
+}
+
+.user-card-pill:hover {
+  background: #FAFAFA;
+}
+
+.user-card-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--green-soft);
+  color: var(--green);
+  font-size: 11px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.user-card-meta {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.user-card-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.1;
+}
+
+.user-card-role {
+  font-size: 10.5px;
+  color: var(--muted);
+  line-height: 1.1;
+}
+
+.user-card-chevron {
+  width: 12px;
+  height: 12px;
+  color: var(--muted);
+  fill: currentColor;
+  margin-left: 2px;
+}
+
+.user-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  background: #FFFFFF;
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  box-shadow: var(--shadow-flyout);
+  min-width: 175px;
+  padding: 6px;
+  z-index: 100;
+  display: none;
+  flex-direction: column;
+}
+
+.user-dropdown-menu.show {
+  display: flex;
+}
+
+.user-dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 12.5px;
+  color: var(--ink);
+  text-decoration: none;
+  background: transparent;
+  border: none;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.user-dropdown-item:hover {
+  background: var(--pill);
+}
+
+.user-dropdown-item svg {
+  width: 14px;
+  height: 14px;
+  fill: currentColor;
+  color: var(--muted);
+}
+
+.user-dropdown-divider {
+  height: 1px;
+  background: var(--card-border);
+  margin: 4px 0;
+}
+
+/* ==========================================================================
+   Bento Grid Layout (4 Columns)
+   grid-template-columns: 175px 175px 1fr 1fr;
+   ========================================================================== */
+.bento-grid {
+  display: grid;
+  gap: 12px;
+  padding: 12px 28px;
+  grid-template-columns: 175px 175px 1fr 1fr;
+  grid-template-areas:
+    "weather weather chart    chart"
+    "crop    plots   chart    chart"
+    "soil    soil    chart    chart"
+    "pump    water   gauge    insights"
+    "limit   limit   gauge    insights";
+}
+
+/* Card Base */
+.bento-card {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: var(--card-radius);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  min-height: 120px;
+}
+
+.card-title-serif {
+  font-family: var(--font-serif);
+  font-size: 16.5px;
+  font-weight: 500;
+  color: var(--ink);
+  line-height: 1.2;
+}
+
+.card-num-serif {
+  font-family: var(--font-serif);
+  font-size: 30px;
+  font-weight: 400;
+  color: var(--ink);
+  line-height: 1.1;
+}
+
+.card-subtext {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.3;
+}
+
+/* Card: Weather (grid-area: weather) */
+.card-weather {
+  grid-area: weather;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.weather-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.weather-illustration-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.weather-art {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.weather-art svg {
+  width: 32px;
+  height: 32px;
+}
+
+.weather-day-num {
+  font-family: var(--font-serif);
+  font-size: 26px;
+  font-weight: 400;
+  color: var(--ink);
+  line-height: 1;
+}
+
+.weather-date-sub {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.weather-pill-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.weather-pill-row {
+  background: #FFFFFF;
+  border: 1px solid var(--card-border);
+  border-radius: 999px;
+  padding: 5px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+}
+
+.weather-pill-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.weather-pill-label svg {
+  width: 13px;
+  height: 13px;
+  fill: currentColor;
+}
+
+.weather-pill-val {
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.weather-footer-note {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 6px;
+}
+
+/* Card: Current Crop (grid-area: crop) */
+.card-crop {
+  grid-area: crop;
+}
+
+.icon-circle-soft {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--green-soft);
+  color: var(--green);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 8px;
+}
+
+.icon-circle-soft svg {
+  width: 16px;
+  height: 16px;
+  fill: currentColor;
+}
+
+/* Card: Active Plots (grid-area: plots) */
+.card-plots {
+  grid-area: plots;
+}
+
+/* Card: Soil Moisture (grid-area: soil) */
+.card-soil {
+  grid-area: soil;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+}
+
+.soil-left {
+  display: flex;
+  flex-direction: column;
+}
+
+.soil-wedge-art {
+  width: 80px;
+  height: 36px;
+}
+
+.soil-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Status Badges */
+.status-pill {
+  font-size: 11.5px;
+  font-weight: 600;
+  padding: 3px 9px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.status-pill.success {
+  background: var(--green-soft);
+  color: var(--green);
+}
+
+.status-pill.warning {
+  background: var(--amber-soft);
+  color: var(--amber);
+}
+
+.status-pill.info {
+  background: var(--blue-soft);
+  color: var(--blue);
+}
+
+.status-pill.neutral {
+  background: var(--pill);
+  color: var(--muted);
+}
+
+/* Card: Pump (grid-area: pump) */
+.card-pump {
+  grid-area: pump;
+}
+
+.pump-top-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.toggle-switch-btn {
+  width: 38px;
+  height: 22px;
+  border-radius: 999px;
+  background: #D8D8D8;
+  border: none;
+  cursor: pointer;
+  position: relative;
+  transition: background 0.2s ease;
+}
+
+.toggle-switch-btn.on {
+  background: var(--green);
+}
+
+.toggle-switch-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #FFFFFF;
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  transition: transform 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.toggle-switch-btn.on .toggle-switch-thumb {
+  transform: translateX(16px);
+}
+
+/* Card: Water Usage (grid-area: water) */
+.card-water {
+  grid-area: water;
+}
+
+.sparkline-7bar {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 24px;
+  margin-top: 6px;
+}
+
+.sparkline-bar {
+  flex: 1;
+  background: var(--green-soft);
+  border-radius: 2px;
+  transition: height 0.3s ease;
+}
+
+.sparkline-bar.active {
+  background: var(--green);
+}
+
+.water-trend-badge {
+  font-size: 11px;
+  color: var(--green);
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+
+/* Card: Irrigation Trigger (grid-area: limit) */
+.card-limit {
+  grid-area: limit;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 14px 18px;
+}
+
+.limit-top-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.tick-bar-container {
+  position: relative;
+  height: 26px;
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  margin-top: 8px;
+  padding: 0 2px;
+}
+
+.tick-bar {
+  flex: 1;
+  height: 12px;
+  border-radius: 1px;
+  background: #D8D8D8;
+  transition: height 0.15s ease;
+}
+
+.tick-pointer {
+  position: absolute;
+  bottom: 0;
+  width: 2px;
+  height: 24px;
+  background: var(--ink);
+  transform: translateX(-50%);
+  border-radius: 1px;
+  pointer-events: none;
+  transition: left 0.3s ease;
+}
+
+.tick-pointer-trigger {
+  position: absolute;
+  bottom: 0;
+  width: 2px;
+  height: 18px;
+  background: var(--amber);
+  transform: translateX(-50%);
+  border-radius: 1px;
+  pointer-events: none;
+}
+
+.tick-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  color: var(--muted);
+  margin-top: 3px;
+}
+
+/* Card: Telemetry Chart (grid-area: chart) */
+.card-chart {
+  grid-area: chart;
+  padding: 20px 22px;
+}
+
+.chart-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.chart-segmented-control {
+  background: #EBEBEB;
+  padding: 3px;
+  border-radius: 999px;
+  display: inline-flex;
+  gap: 2px;
+}
+
+.seg-btn {
+  background: transparent;
+  border: none;
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.seg-btn.active {
+  background: #FFFFFF;
+  color: var(--ink);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+
+.chart-summary-pill-row {
+  background: #FFFFFF;
+  border: 1px solid var(--card-border);
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-size: 12px;
+  color: var(--muted);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+  max-width: 100%;
+}
+
+.chart-canvas-wrap {
+  height: 250px;
+  width: 100%;
+  position: relative;
+}
+
+/* Card: Model Confidence Semicircular Gauge (grid-area: gauge) */
+.card-gauge {
+  grid-area: gauge;
+  align-items: center;
+  text-align: center;
+}
+
+.gauge-svg-container {
+  width: 180px;
+  height: 110px;
+  position: relative;
+  margin: 4px auto 0 auto;
+}
+
+.gauge-center-text {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+}
+
+.gauge-center-num {
+  font-family: var(--font-serif);
+  font-size: 32px;
+  font-weight: 500;
+  color: var(--ink);
+  line-height: 1;
+}
+
+.gauge-center-label {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.gauge-stats-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  width: 100%;
+  margin-top: 10px;
+  border-top: 1px solid var(--card-border);
+  padding-top: 10px;
+}
+
+.gauge-stat-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.gauge-stat-label {
+  font-size: 10.5px;
+  color: var(--muted);
+}
+
+.gauge-stat-val {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+  margin-top: 2px;
+}
+
+/* Card: AI Insights (grid-area: insights) */
+.card-insights {
+  grid-area: insights;
+  overflow: hidden;
+  padding: 0;
+}
+
+.insights-pastel-gradient-bar {
+  background: linear-gradient(135deg, #FBD9C9 0%, #FEE8B0 33%, #FCE4EC 66%, #CFE7D8 100%);
+  height: 24px;
+  width: 100%;
+  opacity: 0.8;
+}
+
+.insights-inner {
+  padding: 14px 16px 16px 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex: 1;
+}
+
+.insights-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.insights-pill-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.insight-metric-pill {
+  background: #FFFFFF;
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  padding: 4px 8px;
+  font-size: 11.5px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.insight-metric-pill span:first-child {
+  color: var(--muted);
+}
+
+.insight-metric-pill span:last-child {
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.insights-meta-row {
+  font-size: 11px;
+  color: var(--muted);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.insights-decision-box {
+  background: #FFFFFF;
+  border: 1px solid var(--card-border);
+  border-radius: 10px;
+  padding: 10px 12px;
+  margin-bottom: 12px;
+}
+
+.insights-decision-text {
+  font-size: 12px;
+  color: var(--ink);
+  line-height: 1.4;
+}
+
+.confidence-progress-bar {
+  height: 4px;
+  background: #EBEBEB;
+  border-radius: 999px;
+  overflow: hidden;
+  margin-top: 8px;
+}
+
+.confidence-progress-fill {
+  height: 100%;
+  background: var(--green);
+  border-radius: 999px;
+  transition: width 0.3s ease;
+}
+
+.btn-evaluate-ml {
+  background: var(--green);
+  color: #FFFFFF;
+  border: none;
+  border-radius: 10px;
+  padding: 9px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  transition: background 0.15s ease;
+}
+
+.btn-evaluate-ml:hover {
+  background: #0B733E;
+}
+
+.btn-evaluate-ml svg {
+  width: 15px;
+  height: 15px;
+  fill: currentColor;
+}
+
+/* ==========================================================================
+   Lower Section (2 Equal Columns)
+   ========================================================================== */
+.lower-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  padding: 4px 28px 28px 28px;
+}
+
+.section-card {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: var(--card-radius);
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+}
+
+.section-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.section-link-pill {
+  font-size: 12px;
+  color: var(--green);
+  text-decoration: none;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: color 0.15s ease;
+}
+
+.section-link-pill:hover {
+  color: #0B733E;
+}
+
+/* Aerial Farmland Map Card */
+.aerial-map-wrap {
+  position: relative;
+  height: 330px;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #234D35 url('../images/farm-aerial.jpg') center/cover no-repeat;
+  box-shadow: inset 0 0 40px rgba(0,0,0,0.3);
+}
+
+.aerial-inner-image {
+  position: absolute;
+  inset: 0;
+  background: url('../images/farm-aerial.jpg') center/cover no-repeat,
+              linear-gradient(135deg, #2D5A27 0%, #3D7336 50%, #4B8544 100%);
+  transform-origin: center center;
+  transition: transform 0.25s ease;
+}
+
+/* Map Action Buttons */
+.map-btn-round {
+  position: absolute;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #FFFFFF;
+  border: 1px solid var(--card-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink);
+  cursor: pointer;
+  z-index: 10;
+  box-shadow: var(--shadow-subtle);
+  transition: all 0.15s ease;
+}
+
+.map-btn-round:hover {
+  background: var(--pill);
+}
+
+.map-btn-round svg {
+  width: 16px;
+  height: 16px;
+  fill: currentColor;
+}
+
+.map-btn-layers {
+  top: 14px;
+  left: 14px;
+  background: var(--green);
+  color: #FFFFFF;
+  border: none;
+}
+
+.map-btn-layers:hover {
+  background: #0B733E;
+}
+
+.map-btn-search {
+  top: 14px;
+  right: 14px;
+}
+
+.map-zoom-controls {
+  position: absolute;
+  bottom: 14px;
+  right: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  z-index: 10;
+}
+
+/* Frosted Glass Overlay Card */
+.frosted-plot-panel {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 82%;
+  max-width: 340px;
+  background: rgba(45, 80, 45, 0.65);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 22px;
+  padding: 16px 18px;
+  color: #FFFFFF;
+  z-index: 5;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.frosted-plot-title {
+  font-family: var(--font-serif);
+  font-size: 19px;
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+.frosted-plot-dates {
+  font-size: 11.5px;
+  color: rgba(255, 255, 255, 0.8);
+  margin-top: 4px;
+}
+
+.frosted-health-row {
+  margin-top: 10px;
+}
+
+.frosted-health-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  margin-bottom: 4px;
+}
+
+.frosted-health-track {
+  height: 4px;
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.frosted-health-fill {
+  height: 100%;
+  background: #4ADE80;
+  border-radius: 999px;
+}
+
+/* Collapsible Sensor Log */
+.frosted-sensor-toggle {
+  background: transparent;
+  border: none;
+  color: #FFFFFF;
+  font-size: 11.5px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 12px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.frosted-sensor-toggle svg {
+  width: 12px;
+  height: 12px;
+  fill: currentColor;
+  transition: transform 0.2s ease;
+}
+
+.frosted-sensor-toggle.expanded svg {
+  transform: rotate(180deg);
+}
+
+.frosted-sensor-body {
+  margin-top: 8px;
+  display: none;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  font-size: 11px;
+}
+
+.frosted-sensor-body.show {
+  display: grid;
+}
+
+.frosted-sensor-item {
+  background: rgba(255, 255, 255, 0.12);
+  padding: 4px 6px;
+  border-radius: 6px;
+  text-align: center;
+}
+
+.frosted-sensor-item span {
+  display: block;
+  font-size: 9.5px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.frosted-sensor-item strong {
+  font-size: 12px;
+}
+
+/* Plot Chips Row */
+.plot-chips-container {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 12px 2px 2px 2px;
+}
+
+.plot-chip {
+  background: #FFFFFF;
+  border: 1px solid var(--card-border);
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ink);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+
+.plot-chip:hover {
+  background: var(--pill);
+}
+
+.plot-chip.active {
+  background: var(--green);
+  color: #FFFFFF;
+  border-color: var(--green);
+}
+
+/* Timeline: Recent Irrigation Activity */
+.timeline-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 280px;
+}
+
+.timeline-row {
+  background: #FFFFFF;
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  transition: background 0.15s ease;
+}
+
+.timeline-row:hover {
+  background: #FAFAFA;
+}
+
+.timeline-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.timeline-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--green);
+}
+
+.timeline-dot.off {
+  background: var(--muted);
+}
+
+.timeline-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.timeline-status {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.timeline-sub {
+  font-size: 11.5px;
+  color: var(--muted);
+}
+
+.timeline-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.timeline-liters {
+  font-family: var(--font-serif);
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.timeline-time {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.timeline-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  color: var(--muted);
+  font-size: 13px;
+  text-align: center;
+}
+
+/* ==========================================================================
+   Floating AI Chat Widget Restyle (Targeting agrobot-* from ai-assistant.js)
+   ========================================================================== */
+#agrobotToggleBtn,
+.agrobot-trigger,
+.floating-chat-btn {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: #1A1A1A !important;
+  color: #FFFFFF !important;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.18);
+  z-index: 1000;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+#agrobotToggleBtn:hover,
+.agrobot-trigger:hover,
+.floating-chat-btn:hover {
+  transform: scale(1.06);
+  background: #000000 !important;
+}
+
+.agrobot-trigger-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #FFFFFF;
+}
+
+.agrobot-trigger-avatar i,
+#agrobotToggleBtn svg,
+.floating-chat-btn svg {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+  fill: currentColor;
+}
+
+#agrobotWindow,
+.agrobot-window,
+.chat-flyout-window {
+  position: fixed;
+  bottom: 84px;
+  right: 24px;
+  width: 370px;
+  max-width: calc(100vw - 32px);
+  height: 520px;
+  background: #FFFFFF;
+  border: 1px solid var(--card-border);
+  border-radius: 16px;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.14);
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+  z-index: 1000;
+}
+
+#agrobotWindow.open,
+.agrobot-window.open,
+.chat-flyout-window.open {
+  display: flex;
+}
+
+.agrobot-header,
+.chat-header {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--card-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #FAFAFA;
+}
+
+.agrobot-header-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.agrobot-status-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--green);
+}
+
+.agrobot-title,
+.chat-header-title {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.agrobot-subtitle,
+.chat-header-sub {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.agrobot-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.agrobot-lang-switch {
+  display: flex;
+  background: var(--pill);
+  border-radius: 999px;
+  padding: 2px;
+}
+
+.agrobot-lang-switch .lang-btn {
+  border: none;
+  background: transparent;
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  cursor: pointer;
+  color: var(--muted);
+}
+
+.agrobot-lang-switch .lang-btn.active {
+  background: #FFFFFF;
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.agrobot-icon-btn,
+.chat-close-btn {
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+}
+
+.agrobot-icon-btn:hover,
+.chat-close-btn:hover {
+  color: var(--ink);
+  background: var(--pill);
+}
+
+.agrobot-messages,
+.chat-messages-area {
+  flex: 1;
+  padding: 16px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: #FDFDFD;
+}
+
+.agrobot-msg,
+.chat-bubble {
+  max-width: 82%;
+  padding: 10px 14px;
+  font-size: 13px;
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+.agrobot-msg.user,
+.chat-bubble.user {
+  align-self: flex-end;
+  background: var(--green);
+  color: #FFFFFF;
+  border-radius: 14px 14px 3px 14px;
+}
+
+.agrobot-msg.bot,
+.chat-bubble.bot {
+  align-self: flex-start;
+  background: #FFFFFF;
+  border: 1px solid var(--card-border);
+  color: var(--ink);
+  border-radius: 14px 14px 14px 3px;
+  box-shadow: var(--shadow-subtle);
+}
+
+.agrobot-msg-time {
+  font-size: 9.5px;
+  color: var(--muted);
+  margin-top: 4px;
+  text-align: right;
+}
+
+.agrobot-msg.user .agrobot-msg-time {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.agrobot-chips {
+  padding: 6px 14px;
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  background: #FAFAFA;
+  border-top: 1px solid var(--card-border);
+}
+
+.agrobot-chip {
+  background: #FFFFFF;
+  border: 1px solid var(--card-border);
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 11px;
+  color: var(--ink);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.agrobot-chip:hover {
+  background: var(--pill);
+}
+
+.agrobot-input-area,
+.chat-input-row {
+  padding: 10px 14px 6px 14px;
+  border-top: 1px solid var(--card-border);
+  background: #FFFFFF;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+  flex-wrap: wrap;
+}
+
+.agrobot-input-area::after {
+  content: "AI Assistant can make mistakes. Please double check.";
+  display: block;
+  width: 100%;
+  font-size: 10px;
+  color: var(--muted);
+  text-align: center;
+  margin-top: 4px;
+}
+
+.agrobot-mic-btn {
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 6px;
+}
+
+.agrobot-mic-btn:hover {
+  color: var(--ink);
+}
+
+.agrobot-input,
+.chat-input-field {
+  flex: 1;
+  border: 1px solid var(--card-border);
+  background: var(--pill);
+  border-radius: 999px;
+  padding: 7px 14px;
+  font-family: inherit;
+  font-size: 12.5px;
+  color: var(--ink);
+  outline: none;
+  min-width: 140px;
+}
+
+.agrobot-input:focus {
+  border-color: var(--green);
+  background: #FFFFFF;
+}
+
+.agrobot-send-btn,
+.chat-send-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--green);
+  color: #FFFFFF;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.agrobot-send-btn:hover,
+.chat-send-btn:hover {
+  background: #0B733E;
+}
+
+.agrobot-send-btn i,
+.chat-send-btn svg {
+  font-size: 13px;
+  width: 14px;
+  height: 14px;
+  fill: currentColor;
+}
+
+.chat-disclaimer {
+  font-size: 10px;
+  color: var(--muted);
+  text-align: center;
+  margin-top: 6px;
+}
+
+/* Legal Footer */
+.dashboard-footer {
+  padding: 14px 28px 20px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11.5px;
+  color: var(--muted);
+  border-top: 1px solid var(--card-border);
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.dashboard-footer a {
+  color: var(--muted);
+  text-decoration: none;
+}
+
+.dashboard-footer a:hover {
+  color: var(--ink);
+}
+
+/* ==========================================================================
+   Responsive Breakpoints
+   - >= 1200px: 4-column bento grid
+   - 900px - 1199px: 2-column grid
+   - < 768px: single column, bottom icon bar
+   ========================================================================== */
+@media (max-width: 1199px) and (min-width: 768px) {
+  .bento-grid {
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      "weather weather"
+      "crop    plots"
+      "soil    soil"
+      "chart   chart"
+      "pump    water"
+      "limit   limit"
+      "gauge   insights";
+  }
+
+  .lower-section {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 767px) {
+  body {
+    padding: 0;
+  }
+
+  .dashboard-shell {
+    grid-template-columns: 1fr;
+    border-radius: 0;
+    min-height: 100vh;
+    padding-bottom: 64px;
+  }
+
+  /* Fixed Bottom Icon Bar */
+  .sidebar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: 56px;
+    flex-direction: row;
+    justify-content: space-around;
+    padding: 0 12px;
+    border-right: none;
+    border-top: 1px solid var(--card-border);
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+  }
+
+  .sidebar-top {
+    flex-direction: row;
+    width: auto;
+    gap: 8px;
+  }
+
+  .brand-logo-btn {
+    display: none;
+  }
+
+  .sidebar-nav {
+    flex-direction: row;
+    gap: 10px;
+    width: auto;
+  }
+
+  .nav-divider {
+    display: none;
+  }
+
+  .sidebar-bottom {
+    flex-direction: row;
+    width: auto;
+    gap: 8px;
+  }
+
+  .sidebar-avatar {
+    display: none;
+  }
+
+  .dashboard-header {
+    padding: 16px;
+  }
+
+  .header-right .user-card-meta,
+  .header-right .user-card-chevron {
+    display: none;
+  }
+
+  .bento-grid {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "weather"
+      "crop"
+      "plots"
+      "soil"
+      "chart"
+      "pump"
+      "water"
+      "limit"
+      "gauge"
+      "insights";
+    padding: 8px 16px;
+  }
+
+  .chart-canvas-wrap {
+    height: 240px;
+  }
+
+  .lower-section {
+    grid-template-columns: 1fr;
+    padding: 8px 16px 24px 16px;
+  }
+
+  .card-soil {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .soil-wedge-art {
+    display: none;
+  }
+
+  .soil-right {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+/* Accessibility & Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

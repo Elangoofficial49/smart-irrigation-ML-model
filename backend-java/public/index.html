@@ -1,23 +1,788 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AgroPulse • Precision Irrigation</title>
-  <link rel="canonical" href="https://agropulse.farm/" />
-  <link rel="manifest" href="manifest.json" />
-  <meta name="theme-color" content="#163D2B" />
-  <link rel="icon" type="image/svg+xml" href="icons/icon.svg" />
-  <link rel="shortcut icon" href="favicon.ico" />
-  <link rel="stylesheet" href="css/style.css?v=6" />
-  <script src="js/common.js"></script>
-  <script>
-    if (getToken()) {
-      window.location.replace("dashboard.html");
-    } else {
-      window.location.replace("login.html");
-    }
-  </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AgroPulse &bull; Smart Farming Starts With Better Decision</title>
+  <link rel="canonical" href="https://agropulse.farm/">
+  
+  <!-- Web App Manifest & Favicon -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#163D2B">
+  <link rel="icon" type="image/svg+xml" href="icons/icon.svg">
+  <link rel="shortcut icon" href="favicon.ico">
+
+  <!-- Google Font DM Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400..700;1,9..40,400..700&display=swap" rel="stylesheet">
+  
+  <!-- Landing Page Stylesheet -->
+  <link rel="stylesheet" href="css/landing.css">
 </head>
-<body></body>
+<body>
+
+  <!-- Outer White Container -->
+  <div class="page-container">
+
+    <!-- ======================================================================
+         Header & Navigation Bar
+         ====================================================================== -->
+    <header class="site-header" id="siteHeader">
+      <nav class="navbar" aria-label="Main Navigation">
+        <!-- Brand Logo & Wordmark -->
+        <a href="index.html" class="brand-link" aria-label="AgroPulse Home">
+          <!-- Original Leaf / Field-Rows Logo Icon (Inline SVG) -->
+          <svg class="brand-logo-icon" width="34" height="34" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <rect width="36" height="36" rx="9" fill="#163D2B"/>
+            <path d="M18 7C18 7 28 10 28 20C28 26 23 29 18 29C13 29 8 26 8 20C8 10 18 7 18 7Z" fill="#21834A" fill-opacity="0.3"/>
+            <path d="M18 8V28" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"/>
+            <path d="M18 13C22.5 14 25.5 17 25.5 20.5" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round"/>
+            <path d="M18 16C13.5 17 10.5 19.5 10.5 22.5" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round"/>
+            <path d="M18 19.5C21.5 20.5 23.5 22.5 23.5 24.5" stroke="#4CAF1A" stroke-width="1.8" stroke-linecap="round"/>
+            <path d="M18 22C14.5 23 12.5 24.5 12.5 26" stroke="#4CAF1A" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+          <span class="brand-name">AgroPulse</span>
+        </a>
+
+        <!-- Desktop Navigation Menu -->
+        <ul class="nav-menu" role="menubar">
+          <!-- Home Dropdown -->
+          <li class="nav-item has-dropdown" role="none">
+            <a href="#hero" class="nav-link" role="menuitem" aria-haspopup="true" aria-expanded="false">
+              <span>Home</span>
+              <svg class="chevron-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </a>
+            <ul class="dropdown-menu" role="menu" aria-label="Home Submenu">
+              <li role="none"><a href="#hero" class="dropdown-link" role="menuitem">Overview</a></li>
+              <li role="none"><a href="#dashboard" class="dropdown-link" role="menuitem">Telemetry Dashboard</a></li>
+              <li role="none"><a href="#service" class="dropdown-link" role="menuitem">Greenhouse Sensors</a></li>
+            </ul>
+          </li>
+
+          <li class="nav-item" role="none">
+            <a href="#about" class="nav-link" role="menuitem">About</a>
+          </li>
+
+          <!-- Page Dropdown -->
+          <li class="nav-item has-dropdown" role="none">
+            <a href="#service" class="nav-link" role="menuitem" aria-haspopup="true" aria-expanded="false">
+              <span>Page</span>
+              <svg class="chevron-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </a>
+            <ul class="dropdown-menu" role="menu" aria-label="Page Submenu">
+              <li role="none"><a href="#service" class="dropdown-link" role="menuitem">Precision Irrigation</a></li>
+              <li role="none"><a href="#dashboard" class="dropdown-link" role="menuitem">Sector Mapping</a></li>
+              <li role="none"><a href="#pricing" class="dropdown-link" role="menuitem">SaaS Plans</a></li>
+            </ul>
+          </li>
+
+          <li class="nav-item" role="none">
+            <a href="#service" class="nav-link" role="menuitem">Service</a>
+          </li>
+          <li class="nav-item" role="none">
+            <a href="#blog" class="nav-link" role="menuitem">Blog</a>
+          </li>
+          <li class="nav-item" role="none">
+            <a href="#pricing" class="nav-link" role="menuitem">Pricing</a>
+          </li>
+        </ul>
+
+        <!-- Right: "Get Started" Pill Button -> Links to Sign In (login.html) -->
+        <div class="pill-halo-wrap">
+          <a href="login.html" class="btn-pill">
+            <span>Get Started</span>
+            <span class="btn-circle-arrow" aria-hidden="true">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="7" y1="17" x2="17" y2="7"></line>
+                <polyline points="7 7 17 7 17 17"></polyline>
+              </svg>
+            </span>
+          </a>
+        </div>
+
+        <!-- Mobile Hamburger Toggle -->
+        <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle navigation menu" aria-expanded="false">
+          <span class="hamburger-icon" aria-hidden="true">
+            <span class="hamburger-line"></span>
+            <span class="hamburger-line"></span>
+            <span class="hamburger-line"></span>
+          </span>
+        </button>
+      </nav>
+
+      <!-- Mobile Navigation Drawer -->
+      <div class="mobile-nav" id="mobileNav">
+        <a href="#hero" class="mobile-nav-link">Home</a>
+        <a href="#about" class="mobile-nav-link">About</a>
+        <a href="#service" class="mobile-nav-link">Services</a>
+        <a href="#pricing" class="mobile-nav-link">Pricing</a>
+        <a href="#blog" class="mobile-nav-link">Blog</a>
+        <div class="mobile-cta-wrap">
+          <div class="pill-halo-wrap">
+            <a href="login.html" class="btn-pill">
+              <span>Get Started</span>
+              <span class="btn-circle-arrow" aria-hidden="true">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="7" y1="17" x2="17" y2="7"></line>
+                  <polyline points="7 7 17 7 17 17"></polyline>
+                </svg>
+              </span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <!-- ======================================================================
+           Hero Section
+           ====================================================================== -->
+      <section class="hero-section" id="hero">
+        <div class="hero-content">
+          <!-- 1. Badge Pill -->
+          <div class="hero-badge-pill">
+            <svg class="badge-sprout-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M7 20h10"></path>
+              <path d="M10 20c0-4.5 1.5-8 7-9"></path>
+              <path d="M12 12c-4 0-7-2-7-7 5 0 7 3 7 7Z"></path>
+            </svg>
+            <span>Trusted by modern farms and agribusiness teams worldwide</span>
+          </div>
+
+          <!-- 2. H1 Headline (broken after "Starts") -->
+          <h1 class="hero-headline">
+            Smart Farming Starts<br>With Better Decision
+          </h1>
+
+          <!-- 3. Subtext Paragraph -->
+          <p class="hero-subtext">
+            All-in-one SaaS platform to manage crops, monitor fields, and boost yield with data-driven insights.
+          </p>
+
+          <!-- 4. Primary CTA Pill Button -> Links to Sign Up (signup.html) -->
+          <div class="pill-halo-wrap">
+            <a href="signup.html" class="btn-pill">
+              <span>Start Free Trial</span>
+              <span class="btn-circle-arrow" aria-hidden="true">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="7" y1="17" x2="17" y2="7"></line>
+                  <polyline points="7 7 17 7 17 17"></polyline>
+                </svg>
+              </span>
+            </a>
+          </div>
+        </div>
+
+        <!-- ====================================================================
+             Dashboard Preview Inside Hero
+             ==================================================================== -->
+        <div class="dashboard-outer-wrap" id="dashboard">
+          <div class="dashboard-backdrop-panel">
+            <div class="dashboard-card">
+              <!-- Dashboard Header Row -->
+              <div class="dashboard-header">
+                <div class="dash-header-left">
+                  <!-- Teal Leaf Logo -->
+                  <svg width="22" height="22" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <rect width="36" height="36" rx="8" fill="#21834A"/>
+                    <path d="M18 8V28" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round"/>
+                    <path d="M18 13C22 14 25 17 25 20.5" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"/>
+                    <path d="M18 16C14 17 11 19.5 11 22.5" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"/>
+                  </svg>
+                  <span class="dash-header-title">Greenhouse Monitoring</span>
+                </div>
+
+                <div class="dash-header-right">
+                  <span class="alert-pill">
+                    <span aria-hidden="true">🔔</span> 3 Alert ↗
+                  </span>
+                  <div class="sector-select-box">
+                    <span>Sector: Spinach Garden 08</span>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Dashboard Body: Slim Sidebar + 3 Content Columns -->
+              <div class="dashboard-body">
+                <!-- Slim Sidebar (4+ icon buttons) -->
+                <aside class="dash-sidebar" aria-label="Dashboard Sidebar">
+                  <!-- Button 1: Active Teal -->
+                  <button type="button" class="dash-icon-btn active" aria-label="Overview">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                      <polyline points="9 22 9 12 15 12 15 22"/>
+                    </svg>
+                  </button>
+                  <!-- Button 2 -->
+                  <button type="button" class="dash-icon-btn" aria-label="Sensors">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                    </svg>
+                  </button>
+                  <!-- Button 3 -->
+                  <button type="button" class="dash-icon-btn" aria-label="Field Plots">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M11 20A7 7 0 0 1 4 13c0-4 3.5-7.5 7.5-7.5s7.5 3.5 7.5 7.5a7 7 0 0 1-7 7Z"/>
+                      <path d="M11 13V6"/>
+                    </svg>
+                  </button>
+                  <!-- Button 4 -->
+                  <button type="button" class="dash-icon-btn" aria-label="Analytics">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <line x1="18" y1="20" x2="18" y2="10"/>
+                      <line x1="12" y1="20" x2="12" y2="4"/>
+                      <line x1="6" y1="20" x2="6" y2="14"/>
+                    </svg>
+                  </button>
+                </aside>
+
+                <!-- 3 Columns Content Area -->
+                <div class="dash-columns-grid">
+                  
+                  <!-- COLUMN 1: Weather & Map Area -->
+                  <div class="dash-panel col-weather-map">
+                    <!-- Faint Line-Art Map Vector in background -->
+                    <svg class="faint-map-bg" viewBox="0 0 320 180" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                      <!-- Grid guidelines -->
+                      <line x1="20" y1="30" x2="300" y2="30" stroke="#FFFFFF" stroke-width="1" stroke-dasharray="3 3"/>
+                      <line x1="20" y1="90" x2="300" y2="90" stroke="#FFFFFF" stroke-width="1" stroke-dasharray="3 3"/>
+                      <line x1="20" y1="150" x2="300" y2="150" stroke="#FFFFFF" stroke-width="1" stroke-dasharray="3 3"/>
+                      <line x1="80" y1="10" x2="80" y2="170" stroke="#FFFFFF" stroke-width="1" stroke-dasharray="3 3"/>
+                      <line x1="200" y1="10" x2="200" y2="170" stroke="#FFFFFF" stroke-width="1" stroke-dasharray="3 3"/>
+
+                      <!-- Plot Polygon PL-70T (light gray outline) -->
+                      <polygon points="170,25 285,45 260,115 150,90" fill="rgba(255,255,255,0.45)" stroke="#CBD5E1" stroke-width="1.5"/>
+                      <text x="215" y="75" font-family="'DM Sans', sans-serif" font-size="10" font-weight="600" fill="#64748B" text-anchor="middle">PL-70T</text>
+
+                      <!-- Plot Polygon PL-02J (Solid Green with Pin Dot) -->
+                      <polygon points="60,50 175,70 145,145 35,115" fill="#21834A" fill-opacity="0.95" stroke="#FFFFFF" stroke-width="1.5"/>
+                      <circle cx="100" cy="98" r="4" fill="#FFFFFF"/>
+                      <circle cx="100" cy="98" r="7" stroke="#4CAF1A" stroke-width="1.5"/>
+                      <text x="100" y="86" font-family="'DM Sans', sans-serif" font-size="11" font-weight="700" fill="#FFFFFF" text-anchor="middle">PL-02J</text>
+                    </svg>
+
+                    <!-- Header Row: Location & Date -->
+                    <div class="panel-meta-row">
+                      <span class="location-tag">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                          <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
+                          <circle cx="12" cy="10" r="3"/>
+                        </svg>
+                        <span>Weilburg, Germany</span>
+                      </span>
+                      <span class="date-tag">Tue, 10 September 2024 09:37 AM</span>
+                    </div>
+
+                    <!-- Weather Info -->
+                    <div class="weather-status-wrap">
+                      <div class="temp-large-row">
+                        <span class="temp-val">24&deg;C</span>
+                        <span aria-hidden="true" style="font-size:22px;">&#9728;&#65039;</span>
+                        <span class="weather-desc">Sunny</span>
+                      </div>
+                      <div class="temp-hi-low">H:46&deg;C L:52&deg;C</div>
+                    </div>
+
+                    <!-- Floating White Info Card -->
+                    <div class="field-info-floating-card">
+                      <span class="field-name">Spinach Garden 08</span>
+                      <span class="field-details">ID PL-02J &bull; Area 200 m&sup2;</span>
+                    </div>
+
+                    <!-- Row of 3 Metric Tiles -->
+                    <div class="metrics-triplet">
+                      <!-- Tile 1: Plant Health (Peach) -->
+                      <div class="metric-tile peach">
+                        <div class="metric-tile-header">
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M11 20A7 7 0 0 1 4 13c0-4 3.5-7.5 7.5-7.5s7.5 3.5 7.5 7.5a7 7 0 0 1-7 7Z"/>
+                            <path d="M11 13V6"/>
+                          </svg>
+                          <span class="tiny-arrow-btn" aria-hidden="true">&#8599;</span>
+                        </div>
+                        <span class="metric-tile-title">Plant Health</span>
+                      </div>
+
+                      <!-- Tile 2: Wind (Gray) -->
+                      <div class="metric-tile gray">
+                        <div class="metric-tile-header">
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M17.7 7.7a2.5 2.5 0 1 1 1.8 4.3H2"/>
+                            <path d="M9.6 4.6A2 2 0 1 1 11 8H2"/>
+                            <path d="M12.6 19.4A2 2 0 1 0 14 16H2"/>
+                          </svg>
+                          <span class="tiny-arrow-btn" aria-hidden="true">&#8599;</span>
+                        </div>
+                        <span class="metric-tile-title">Wind</span>
+                      </div>
+
+                      <!-- Tile 3: Temperature (Gray) -->
+                      <div class="metric-tile gray">
+                        <div class="metric-tile-header">
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/>
+                          </svg>
+                          <span class="tiny-arrow-btn" aria-hidden="true">&#8599;</span>
+                        </div>
+                        <span class="metric-tile-title">Temperature</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- COLUMN 2: Device -->
+                  <div class="dash-panel col-device">
+                    <div class="panel-header-simple">
+                      <span class="panel-title">Device</span>
+                      <span class="tiny-arrow-btn" aria-hidden="true" style="color:var(--teal); font-weight:700;">&#8599;</span>
+                    </div>
+
+                    <!-- Counters Row -->
+                    <div class="counter-badges-row">
+                      <span class="counter-badge">Sensor 5</span>
+                      <span class="counter-badge">Camera 2</span>
+                    </div>
+
+                    <!-- Device Rows -->
+                    <div class="device-list">
+                      <div class="device-card-item">
+                        <div class="device-title-row">
+                          <span class="status-dot green" aria-hidden="true"></span>
+                          <span class="device-name" title="Soil Moisture (Ref. 9248-P)">Soil Moisture (Ref. 9248-P)</span>
+                        </div>
+                        <span class="device-meta">Smart Farm 01 &bull; Sensor &bull; Libelku...</span>
+                      </div>
+
+                      <div class="device-card-item">
+                        <div class="device-title-row">
+                          <span class="status-dot green" aria-hidden="true"></span>
+                          <span class="device-name" title="Temperature (Pt1000 Probe - Ref. 9255-P)">Temperature (Pt1000 Probe - Ref. 9255-P)</span>
+                        </div>
+                        <span class="device-meta">Smart Farm 01 &bull; Sensor &bull; Libelku...</span>
+                      </div>
+
+                      <div class="device-card-item">
+                        <div class="device-title-row">
+                          <span class="status-dot yellow" aria-hidden="true"></span>
+                          <span class="device-name" title="Humidity - Honeywell HIH Series (Ref. 9370-P)">Humidity - Honeywell HIH Series (Ref. 9370-P)</span>
+                        </div>
+                        <span class="device-meta">Smart Farm 01 &bull; Sensor &bull; Libelku...</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- COLUMN 3: Camera 1 & Task -->
+                  <div class="col-camera-task">
+                    <!-- Camera 1 Card -->
+                    <div class="camera-card">
+                      <img src="images/greenhouse.jpg" alt="Greenhouse Rows Camera Surveillance" class="camera-img">
+                      <span class="camera-counter-badge">1/6</span>
+                      
+                      <!-- Overlay Translucent Controls Bar -->
+                      <div class="camera-controls-bar">
+                        <button type="button" class="camera-ctrl-btn" aria-label="Previous Camera">&larr;</button>
+                        <button type="button" class="camera-ctrl-btn" aria-label="Capture Photo">&#128247;</button>
+                        <button type="button" class="camera-ctrl-btn" aria-label="Alert">&#128276;</button>
+                        <button type="button" class="camera-ctrl-btn" aria-label="Next Camera">&rarr;</button>
+                      </div>
+                    </div>
+
+                    <!-- Task Card -->
+                    <div class="task-card-wrap">
+                      <div class="panel-header-simple">
+                        <span class="panel-title">Task</span>
+                        <span class="tiny-arrow-btn" aria-hidden="true" style="color:var(--teal); font-weight:700;">&#8599;</span>
+                      </div>
+
+                      <!-- Progress Track with Peach Fill -->
+                      <div class="progress-track" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100">
+                        <div class="progress-fill"></div>
+                      </div>
+
+                      <div class="task-stats-row">
+                        <span>40%</span>
+                        <span>2/5 Task Completed</span>
+                      </div>
+
+                      <!-- Task Item White -->
+                      <div class="task-item-white">
+                        <div class="task-item-title">
+                          <span class="task-dot-orange" aria-hidden="true"></span>
+                          <span>Watering</span>
+                        </div>
+                        <div class="task-item-desc">Water plants with 1 inch of water in...</div>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ======================================================================
+           Trust Strip (Logo Marquee)
+           ====================================================================== -->
+      <section class="trust-strip" aria-label="Trusted agribusiness partners">
+        <div class="trust-title">
+          Trusted by Farms &amp;<br>Agribusinesses
+        </div>
+        <div class="trust-divider" aria-hidden="true"></div>
+        <div class="marquee-container">
+          <div class="marquee-track" id="marqueeTrack">
+            <span class="marquee-logo">PSUM</span>
+            <span class="marquee-logo">AGRI-FLOW</span>
+            <span class="marquee-logo">LOGOIPSUM</span>
+            <span class="marquee-logo">VERDANT</span>
+            <span class="marquee-logo">TERRA-SYS</span>
+            <span class="marquee-logo">CROP-INTEL</span>
+            <span class="marquee-logo">LOGO IPSUM</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ======================================================================
+           #about Section
+           ====================================================================== -->
+      <section class="content-section" id="about">
+        <div class="section-header">
+          <span class="section-tag">About AgroPulse</span>
+          <h2 class="section-heading">Built for the Future of Sustainable Agriculture</h2>
+          <p class="section-subtext">
+            We bridge hardware telemetry with automated precision irrigation. Our platform monitors every acre in real time so you can conserve water and maximize crop quality.
+          </p>
+        </div>
+
+        <div class="stats-cards-grid">
+          <div class="stat-showcase-card">
+            <div class="stat-huge-number">10K+</div>
+            <div class="stat-card-label">Fields Monitored</div>
+            <div class="stat-card-detail">Active telemetry sensors deployed across 32 agricultural regions.</div>
+          </div>
+          <div class="stat-showcase-card">
+            <div class="stat-huge-number">35%</div>
+            <div class="stat-card-label">Higher Yield</div>
+            <div class="stat-card-detail">Measured across precision-irrigated commercial greenhouse crops.</div>
+          </div>
+          <div class="stat-showcase-card">
+            <div class="stat-huge-number">24/7</div>
+            <div class="stat-card-label">Live Telemetry</div>
+            <div class="stat-card-detail">Edge-to-cloud automated alerts with zero downtime monitoring.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ======================================================================
+           #service Section (6 Feature Cards in 3x2 Grid)
+           ====================================================================== -->
+      <section class="content-section" id="service" style="background-color: #FAFAFA;">
+        <div class="section-header">
+          <span class="section-tag">Services &amp; Capabilities</span>
+          <h2 class="section-heading">End-to-End Precision Farming Services</h2>
+          <p class="section-subtext">
+            From soil microbiology to aerial surveillance, AgroPulse combines field sensors, satellite weather, and automated valves in one cockpit.
+          </p>
+        </div>
+
+        <div class="services-grid">
+          <!-- Card 1 -->
+          <div class="service-card">
+            <div class="service-icon-box" aria-hidden="true">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M11 20A7 7 0 0 1 4 13c0-4 3.5-7.5 7.5-7.5s7.5 3.5 7.5 7.5a7 7 0 0 1-7 7Z"/>
+                <path d="M11 13V6"/>
+              </svg>
+            </div>
+            <h3 class="service-title">Crop Monitoring</h3>
+            <p class="service-desc">Continuous canopy health tracking, chlorophyll index readings, and early disease detection alerts.</p>
+          </div>
+
+          <!-- Card 2 -->
+          <div class="service-card">
+            <div class="service-icon-box" aria-hidden="true">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>
+              </svg>
+            </div>
+            <h3 class="service-title">Soil &amp; Moisture Sensors</h3>
+            <p class="service-desc">Sub-surface capacitive moisture probes calibrated for sandy, loamy, and clay agricultural profiles.</p>
+          </div>
+
+          <!-- Card 3 -->
+          <div class="service-card">
+            <div class="service-icon-box" aria-hidden="true">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="9"/>
+                <path d="M12 7v5l3 3"/>
+              </svg>
+            </div>
+            <h3 class="service-title">Precision Irrigation</h3>
+            <p class="service-desc">Automated valve actuation based on plant evapotranspiration demand and rain forecasts.</p>
+          </div>
+
+          <!-- Card 4 -->
+          <div class="service-card">
+            <div class="service-icon-box" aria-hidden="true">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/>
+              </svg>
+            </div>
+            <h3 class="service-title">Weather Insights</h3>
+            <p class="service-desc">Hyperlocal micro-climate forecasts, frost alerts, and solar radiation index tailored to your coordinates.</p>
+          </div>
+
+          <!-- Card 5 -->
+          <div class="service-card">
+            <div class="service-icon-box" aria-hidden="true">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect width="18" height="18" x="3" y="3" rx="2"/>
+                <path d="m9 12 2 2 4-4"/>
+              </svg>
+            </div>
+            <h3 class="service-title">Task Management</h3>
+            <p class="service-desc">Assign field scouts, track fertilizer application schedules, and monitor greenhouse crew completion rates.</p>
+          </div>
+
+          <!-- Card 6 -->
+          <div class="service-card">
+            <div class="service-icon-box" aria-hidden="true">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/>
+                <circle cx="12" cy="13" r="3"/>
+              </svg>
+            </div>
+            <h3 class="service-title">Camera Surveillance</h3>
+            <p class="service-desc">Ultra-low power optical and multispectral camera feeds streaming direct greenhouse crop footage.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ======================================================================
+           #pricing Section
+           ====================================================================== -->
+      <section class="content-section" id="pricing">
+        <div class="section-header">
+          <span class="section-tag">Transparent Pricing</span>
+          <h2 class="section-heading">Simple, Transparent Plans for Every Acre</h2>
+          <p class="section-subtext">No hidden hardware fees. Get started with a 14-day free trial on any tier.</p>
+        </div>
+
+        <div class="pricing-grid">
+          <!-- Plan 1: Starter -->
+          <div class="pricing-card">
+            <h3 class="plan-name">Starter</h3>
+            <p class="plan-desc">For pilot plots and private family greenhouses.</p>
+            <div class="price-row">
+              <span class="price-amount">$49</span>
+              <span class="price-period">/ month</span>
+            </div>
+            <ul class="features-list">
+              <li class="feature-item"><span class="feature-check">&check;</span> Up to 5 Wireless Sensors</li>
+              <li class="feature-item"><span class="feature-check">&check;</span> 1 Greenhouse Sector Map</li>
+              <li class="feature-item"><span class="feature-check">&check;</span> Hourly Weather Telemetry</li>
+              <li class="feature-item"><span class="feature-check">&check;</span> Mobile Alerts via SMS/Email</li>
+            </ul>
+            <div class="plan-cta-wrap">
+              <div class="pill-halo-wrap">
+                <a href="signup.html" class="btn-pill">
+                  <span>Start Free Trial</span>
+                  <span class="btn-circle-arrow" aria-hidden="true">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <line x1="7" y1="17" x2="17" y2="7"></line>
+                      <polyline points="7 7 17 7 17 17"></polyline>
+                    </svg>
+                  </span>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Plan 2: Growth (Featured Teal) -->
+          <div class="pricing-card featured">
+            <span class="pricing-badge">Most Popular</span>
+            <h3 class="plan-name">Growth</h3>
+            <p class="plan-desc">For commercial agribusinesses scaling yield &amp; automation.</p>
+            <div class="price-row">
+              <span class="price-amount">$149</span>
+              <span class="price-period">/ month</span>
+            </div>
+            <ul class="features-list">
+              <li class="feature-item"><span class="feature-check">&check;</span> Up to 35 Wireless Sensors</li>
+              <li class="feature-item"><span class="feature-check">&check;</span> 6 Field Sectors &amp; Polygon Maps</li>
+              <li class="feature-item"><span class="feature-check">&check;</span> Automated Precision Valve Control</li>
+              <li class="feature-item"><span class="feature-check">&check;</span> Camera Feeds &amp; Disease AI Scan</li>
+              <li class="feature-item"><span class="feature-check">&check;</span> Priority 24/7 Support</li>
+            </ul>
+            <div class="plan-cta-wrap">
+              <div class="pill-halo-wrap">
+                <a href="signup.html" class="btn-pill">
+                  <span>Start Free Trial</span>
+                  <span class="btn-circle-arrow" aria-hidden="true">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <line x1="7" y1="17" x2="17" y2="7"></line>
+                      <polyline points="7 7 17 7 17 17"></polyline>
+                    </svg>
+                  </span>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Plan 3: Enterprise -->
+          <div class="pricing-card">
+            <h3 class="plan-name">Enterprise</h3>
+            <p class="plan-desc">For regional farming co-ops and enterprise acreage.</p>
+            <div class="price-row">
+              <span class="price-amount">Custom</span>
+            </div>
+            <ul class="features-list">
+              <li class="feature-item"><span class="feature-check">&check;</span> Unlimited Sensor Nodes</li>
+              <li class="feature-item"><span class="feature-check">&check;</span> Multi-Farm Tenant Hierarchy</li>
+              <li class="feature-item"><span class="feature-check">&check;</span> Custom Modbus / LoRaWAN Gateways</li>
+              <li class="feature-item"><span class="feature-check">&check;</span> Dedicated Account Agronomist</li>
+            </ul>
+            <div class="plan-cta-wrap">
+              <div class="pill-halo-wrap">
+                <a href="login.html" class="btn-pill">
+                  <span>Contact Sales</span>
+                  <span class="btn-circle-arrow" aria-hidden="true">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <line x1="7" y1="17" x2="17" y2="7"></line>
+                      <polyline points="7 7 17 7 17 17"></polyline>
+                    </svg>
+                  </span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ======================================================================
+           #blog Section
+           ====================================================================== -->
+      <section class="content-section" id="blog" style="background-color: #FAFAFA;">
+        <div class="section-header">
+          <span class="section-tag">Agronomy &amp; Tech</span>
+          <h2 class="section-heading">Latest AgroPulse Field Insights</h2>
+          <p class="section-subtext">Actionable telemetry techniques, soil hydration studies, and IoT hardware guides.</p>
+        </div>
+
+        <div class="blog-grid">
+          <!-- Article 1 -->
+          <article class="blog-card">
+            <div class="blog-thumb-wrap">
+              <img src="images/greenhouse.jpg" alt="Greenhouse telemetry optimization" class="blog-thumb-img">
+            </div>
+            <div class="blog-body">
+              <span class="blog-date">September 12, 2026</span>
+              <h3 class="blog-title">Optimizing Spinach Canopy Hydration via Sub-Surface Probes</h3>
+              <p class="blog-excerpt">How continuous dielectric soil measurements reduced localized root rot by 42% in Hesse greenhouses.</p>
+              <a href="#" class="blog-read-more">Read more &#8599;</a>
+            </div>
+          </article>
+
+          <!-- Article 2 -->
+          <article class="blog-card">
+            <div class="blog-thumb-wrap">
+              <img src="images/greenhouse.jpg" alt="Precision irrigation valve actuation" class="blog-thumb-img">
+            </div>
+            <div class="blog-body">
+              <span class="blog-date">August 28, 2026</span>
+              <h3 class="blog-title">Edge Computing in Field Telemetry: Zero Latency Valve Cycling</h3>
+              <p class="blog-excerpt">Running localized machine learning models directly on solar-powered microcontrollers during grid blackouts.</p>
+              <a href="#" class="blog-read-more">Read more &#8599;</a>
+            </div>
+          </article>
+
+          <!-- Article 3 -->
+          <article class="blog-card">
+            <div class="blog-thumb-wrap">
+              <img src="images/greenhouse.jpg" alt="Drone multispectral imaging" class="blog-thumb-img">
+            </div>
+            <div class="blog-body">
+              <span class="blog-date">August 14, 2026</span>
+              <h3 class="blog-title">Combining NDVI Satellite Imagery with In-Situ Moisture Meters</h3>
+              <p class="blog-excerpt">A pragmatic guide for farm managers on correlating top-down optical maps with localized capacitive probes.</p>
+              <a href="#" class="blog-read-more">Read more &#8599;</a>
+            </div>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <!-- ======================================================================
+         Site Footer
+         ====================================================================== -->
+    <footer class="site-footer">
+      <div class="footer-top">
+        <div class="footer-brand-col">
+          <div style="display:flex; align-items:center; gap:10px;">
+            <svg width="32" height="32" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <rect width="36" height="36" rx="8" fill="#21834A"/>
+              <path d="M18 8V28" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round"/>
+              <path d="M18 13C22 14 25 17 25 20.5" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"/>
+              <path d="M18 16C14 17 11 19.5 11 22.5" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            <span class="footer-brand-title">AgroPulse</span>
+          </div>
+          <p class="footer-tagline">
+            Next-generation precision agriculture intelligence platform. Turn real-time field telemetry into actionable yield gains.
+          </p>
+        </div>
+
+        <div>
+          <h4 class="footer-col-title">Platform</h4>
+          <ul class="footer-links-list">
+            <li><a href="#dashboard" class="footer-link">Greenhouse Telemetry</a></li>
+            <li><a href="#service" class="footer-link">Soil Probes</a></li>
+            <li><a href="#service" class="footer-link">Precision Irrigation</a></li>
+            <li><a href="#service" class="footer-link">Camera Feeds</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="footer-col-title">Company</h4>
+          <ul class="footer-links-list">
+            <li><a href="#about" class="footer-link">About Us</a></li>
+            <li><a href="#pricing" class="footer-link">Pricing Plans</a></li>
+            <li><a href="#blog" class="footer-link">Agronomy Blog</a></li>
+            <li><a href="login.html" class="footer-link">Operator Sign In</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="footer-col-title">Solutions</h4>
+          <ul class="footer-links-list">
+            <li><a href="#service" class="footer-link">Commercial Greenhouses</a></li>
+            <li><a href="#service" class="footer-link">Vineyards &amp; Orchards</a></li>
+            <li><a href="#service" class="footer-link">Open Field Farming</a></li>
+            <li><a href="signup.html" class="footer-link">Free Trial</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>&copy; 2026 AgroPulse. All rights reserved.</div>
+        <div class="footer-legal-links">
+          <a href="privacy.html">Privacy Policy</a>
+          <a href="terms.html">Terms &amp; Conditions</a>
+        </div>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- Vanilla JavaScript -->
+  <script src="js/landing.js"></script>
+</body>
 </html>

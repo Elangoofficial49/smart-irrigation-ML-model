@@ -13,320 +13,535 @@
   <link rel="apple-touch-icon" href="icons/icon-192.svg" />
   <link rel="icon" type="image/svg+xml" href="icons/icon.svg" />
   <link rel="shortcut icon" href="favicon.ico" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <!-- Fonts & Chart.js -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <link rel="stylesheet" href="css/style.css?v=6" />
+
+  <!-- Modern Bento Dashboard Stylesheet -->
+  <link rel="stylesheet" href="css/dashboard.css?v=1" />
 </head>
 <body>
-  <div class="app-layout">
-    <!-- Compact Hover-Expand Left Sidebar -->
-    <aside class="sidebar">
-      <div class="sidebar-header">
-        <div class="logo-icon"><i class="fa-solid fa-seedling" aria-hidden="true"></i></div>
-        <div>
-          <div class="brand-title">AgroPulse</div>
-          <div class="brand-sub">Precision Irrigation</div>
-        </div>
+  <div class="dashboard-shell">
+    <!-- Left Sidebar (72px White Bar) -->
+    <aside class="sidebar" aria-label="Main Navigation">
+      <div class="sidebar-top">
+        <!-- AgroPulse Brand Logo (Green rounded square + white leaf) -->
+        <a href="dashboard.html" class="brand-logo-btn" title="AgroPulse Dashboard" aria-label="AgroPulse Home">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 2L9.5 8.5C7.5 13.5 10 18 12 22C14 18 16.5 13.5 14.5 8.5L12 2Z"></path>
+            <path d="M12 22V10"></path>
+          </svg>
+        </a>
+
+        <!-- Main Destination Buttons -->
+        <nav class="sidebar-nav">
+          <a href="dashboard.html" class="nav-item active" data-page="dashboard" title="Operational Dashboard" aria-label="Operational Dashboard">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="7" height="9" rx="1"></rect>
+              <rect x="14" y="3" width="7" height="5" rx="1"></rect>
+              <rect x="14" y="12" width="7" height="9" rx="1"></rect>
+              <rect x="3" y="16" width="7" height="5" rx="1"></rect>
+            </svg>
+          </a>
+
+          <a href="sensors.html" class="nav-item" data-page="sensors" title="Sensor Monitoring" aria-label="Sensor Monitoring">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4.9 19.1C1 15.2 1 8.8 4.9 4.9"></path>
+              <path d="M7.8 16.2c-2.3-2.3-2.3-6.1 0-8.5"></path>
+              <circle cx="12" cy="12" r="2"></circle>
+              <path d="M16.2 7.8c2.3 2.3 2.3 6.1 0 8.5"></path>
+              <path d="M19.1 4.9C23 8.8 23 15.1 19.1 19"></path>
+            </svg>
+          </a>
+
+          <a href="irrigation.html" class="nav-item" data-page="irrigation" title="Irrigation Control" aria-label="Irrigation Control">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"></path>
+            </svg>
+          </a>
+
+          <div class="nav-divider"></div>
+
+          <a href="crops.html" class="nav-item" data-page="crops" title="Crop Inventory" aria-label="Crop Inventory">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M2 22 12 2l10 20H2z"></path>
+              <path d="M12 2v20"></path>
+              <path d="m7 15 5-5 5 5"></path>
+            </svg>
+          </a>
+
+          <a href="weather.html" class="nav-item" data-page="weather" title="Weather Intelligence" aria-label="Weather Intelligence">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"></path>
+            </svg>
+          </a>
+        </nav>
       </div>
 
-      <nav class="sidebar-nav" aria-label="Main Navigation">
-        <div class="nav-section-label">Telemetry &amp; Control</div>
-        <a href="dashboard.html" class="nav-item active" data-page="dashboard" title="Dashboard">
-          <i class="fa-solid fa-chart-line" aria-hidden="true"></i> <span>Dashboard</span>
-        </a>
-        <a href="sensors.html" class="nav-item" data-page="sensors" title="Sensor Monitoring">
-          <i class="fa-solid fa-satellite-dish" aria-hidden="true"></i> <span>Sensor Monitoring</span>
-        </a>
-        <a href="irrigation.html" class="nav-item" data-page="irrigation" title="Irrigation Control">
-          <i class="fa-solid fa-faucet-drip" aria-hidden="true"></i> <span>Irrigation Control</span>
-        </a>
-
-        <div class="nav-section-label">Farm Management</div>
-        <a href="crops.html" class="nav-item" data-page="crops" title="Crop Inventory">
-          <i class="fa-solid fa-wheat-awn" aria-hidden="true"></i> <span>Crop Inventory</span>
-        </a>
-        <a href="weather.html" class="nav-item" data-page="weather" title="Weather Intelligence">
-          <i class="fa-solid fa-cloud-sun-rain" aria-hidden="true"></i> <span>Weather Intelligence</span>
-        </a>
-      </nav>
-
-      <div class="sidebar-footer">
-        <div class="user-card">
-          <div class="user-avatar" id="avatarInitials">EL</div>
-          <div class="user-info">
-            <div class="user-name" id="userBadge">Operator</div>
-            <div class="user-role">Field Operations</div>
-          </div>
-        </div>
-        <button class="btn-logout" onclick="logout()" title="Sign Out">
-          <i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i> <span>Sign Out</span>
+      <div class="sidebar-bottom">
+        <div class="sidebar-avatar" id="avatarInitials" title="Active Operator">EL</div>
+        <button type="button" class="btn-sidebar-logout" onclick="logout()" title="Sign Out" aria-label="Sign Out">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+            <polyline points="16 17 21 12 16 7"></polyline>
+            <line x1="21" y1="12" x2="9" y2="12"></line>
+          </svg>
         </button>
       </div>
     </aside>
 
-    <!-- Main Operations Workspace -->
+    <!-- Main Operational Workspace -->
     <div class="main-wrapper">
-      <header class="top-navbar">
-        <div style="display:flex; align-items:center; gap:12px;">
-          <button class="mobile-menu-btn" id="mobileToggle" aria-label="Toggle Navigation">
-            <i class="fa-solid fa-bars" aria-hidden="true"></i>
-          </button>
-          <nav class="page-breadcrumb" aria-label="Breadcrumb">
-            <span>AgroPulse</span>
-            <span class="sep">/</span>
-            <span class="current">Dashboard</span>
-          </nav>
+      <!-- Header with Greeting & Pills -->
+      <header class="dashboard-header">
+        <div class="header-left">
+          <h1 class="header-greeting">Hi, <span id="headerUserName">Farmer</span>!</h1>
+          <p class="header-subtext">Real-time environmental telemetry, Random Forest irrigation recommendations, and field status.</p>
         </div>
 
-        <div class="top-actions">
-          <span class="status-pill success" id="probeTimestampBadge" aria-live="polite">
-            <span class="status-dot"></span>
-            <span id="probeTimestampText">Telemetry Active</span>
-          </span>
-          <a href="sensors.html" class="btn btn-secondary btn-sm" title="Proceed to Sensor Monitoring">
+        <div class="header-right">
+          <!-- Live Telemetry Status Chip -->
+          <div class="chip-status-live" id="probeTimestampBadge" aria-live="polite">
+            <span class="pulse-dot"></span>
+            <span id="probeTimestampText">Probe #1 · Telemetry Active</span>
+          </div>
+
+          <!-- Quick Navigation Pill -->
+          <a href="sensors.html" class="btn-header-pill" title="Proceed to Sensor Monitoring">
             <span>Sensor Monitoring</span>
-            <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+              <polyline points="12 5 19 12 12 19"></polyline>
+            </svg>
           </a>
+
+          <!-- Poll Field Sensor Button -->
+          <button type="button" class="btn-header-pill btn-header-primary" onclick="quickSimulate()" id="quickSimBtn" title="Poll Capacitive Field Probe #1">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="23 4 23 10 17 10"></polyline>
+              <polyline points="1 20 1 14 7 14"></polyline>
+              <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+            </svg>
+            <span>Poll Field Sensor</span>
+          </button>
+
+          <!-- User Card with Dropdown -->
+          <div class="user-dropdown-wrap">
+            <div class="user-card-pill" id="userCardDropdownTrigger" role="button" aria-haspopup="true" aria-expanded="false" tabindex="0">
+              <div class="user-card-avatar" id="userCardAvatar">EL</div>
+              <div class="user-card-meta">
+                <div class="user-card-name" id="userBadge">Operator</div>
+                <div class="user-card-role" id="userCardRole">operator@agropulse.farm</div>
+              </div>
+              <svg class="user-card-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </div>
+
+            <!-- Dropdown Menu -->
+            <div class="user-dropdown-menu" id="userDropdownMenu" role="menu">
+              <a href="admin.html" class="user-dropdown-item" role="menuitem">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                <span>Profile</span>
+              </a>
+              <a href="sensors.html" class="user-dropdown-item" role="menuitem">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                <span>Settings</span>
+              </a>
+              <div class="user-dropdown-divider"></div>
+              <button type="button" class="user-dropdown-item" onclick="logout()" role="menuitem">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                <span>Sign out</span>
+              </button>
+            </div>
+          </div>
         </div>
       </header>
 
-      <main class="content-area">
-        <div class="page-header-bar">
-          <div>
-            <h1 class="page-title">Operational Dashboard</h1>
-            <p class="page-subtitle">Real-time environmental telemetry, Random Forest irrigation recommendations, and field status.</p>
-          </div>
-          <div class="page-header-actions">
-            <button class="btn btn-secondary btn-sm" onclick="quickSimulate()" id="quickSimBtn" title="Poll Capacitive Field Probe #1">
-              <i class="fa-solid fa-arrows-rotate" aria-hidden="true"></i>
-              <span>Poll Field Sensor</span>
-            </button>
-          </div>
-        </div>
-
-        <!-- Compact 4-Metric Strip with Root-Zone Hydration Horizon Gauges -->
-        <section class="metrics-strip" aria-label="Primary Farm Telemetry Metrics">
-          <div class="metric-cell">
-            <div class="metric-label">
-              <span>Soil Moisture</span>
-              <i class="fa-solid fa-droplet" aria-hidden="true"></i>
-            </div>
-            <div class="metric-value-row">
-              <span class="metric-value skeleton-shimmer" id="cardMoisture">00.0%</span>
-              <span class="metric-unit">VWC</span>
-            </div>
-            <div class="metric-gauge-track" role="img" aria-label="Optimal root-zone moisture horizon 35% to 75%">
-              <div class="metric-target-band" style="left:35%; width:40%;" title="Optimal Root-Zone Band: 35% to 75%"></div>
-              <div class="metric-gauge-fill" id="moistureGaugeFill" style="width:0%; background:var(--action-green);"></div>
-            </div>
-            <div class="metric-desc" id="moistureStatus" aria-live="polite">
-              <i class="fa-solid fa-circle-info" aria-hidden="true"></i> <span>Optimal band: 35% to 75%</span>
-            </div>
-          </div>
-
-          <div class="metric-cell">
-            <div class="metric-label">
-              <span>Ambient / Soil Temp</span>
-              <i class="fa-solid fa-temperature-half" aria-hidden="true"></i>
-            </div>
-            <div class="metric-value-row">
-              <span class="metric-value skeleton-shimmer" id="cardTemp">00.0°C</span>
-            </div>
-            <div class="metric-gauge-track" role="img" aria-label="Target thermal range 20°C to 34°C">
-              <div class="metric-target-band" style="left:40%; width:28%;" title="Target Thermal Band: 20°C to 34°C"></div>
-              <div class="metric-gauge-fill" id="tempGaugeFill" style="width:0%; background:var(--info-blue);"></div>
-            </div>
-            <div class="metric-desc" id="tempStatus">
-              <i class="fa-solid fa-circle-check" style="color:var(--action-green);" aria-hidden="true"></i> <span>Target range: 20°C to 34°C</span>
-            </div>
-          </div>
-
-          <div class="metric-cell">
-            <div class="metric-label">
-              <span>Relative Humidity</span>
-              <i class="fa-solid fa-wind" aria-hidden="true"></i>
-            </div>
-            <div class="metric-value-row">
-              <span class="metric-value skeleton-shimmer" id="cardHumidity">00.0%</span>
-              <span class="metric-unit">RH</span>
-            </div>
-            <div class="metric-gauge-track" role="img" aria-label="Normal relative humidity band 40% to 75%">
-              <div class="metric-target-band" style="left:40%; width:35%;" title="Balanced Humidity Band: 40% to 75%"></div>
-              <div class="metric-gauge-fill" id="humidityGaugeFill" style="width:0%; background:var(--info-blue);"></div>
-            </div>
-            <div class="metric-desc" id="humidityStatus">
-              <i class="fa-solid fa-gauge-high" aria-hidden="true"></i> <span>Evapotranspiration factor</span>
-            </div>
-          </div>
-
-          <div class="metric-cell">
-            <div class="metric-label">
-              <span>Main Irrigation Pump</span>
-              <i class="fa-solid fa-faucet-drip" aria-hidden="true"></i>
-            </div>
-            <div class="metric-value-row">
-              <span class="metric-value skeleton-shimmer" id="cardIrrigation">OFF</span>
-            </div>
-            <div class="metric-gauge-track" role="img" aria-label="Pump actuation state">
-              <div class="metric-gauge-fill" id="pumpGaugeFill" style="width:0%; background:var(--action-green);"></div>
-            </div>
-            <div class="metric-desc" id="pumpMode">
-              <i class="fa-solid fa-shield-halved" aria-hidden="true"></i> <span>Mode: standby</span>
-            </div>
-          </div>
-        </section>
-
-        <!-- Primary 2-Column Workspace Grid (Telemetry Chart + Field Telemetry Insights) -->
-        <div class="workspace-grid" style="margin-bottom:16px;">
-          <!-- Left: Moisture & Humidity Trends Chart -->
-          <section class="panel" style="margin-bottom:0;" aria-labelledby="chartPanelHeading">
-            <div class="panel-header">
+      <!-- Main Bento Grid (4 Columns) -->
+      <main>
+        <section class="bento-grid" aria-label="Operational Bento Workspace">
+          <!-- 1. Ambient Conditions (Weather) -->
+          <div class="bento-card card-weather" aria-labelledby="weatherHeading">
+            <div class="weather-header">
               <div>
-                <div class="panel-title" id="chartPanelHeading">
-                  <i class="fa-solid fa-chart-line" aria-hidden="true"></i>
-                  <span>Soil Moisture &amp; Humidity Telemetry</span>
-                </div>
-                <div class="panel-subtitle">Capacitive Ground Probe #1 with 35% critical irrigation threshold</div>
+                <h2 class="card-title-serif" id="weatherHeading">Ambient Conditions</h2>
+                <div class="card-subtext" id="tempStatus">Target range: 20°C to 34°C</div>
               </div>
-              <div class="segmented-control" role="group" aria-label="Telemetry Chart Sample Depth">
+              <div class="weather-illustration-box">
+                <div class="weather-art" id="weatherArt" aria-hidden="true">
+                  <!-- Dynamic SVG inserted via JS -->
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#E0A030" stroke-width="2">
+                    <circle cx="12" cy="12" r="5"></circle>
+                    <line x1="12" y1="1" x2="12" y2="3"></line>
+                    <line x1="12" y1="21" x2="12" y2="23"></line>
+                  </svg>
+                </div>
+                <div>
+                  <div class="weather-day-num" id="weatherDayNum">4</div>
+                  <div class="weather-date-sub" id="weatherDateSub">November 2026</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="weather-pill-list">
+              <div class="weather-pill-row">
+                <span class="weather-pill-label">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"></path></svg>
+                  <span>Temperature</span>
+                </span>
+                <span class="weather-pill-val" id="cardTemp">28.0°C</span>
+              </div>
+              <div class="weather-pill-row">
+                <span class="weather-pill-label">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"></path></svg>
+                  <span>Humidity</span>
+                </span>
+                <span class="weather-pill-val" id="cardHumidity">60% RH</span>
+              </div>
+              <div class="weather-pill-row">
+                <span class="weather-pill-label">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"></path><path d="M16 14v6M8 14v6M12 16v6"></path></svg>
+                  <span>Rain probability</span>
+                </span>
+                <span class="weather-pill-val" id="cardRain">10%</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. Current Crop -->
+          <div class="bento-card card-crop">
+            <div>
+              <div class="icon-circle-soft" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"></path>
+                  <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"></path>
+                </svg>
+              </div>
+              <div class="card-subtext" style="font-weight:600;">Current Crop</div>
+              <div class="card-num-serif" id="cardCropName" style="font-size:24px; margin-top:4px;">Tomato</div>
+            </div>
+            <div class="card-subtext" id="cardCropPlotMeta">Plot A-1 · Day 42 of 90</div>
+          </div>
+
+          <!-- 3. Active Plots -->
+          <div class="bento-card card-plots">
+            <div>
+              <div class="card-subtext" style="font-weight:600;">Active Plots</div>
+              <div class="card-num-serif" id="cardPlotCount" style="margin-top:6px;">4</div>
+            </div>
+            <div class="card-subtext">registered crop plots</div>
+          </div>
+
+          <!-- 4. Soil Moisture Strip -->
+          <div class="bento-card card-soil">
+            <div class="soil-left">
+              <h2 class="card-title-serif">Soil Moisture</h2>
+              <div class="card-subtext" id="moistureStatus">Optimal root-zone band (35% to 75%)</div>
+            </div>
+
+            <!-- Rising Wedge SVG Chart in Middle -->
+            <div class="soil-wedge-art" aria-hidden="true">
+              <svg viewBox="0 0 80 36" fill="none">
+                <defs>
+                  <linearGradient id="soilWedgeGrad" x1="0" y1="0" x2="0" y2="36" gradientUnits="userSpaceOnUse">
+                    <stop stop-color="#0F8A4B" stop-opacity="0.3"></stop>
+                    <stop offset="1" stop-color="#0F8A4B" stop-opacity="0.02"></stop>
+                  </linearGradient>
+                </defs>
+                <path d="M 2 32 Q 25 30 45 18 T 78 6 L 78 34 L 2 34 Z" fill="url(#soilWedgeGrad)"></path>
+                <path d="M 2 32 Q 25 30 45 18 T 78 6" stroke="#0F8A4B" stroke-width="2" stroke-linecap="round"></path>
+              </svg>
+            </div>
+
+            <div class="soil-right">
+              <div class="card-num-serif" id="cardMoisture" style="color:var(--green); font-size:32px;">42.5%</div>
+              <span class="status-pill success" id="moistureStatusLabel">Optimal</span>
+              <div id="moistureGaugeFill" style="display:none;"></div>
+            </div>
+          </div>
+
+          <!-- 5. Main Irrigation Pump -->
+          <div class="bento-card card-pump">
+            <div class="pump-top-row">
+              <div style="display:flex; align-items:center; gap:8px;">
+                <div class="icon-circle-soft" style="margin-bottom:0;" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"></path>
+                  </svg>
+                </div>
+                <div class="card-subtext" style="font-weight:600;">Irrigation Status</div>
+              </div>
+              <button class="toggle-switch-btn" id="pumpToggleBtn" onclick="togglePump()" aria-label="Toggle irrigation pump" role="switch" aria-checked="false">
+                <span class="toggle-switch-thumb"></span>
+              </button>
+            </div>
+            <div>
+              <div class="card-num-serif" id="cardIrrigation" style="font-size:26px; margin-top:6px;">OFF</div>
+              <div style="display:flex; align-items:center; justify-content:space-between; margin-top:4px;">
+                <span class="card-subtext" id="pumpMode">Mode: auto by system</span>
+                <span class="status-pill neutral" id="pumpStatusPill">Idle</span>
+              </div>
+            </div>
+            <div id="pumpGaugeFill" style="display:none;"></div>
+          </div>
+
+          <!-- 6. Water Usage -->
+          <div class="bento-card card-water">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+              <div>
+                <div class="card-subtext" style="font-weight:600;">Water Usage</div>
+                <div class="card-subtext">Today</div>
+              </div>
+              <span class="water-trend-badge" id="waterUsageTrend">
+                <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>
+                <span>8% vs yesterday</span>
+              </span>
+            </div>
+            <div>
+              <div class="card-num-serif" id="cardWaterUsage" style="font-size:24px;">1,240 L</div>
+              <div class="sparkline-7bar" id="waterSparkline" aria-label="7-day water usage sparkline"></div>
+            </div>
+          </div>
+
+          <!-- 7. Irrigation Trigger Strip -->
+          <div class="bento-card card-limit">
+            <div class="limit-top-row">
+              <div>
+                <h2 class="card-title-serif">Irrigation Trigger</h2>
+                <div class="card-subtext">Trigger at 35% soil moisture</div>
+              </div>
+              <div id="triggerStatusText" class="card-subtext"><span style="color:var(--green); font-weight:600;">Safe (+7.5% above trigger)</span></div>
+            </div>
+            <div class="tick-bar-container" id="tickBarContainer" aria-label="Hydration tick-bar horizon"></div>
+            <div class="tick-labels">
+              <span>0% Deficit</span>
+              <span style="color:var(--amber); font-weight:600;">35% Trigger Horizon</span>
+              <span>100% Saturation</span>
+            </div>
+          </div>
+
+          <!-- 8. Soil Moisture & Humidity Telemetry Chart -->
+          <div class="bento-card card-chart" aria-labelledby="chartHeading">
+            <div class="chart-header">
+              <div>
+                <h2 class="card-title-serif" id="chartHeading">Soil Moisture &amp; Humidity Telemetry</h2>
+                <div class="card-subtext">Capacitive Ground Probe #1 with 35% critical irrigation threshold</div>
+              </div>
+              <div class="chart-segmented-control" role="group" aria-label="Telemetry Chart Sample Depth">
                 <button type="button" class="seg-btn active" id="segLimit10" onclick="setChartLimit(10)">10 Samples</button>
                 <button type="button" class="seg-btn" id="segLimit25" onclick="setChartLimit(25)">25 Samples</button>
               </div>
             </div>
 
-            <!-- Descriptive Chart Takeaway Headline -->
-            <div class="chart-takeaway-banner" id="chartTakeawayBanner" aria-live="polite">
+            <!-- Summary Pill Row -->
+            <div class="chart-summary-pill-row" id="chartTakeawayBanner" aria-live="polite">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="var(--green)" stroke-width="2" aria-hidden="true">
+                <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
+              </svg>
+              <span id="chartSummaryText">Loading probe telemetry summary...</span>
+            </div>
+
+            <!-- Chart.js Canvas -->
+            <div class="chart-canvas-wrap">
+              <canvas id="telemetryChart" role="img" aria-label="Telemetry Chart showing soil moisture, humidity, and 35 percent irrigation threshold"></canvas>
+            </div>
+          </div>
+
+          <!-- 9. Model Confidence Semicircular Gauge -->
+          <div class="bento-card card-gauge" aria-labelledby="gaugeHeading">
+            <div style="width:100%; text-align:left;">
+              <h2 class="card-title-serif" id="gaugeHeading">Model Confidence</h2>
+              <div class="card-subtext">Random Forest irrigation model</div>
+            </div>
+
+            <div class="gauge-svg-container" id="gaugeSvgContainer" aria-label="Semicircular Confidence Gauge"></div>
+
+            <div class="gauge-stats-row" id="gaugeStats">
+              <div class="gauge-stat-box">
+                <span class="gauge-stat-label">Samples</span>
+                <span class="gauge-stat-val" id="gaugeStatSamples">10</span>
+              </div>
+              <div class="gauge-stat-box">
+                <span class="gauge-stat-label">Trigger</span>
+                <span class="gauge-stat-val" id="gaugeStatTrigger">35%</span>
+              </div>
+              <div class="gauge-stat-box">
+                <span class="gauge-stat-label">Rain Risk</span>
+                <span class="gauge-stat-val" id="gaugeStatRain">Low</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 10. Field Telemetry Insights (AI Card) -->
+          <div class="bento-card card-insights" aria-labelledby="aiCardHeading">
+            <div class="insights-pastel-gradient-bar" aria-hidden="true"></div>
+            <div class="insights-inner">
               <div>
-                <i class="fa-solid fa-wave-square" style="color:var(--action-green); margin-right:6px;" aria-hidden="true"></i>
-                <span id="chartSummaryText">Loading probe telemetry summary...</span>
-              </div>
-              <span style="font-size:11.5px; color:var(--warning-amber); font-weight:600;">
-                <i class="fa-solid fa-grip-lines" aria-hidden="true"></i> 35% Trigger Horizon
-              </span>
-            </div>
-
-            <div style="height:245px; position:relative;">
-              <canvas id="telemetryChart" role="img" aria-label="Line chart of soil moisture, relative humidity, and 35 percent critical irrigation threshold"></canvas>
-            </div>
-          </section>
-
-          <!-- Right: Field Telemetry Insights Panel -->
-          <aside class="ai-insights-panel" aria-labelledby="aiPanelHeading">
-            <div class="ai-insights-header">
-              <div class="ai-insights-title" id="aiPanelHeading">
-                <span class="ai-badge-dot" aria-hidden="true"></span>
-                <span>Field Telemetry Insights</span>
-              </div>
-              <span id="quickMlBadge" class="status-pill neutral" aria-live="polite">Ready</span>
-            </div>
-            <div class="ai-insights-body">
-              <div class="ai-insight-item">
-                <div class="ai-insight-label">Measured Field Inputs (Observed)</div>
-                <div class="ai-insight-text" id="aiMeasuredSummary" aria-live="polite">
-                  <span class="skeleton-shimmer" style="width:100%;">Loading sensor reading</span>
+                <div class="insights-header-row">
+                  <h2 class="card-title-serif" id="aiCardHeading">Field Telemetry Insights</h2>
+                  <span id="quickMlBadge" class="status-pill success" aria-live="polite">Hold (OFF)</span>
                 </div>
-                <div class="ai-meta-row" id="aiMeasuredMeta">
-                  <span><i class="fa-regular fa-clock" aria-hidden="true"></i> Timestamp: N/A</span>
-                  <span><i class="fa-solid fa-satellite-dish" aria-hidden="true"></i> Source: Probe #1</span>
+
+                <div class="card-subtext" style="font-weight:600; margin-bottom:6px;">Measured field inputs</div>
+                <div class="insights-pill-grid" id="aiMeasuredSummary" aria-live="polite">
+                  <div class="insight-metric-pill"><span>Soil Moisture</span><span>42.5%</span></div>
+                  <div class="insight-metric-pill"><span>Temperature</span><span>28.0°C</span></div>
+                  <div class="insight-metric-pill"><span>Humidity</span><span>60%</span></div>
+                  <div class="insight-metric-pill"><span>Rain Prob</span><span>10%</span></div>
+                </div>
+
+                <div class="insights-meta-row" id="aiMeasuredMeta">
+                  <span id="aiMeasuredTime">Measured: Just now</span>
+                  <span>&middot; Source: Capacitive Probe #1</span>
+                </div>
+
+                <div class="insights-decision-box">
+                  <div class="card-subtext" style="font-weight:600; margin-bottom:2px;">Random Forest decision evaluation</div>
+                  <div class="insights-decision-text" id="aiDecisionExplanation" aria-live="polite">
+                    Root-zone moisture and atmospheric demand do not require immediate water application.
+                  </div>
+                  <div class="confidence-progress-bar" id="quickMlProgress" role="progressbar" aria-label="Model prediction confidence" aria-valuemin="0" aria-valuemax="100">
+                    <div class="confidence-progress-fill" id="quickMlBar" style="width:97%;"></div>
+                  </div>
+                  <div style="display:flex; justify-content:space-between; font-size:11px; color:var(--muted); margin-top:4px;">
+                    <span id="quickMlScore">Model Confidence 97%</span>
+                  </div>
                 </div>
               </div>
 
-              <div class="ai-insight-item">
-                <div class="ai-insight-label">Random Forest Decision Evaluation (Predicted)</div>
-                <div class="ai-insight-text" id="aiDecisionExplanation" aria-live="polite">
-                  Run an evaluation to compute irrigation necessity from soil moisture, temperature, humidity, and rain probability.
-                </div>
-                <div class="ml-confidence-meter" style="margin-top:8px;" role="progressbar" aria-label="Model prediction confidence" aria-valuemin="0" aria-valuemax="100" id="quickMlProgress">
-                  <div class="ml-confidence-bar" id="quickMlBar" style="width:0%;"></div>
-                </div>
-                <div style="display:flex; justify-content:space-between; font-size:11.5px; color:var(--text-secondary); margin-top:4px;">
-                  <span>Model Confidence</span>
-                  <span id="quickMlScore" class="num">N/A</span>
-                </div>
-              </div>
-
-              <button class="btn btn-primary btn-sm btn-block" onclick="quickPredict()" id="quickPredictBtn" accesskey="e" title="Evaluate Random Forest ML Decision (Alt+E)">
-                <i class="fa-solid fa-microchip" aria-hidden="true"></i>
+              <button type="button" class="btn-evaluate-ml" id="quickPredictBtn" onclick="quickPredict()" title="Evaluate Random Forest ML Decision">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <rect x="4" y="4" width="16" height="16" rx="2"></rect>
+                  <rect x="9" y="9" width="6" height="6"></rect>
+                  <line x1="9" y1="1" x2="9" y2="4"></line>
+                  <line x1="15" y1="1" x2="15" y2="4"></line>
+                  <line x1="9" y1="20" x2="9" y2="23"></line>
+                  <line x1="15" y1="20" x2="15" y2="23"></line>
+                  <line x1="20" y1="9" x2="23" y2="9"></line>
+                  <line x1="20" y1="14" x2="23" y2="14"></line>
+                  <line x1="1" y1="9" x2="4" y2="9"></line>
+                  <line x1="1" y1="14" x2="4" y2="14"></line>
+                </svg>
                 <span>Evaluate ML Decision</span>
               </button>
             </div>
-          </aside>
-        </div>
+          </div>
+        </section>
 
-        <!-- Secondary 2-Column Operational Tables: Recent Irrigation Activity & Registered Crops -->
-        <div class="grid-2">
-          <!-- Recent Irrigation Activity -->
-          <section class="panel panel-flush" style="margin-bottom:0;">
-            <div class="panel-header">
-              <div>
-                <div class="panel-title">
-                  <i class="fa-solid fa-clock-rotate-left" aria-hidden="true"></i>
-                  <span>Recent Irrigation Activity</span>
+        <!-- Lower Section (2 Equal Columns: Plots Map & Timeline) -->
+        <section class="lower-section">
+          <!-- Column 1: Registered Crop Plots (Aerial Farmland Map) -->
+          <div class="section-card" aria-labelledby="plotsSectionHeading">
+            <div class="section-card-header">
+              <h2 class="card-title-serif" id="plotsSectionHeading">Registered Crop Plots</h2>
+              <a href="crops.html" class="section-link-pill" title="Proceed to Crop Inventory">
+                <span>Crop Inventory</span>
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+              </a>
+            </div>
+
+            <!-- Aerial Map Box with Frosted Glass Overlay -->
+            <div class="aerial-map-wrap" role="region" aria-label="Aerial Farmland Plot Viewer">
+              <div class="aerial-inner-image" id="aerialInnerImage"></div>
+
+              <!-- Action Buttons -->
+              <button type="button" class="map-btn-round map-btn-layers" title="Toggle Vegetation Index Layer" aria-label="Toggle Layers">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+              </button>
+
+              <button type="button" class="map-btn-round map-btn-search" title="Search Field Plots" aria-label="Search Plots">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+              </button>
+
+              <div class="map-zoom-controls">
+                <button type="button" class="map-btn-round" id="mapZoomInBtn" title="Zoom In" aria-label="Zoom In">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                </button>
+                <button type="button" class="map-btn-round" id="mapZoomOutBtn" title="Zoom Out" aria-label="Zoom Out">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                </button>
+              </div>
+
+              <!-- Frosted Glass Overlay Panel -->
+              <div class="frosted-plot-panel">
+                <div class="frosted-plot-title" id="aerialPlotTitle">Plot 1: Tomato (Roma)</div>
+                <div class="frosted-plot-dates" id="aerialPlotDates">Planted: 15 Sep 2026 &middot; Harvest: 20 Dec 2026</div>
+
+                <div class="frosted-health-row">
+                  <div class="frosted-health-header">
+                    <span>Crop health</span>
+                    <span id="aerialHealthVal">94%</span>
+                  </div>
+                  <div class="frosted-health-track">
+                    <div class="frosted-health-fill" id="aerialHealthFill" style="width:94%;"></div>
+                  </div>
                 </div>
-                <div class="panel-subtitle">Latest automated and manual pump events</div>
-              </div>
-              <a href="irrigation.html" class="btn btn-ghost btn-xs">Irrigation Control <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
-            </div>
 
-            <div class="table-responsive">
-              <table class="data-table" id="activityTable">
-                <thead>
-                  <tr>
-                    <th>State</th>
-                    <th>Mode</th>
-                    <th>Operator / Trigger</th>
-                    <th class="num">Confidence</th>
-                    <th>Timestamp</th>
-                  </tr>
-                </thead>
-                <tbody></tbody>
-              </table>
-              <div class="empty-state" id="activityEmpty" style="display:none; padding:28px 16px;">
-                <div class="empty-state-title">No irrigation events logged yet</div>
-                <p class="empty-state-desc" style="margin-bottom:0;">Run an ML evaluation or toggle the pump in Irrigation Control.</p>
-              </div>
-            </div>
-          </section>
+                <!-- Collapsible Sensor Log -->
+                <button type="button" class="frosted-sensor-toggle" id="frostedSensorToggle" aria-expanded="false">
+                  <span>Sensor log</span>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                </button>
 
-          <!-- Planted Crops Overview -->
-          <section class="panel panel-flush" style="margin-bottom:0;">
-            <div class="panel-header">
-              <div>
-                <div class="panel-title">
-                  <i class="fa-solid fa-wheat-awn" aria-hidden="true"></i>
-                  <span>Registered Crop Plots</span>
+                <div class="frosted-sensor-body" id="frostedSensorBody">
+                  <div class="frosted-sensor-item">
+                    <span>Temp</span>
+                    <strong id="frostedLogTemp">28.0°C</strong>
+                  </div>
+                  <div class="frosted-sensor-item">
+                    <span>Humidity</span>
+                    <strong id="frostedLogHum">60%</strong>
+                  </div>
+                  <div class="frosted-sensor-item">
+                    <span>Moisture</span>
+                    <strong id="frostedLogMoist">42.5%</strong>
+                  </div>
                 </div>
-                <div class="panel-subtitle">Active field allocations and irrigation status</div>
               </div>
-              <a href="crops.html" class="btn btn-ghost btn-xs">Crop Inventory <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
             </div>
 
-            <div class="table-responsive">
-              <table class="data-table" id="cropsTable">
-                <thead>
-                  <tr>
-                    <th>Crop &amp; Variety</th>
-                    <th>Plot</th>
-                    <th class="num">Area</th>
-                    <th>Stage</th>
-                    <th>Status</th>
-                  </tr>
-                </thead>
-                <tbody></tbody>
-              </table>
-              <div class="empty-state" id="cropsEmpty" style="display:none; padding:28px 16px;">
-                <div class="empty-state-title">No crops registered yet</div>
-                <p class="empty-state-desc" style="margin-bottom:10px;">Register your field plots in Crop Inventory to track water demand.</p>
-                <a href="crops.html" class="btn btn-primary btn-xs"><i class="fa-solid fa-plus" aria-hidden="true"></i> Add Crop</a>
-              </div>
+            <!-- Horizontal Plot Chips -->
+            <div class="plot-chips-container" id="plotChipsList" role="tablist" aria-label="Registered Field Plots"></div>
+
+            <!-- Accessible/Legacy Crops Data Table -->
+            <table class="data-table" id="cropsTable" style="display:none;" aria-hidden="true">
+              <tbody></tbody>
+            </table>
+            <div id="cropsEmpty" style="display:none;" aria-hidden="true"></div>
+          </div>
+
+          <!-- Column 2: Recent Irrigation Activity (Vertical Timeline) -->
+          <div class="section-card" aria-labelledby="activitySectionHeading">
+            <div class="section-card-header">
+              <h2 class="card-title-serif" id="activitySectionHeading">Recent Irrigation Activity</h2>
+              <a href="irrigation.html" class="section-link-pill" title="Proceed to Irrigation Control">
+                <span>Irrigation Control</span>
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+              </a>
             </div>
-          </section>
-        </div>
+
+            <div class="timeline-container" id="activityTimelineList" aria-live="polite"></div>
+
+            <div class="timeline-empty" id="activityEmpty" style="display:none;">
+              No irrigation events yet. They will appear here when the pump runs.
+            </div>
+
+            <!-- Accessible/Legacy Activity Data Table -->
+            <table class="data-table" id="activityTable" style="display:none;" aria-hidden="true">
+              <tbody></tbody>
+            </table>
+          </div>
+        </section>
       </main>
 
-      <footer class="app-legal-footer">
-        <div>&copy; 2026 AgroPulse Operations (<a href="https://agropulse.farm" style="color:inherit; text-decoration:none;">agropulse.farm</a>). Precision Irrigation Telemetry.</div>
-        <div class="footer-links">
+      <!-- Legal Footer -->
+      <footer class="dashboard-footer">
+        <div>&copy; 2026 AgroPulse Operations (<a href="https://agropulse.farm">agropulse.farm</a>). Precision Irrigation Telemetry.</div>
+        <div style="display:flex; gap:16px;">
           <a href="privacy.html">Privacy Policy</a>
           <a href="terms.html">Terms &amp; Conditions</a>
         </div>
@@ -334,338 +549,9 @@
     </div>
   </div>
 
+  <!-- Core Scripts -->
   <script src="js/common.js"></script>
   <script src="js/ai-assistant.js"></script>
-  <script>
-    requireAuth();
-    initLayout("dashboard");
-
-    let chartInstance = null;
-    let currentChartLimit = 10;
-    let cachedHistoryRecords = [];
-
-    function setChartLimit(limit) {
-      currentChartLimit = limit;
-      document.getElementById("segLimit10").classList.toggle("active", limit === 10);
-      document.getElementById("segLimit25").classList.toggle("active", limit === 25);
-      refreshTelemetryHistory();
-    }
-
-    function updateChartTakeaway(moistureData) {
-      const summaryEl = document.getElementById("chartSummaryText");
-      if (!moistureData || moistureData.length === 0) {
-        summaryEl.textContent = "No telemetry samples available yet.";
-        return;
-      }
-      const nums = moistureData.map(Number).filter((n) => !isNaN(n));
-      if (nums.length === 0) {
-        summaryEl.textContent = "No telemetry samples available yet.";
-        return;
-      }
-      const avg = nums.reduce((a, b) => a + b, 0) / nums.length;
-      const min = Math.min(...nums);
-      const max = Math.max(...nums);
-      const belowCount = nums.filter((v) => v < 35).length;
-      const statusPhrase = belowCount > 0
-        ? `${belowCount} of ${nums.length} readings below 35% trigger threshold`
-        : `All ${nums.length} readings within safe hydration bounds`;
-      summaryEl.innerHTML =
-        `Average Moisture <strong class="num">${avg.toFixed(1)}%</strong> across <strong class="num">${nums.length}</strong> samples (Range: <strong class="num">${min.toFixed(1)}% to ${max.toFixed(1)}%</strong>) | ${statusPhrase}`;
-    }
-
-    function initChart(labels, moistureData, humidityData) {
-      const ctx = document.getElementById("telemetryChart").getContext("2d");
-      if (chartInstance) chartInstance.destroy();
-
-      const thresholdLine = labels.map(() => 35);
-      chartInstance = new Chart(ctx, {
-        type: "line",
-        data: {
-          labels: labels,
-          datasets: [
-            {
-              label: "Soil Moisture (%)",
-              data: moistureData,
-              borderColor: "#21834A",
-              backgroundColor: "rgba(33, 131, 74, 0.08)",
-              tension: 0.3,
-              fill: true,
-              borderWidth: 2,
-              pointRadius: 3,
-              pointBackgroundColor: "#21834A"
-            },
-            {
-              label: "Relative Humidity (%)",
-              data: humidityData,
-              borderColor: "#3478B8",
-              backgroundColor: "rgba(52, 120, 184, 0.05)",
-              tension: 0.3,
-              fill: true,
-              borderWidth: 1.75,
-              pointRadius: 2.5,
-              pointBackgroundColor: "#3478B8"
-            },
-            {
-              label: "35% Irrigation Trigger",
-              data: thresholdLine,
-              borderColor: "rgba(183, 121, 31, 0.65)",
-              borderDash: [5, 5],
-              borderWidth: 1.25,
-              pointRadius: 0,
-              fill: false
-            }
-          ]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          interaction: { mode: "index", intersect: false },
-          plugins: {
-            legend: {
-              position: "top",
-              align: "end",
-              labels: { boxWidth: 12, font: { family: "Inter", size: 12, weight: "600" }, color: "#17231D" }
-            },
-            tooltip: { padding: 10, cornerRadius: 6 }
-          },
-          scales: {
-            y: {
-              min: 0,
-              max: 100,
-              grid: { color: "#E1E7E1" },
-              ticks: { font: { family: "Inter", size: 11 }, color: "#4A5850" }
-            },
-            x: {
-              grid: { display: false },
-              ticks: { font: { family: "Inter", size: 11 }, color: "#4A5850" }
-            }
-          }
-        }
-      });
-    }
-
-    function renderChartFromCache() {
-      if (Array.isArray(cachedHistoryRecords) && cachedHistoryRecords.length > 0) {
-        const rev = [...cachedHistoryRecords].reverse();
-        const labels = rev.map((r, i) => (r.recorded_at && r.recorded_at.length >= 16) ? r.recorded_at.slice(11, 16) : `T-${rev.length - i}`);
-        const moisture = rev.map((r) => r.soil_moisture);
-        const humidity = rev.map((r) => r.humidity);
-        updateChartTakeaway(moisture);
-        initChart(labels, moisture, humidity);
-      } else {
-        updateChartTakeaway([]);
-        initChart(["No data"], [0], [0]);
-      }
-    }
-
-    async function refreshTelemetryHistory() {
-      try {
-        const history = await apiFetch(`/api/sensors/history?limit=${currentChartLimit}`);
-        cachedHistoryRecords = Array.isArray(history) ? history : [];
-        renderChartFromCache();
-      } catch (e) {
-        cachedHistoryRecords = [];
-        initChart(["Offline"], [0], [0]);
-      }
-    }
-
-    async function loadDashboard() {
-      renderTableSkeleton("#activityTable tbody", 5, 3);
-      renderTableSkeleton("#cropsTable tbody", 5, 3);
-
-      // 1. Latest Sensor & History
-      try {
-        const sensor = await apiFetch("/api/sensors/latest");
-        const mEl = document.getElementById("cardMoisture");
-        const tEl = document.getElementById("cardTemp");
-        const hEl = document.getElementById("cardHumidity");
-        mEl.classList.remove("skeleton-shimmer");
-        tEl.classList.remove("skeleton-shimmer");
-        hEl.classList.remove("skeleton-shimmer");
-
-        if (sensor && sensor.soil_moisture != null) {
-          const sm = Number(sensor.soil_moisture);
-          const temp = Number(sensor.temperature || 0);
-          const hum = Number(sensor.humidity || 0);
-          const rain = Number(sensor.rainfall_prob || 0);
-
-          mEl.textContent = sm.toFixed(1) + "%";
-          tEl.textContent = temp.toFixed(1) + "°C";
-          hEl.textContent = hum.toFixed(1) + "%";
-
-          const moistFill = document.getElementById("moistureGaugeFill");
-          if (moistFill) {
-            moistFill.style.width = Math.max(0, Math.min(100, sm)) + "%";
-            moistFill.style.background = sm < 35 ? "var(--warning-amber)" : (sm > 75 ? "var(--info-blue)" : "var(--action-green)");
-          }
-          const tempFill = document.getElementById("tempGaugeFill");
-          if (tempFill) {
-            const tempPct = Math.max(0, Math.min(100, (temp / 50) * 100));
-            tempFill.style.width = tempPct + "%";
-            tempFill.style.background = (temp > 34 || temp < 15) ? "var(--warning-amber)" : "var(--action-green)";
-          }
-          const humFill = document.getElementById("humidityGaugeFill");
-          if (humFill) {
-            humFill.style.width = Math.max(0, Math.min(100, hum)) + "%";
-          }
-
-          const moistSub = document.getElementById("moistureStatus");
-          if (sm < 35) {
-            moistSub.innerHTML = '<i class="fa-solid fa-triangle-exclamation" style="color:var(--warning-amber);" aria-hidden="true"></i> <span style="color:var(--warning-amber); font-weight:600;">Below 35%: irrigation advised</span>';
-          } else if (sm > 75) {
-            moistSub.innerHTML = '<i class="fa-solid fa-droplet" style="color:var(--info-blue);" aria-hidden="true"></i> <span style="color:var(--info-blue); font-weight:600;">High saturation: hold water</span>';
-          } else {
-            moistSub.innerHTML = '<i class="fa-solid fa-circle-check" style="color:var(--action-green);" aria-hidden="true"></i> <span style="color:var(--action-green); font-weight:600;">Optimal root-zone band (35% to 75%)</span>';
-          }
-
-          document.getElementById("aiMeasuredSummary").innerHTML =
-            `Soil Moisture: <strong class="num">${sm.toFixed(1)}%</strong> · Temp: <strong class="num">${temp.toFixed(1)}°C</strong> · Humidity: <strong class="num">${hum.toFixed(0)}%</strong> · Rain Prob: <strong class="num">${rain.toFixed(0)}%</strong>`;
-          document.getElementById("aiMeasuredMeta").innerHTML =
-            `<span><i class="fa-regular fa-clock" aria-hidden="true"></i> Measured: ${escapeHtml(sensor.recorded_at || "Just now")}</span>
-             <span><i class="fa-solid fa-satellite-dish" aria-hidden="true"></i> Source: Capacitive Probe #1</span>`;
-
-          const tsShort = sensor.recorded_at && sensor.recorded_at.length >= 16 ? sensor.recorded_at.slice(11, 16) : "Live";
-          document.getElementById("probeTimestampText").textContent = `Probe #1 · ${tsShort}`;
-        } else {
-          mEl.textContent = "N/A";
-          tEl.textContent = "N/A";
-          hEl.textContent = "N/A";
-          document.getElementById("aiMeasuredSummary").textContent = "Data unavailable: poll a field sensor reading.";
-        }
-
-        await refreshTelemetryHistory();
-      } catch (e) {
-        initChart(["Offline"], [0], [0]);
-      }
-
-      // 2. Irrigation Status
-      try {
-        const status = await apiFetch("/api/irrigation/status");
-        const card = document.getElementById("cardIrrigation");
-        card.classList.remove("skeleton-shimmer");
-        const mode = document.getElementById("pumpMode");
-        const pumpFill = document.getElementById("pumpGaugeFill");
-        const isON = status.status === "ON";
-        card.textContent = isON ? "ON" : "OFF";
-        card.style.color = isON ? "var(--action-green)" : "var(--text-primary)";
-        if (pumpFill) {
-          pumpFill.style.width = isON ? "100%" : "18%";
-          pumpFill.style.background = isON ? "var(--action-green)" : "var(--text-muted)";
-        }
-        mode.innerHTML = `<i class="fa-solid ${isON ? 'fa-circle-play' : 'fa-circle-pause'}" style="color:${isON ? 'var(--action-green)' : 'var(--text-secondary)'};" aria-hidden="true"></i> <span>Mode: <strong>${escapeHtml(status.mode || "standby")}</strong> ${status.triggered_by ? `by ${escapeHtml(status.triggered_by)}` : ""}</span>`;
-
-        if (status.confidence != null) {
-          const pct = Math.round(Number(status.confidence) * 100);
-          document.getElementById("quickMlBar").style.width = pct + "%";
-          document.getElementById("quickMlProgress").setAttribute("aria-valuenow", String(pct));
-          document.getElementById("quickMlScore").textContent = pct + "%";
-          const badge = document.getElementById("quickMlBadge");
-          badge.className = `status-pill ${isON ? "warning" : "success"}`;
-          badge.innerHTML = `<span class="status-dot"></span><span>${isON ? "Irrigate (ON)" : "Hold (OFF)"}</span>`;
-        }
-      } catch (e) {
-        document.getElementById("cardIrrigation").classList.remove("skeleton-shimmer");
-      }
-
-      // 3. Irrigation Activity History
-      try {
-        const history = await apiFetch("/api/irrigation/history");
-        const tbody = document.querySelector("#activityTable tbody");
-        tbody.innerHTML = "";
-        if (!Array.isArray(history) || history.length === 0) {
-          document.getElementById("activityEmpty").style.display = "block";
-        } else {
-          document.getElementById("activityEmpty").style.display = "none";
-          history.slice(0, 5).forEach((log) => {
-            const isOn = log.status === "ON";
-            const tr = document.createElement("tr");
-            tr.innerHTML = `
-              <td><span class="status-pill ${isOn ? "success" : "neutral"}"><span class="status-dot"></span>${escapeHtml(log.status)}</span></td>
-              <td><span class="badge ${log.mode === "auto" ? "badge-info" : "badge-neutral"}">${escapeHtml(log.mode)}</span></td>
-              <td>${escapeHtml(log.triggered_by || "N/A")}</td>
-              <td class="num">${log.confidence != null ? (Number(log.confidence) * 100).toFixed(1) + "%" : "N/A"}</td>
-              <td style="font-size:12px; color:var(--text-secondary);">${escapeHtml(log.created_at || "N/A")}</td>
-            `;
-            tbody.appendChild(tr);
-          });
-        }
-      } catch (e) {}
-
-      // 4. Registered Crop Plots
-      try {
-        const cropsRes = await apiFetch("/api/crops");
-        const crops = Array.isArray(cropsRes) ? cropsRes : (cropsRes.crops || []);
-        const tbody = document.querySelector("#cropsTable tbody");
-        tbody.innerHTML = "";
-        if (!crops || crops.length === 0) {
-          document.getElementById("cropsEmpty").style.display = "block";
-        } else {
-          document.getElementById("cropsEmpty").style.display = "none";
-          crops.slice(0, 5).forEach((c) => {
-            const st = c.irrigation_status || "Optimal";
-            const pill = st === "Requires Irrigation" ? "warning" : (st === "Scheduled" ? "info" : "success");
-            const tr = document.createElement("tr");
-            tr.innerHTML = `
-              <td>
-                <div class="cell-primary">${escapeHtml(c.crop_name)}</div>
-                <div class="cell-secondary">${escapeHtml(c.variety || "Standard")}</div>
-              </td>
-              <td><span class="badge badge-neutral" style="font-family:var(--font-mono);">${escapeHtml(c.field_plot || "Plot A-1")}</span></td>
-              <td class="num">${Number(c.area_acres || 0).toFixed(1)} ac</td>
-              <td><span class="badge badge-primary">${escapeHtml(c.growth_stage || "Vegetative")}</span></td>
-              <td><span class="status-pill ${pill}"><span class="status-dot"></span>${escapeHtml(st)}</span></td>
-            `;
-            tbody.appendChild(tr);
-          });
-        }
-      } catch (e) {}
-    }
-
-    async function quickSimulate() {
-      const btn = document.getElementById("quickSimBtn");
-      btn.disabled = true;
-      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> <span>Polling...</span>';
-      try {
-        await apiFetch("/api/sensors/simulate", { method: "POST" });
-        showToast("Recorded new field telemetry reading.", "success");
-        await loadDashboard();
-      } catch (err) {
-        showToast(err.message, "error");
-      } finally {
-        btn.disabled = false;
-        btn.innerHTML = '<i class="fa-solid fa-arrows-rotate"></i> <span>Poll Field Sensor</span>';
-      }
-    }
-
-    async function quickPredict() {
-      const btn = document.getElementById("quickPredictBtn");
-      btn.disabled = true;
-      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> <span>Evaluating...</span>';
-      try {
-        const res = await apiFetch("/api/irrigation/predict", { method: "POST" });
-        const isON = res.status === "ON";
-        const badge = document.getElementById("quickMlBadge");
-        badge.className = `status-pill ${isON ? "warning" : "success"}`;
-        badge.innerHTML = `<span class="status-dot"></span><span>${isON ? "IRRIGATE (ON)" : "HOLD (OFF)"}</span>`;
-
-        const pct = Math.round((res.confidence || 0.5) * 100);
-        document.getElementById("quickMlBar").style.width = pct + "%";
-        document.getElementById("quickMlScore").textContent = pct + "% (" + (res.model || "Random Forest") + ")";
-        document.getElementById("aiDecisionExplanation").innerHTML = isON
-          ? `<strong>Recommendation: Activate Irrigation.</strong> Model (${escapeHtml(res.model || "Random Forest")}) detected moisture deficit relative to evapotranspiration demand.`
-          : `<strong>Recommendation: Hold Irrigation.</strong> Root-zone moisture and atmospheric conditions do not require immediate water application.`;
-
-        showToast(`ML Evaluation: Pump ${res.status} (${pct}% confidence)`, "success");
-        await loadDashboard();
-      } catch (err) {
-        showToast(err.message, "error");
-      } finally {
-        btn.disabled = false;
-        btn.innerHTML = '<i class="fa-solid fa-microchip"></i> <span>Evaluate ML Decision</span>';
-      }
-    }
-
-    loadDashboard();
-  </script>
+  <script src="js/dashboard.js"></script>
 </body>
 </html>

@@ -3,158 +3,791 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sign Up &bull; AgroPulse</title>
+  <title>Create your operator account &bull; AgroPulse</title>
   <link rel="canonical" href="https://agropulse.farm/signup">
+  
   <!-- PWA Meta Tags & Web App Manifest -->
   <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#163D2B">
+  <meta name="theme-color" content="#55B312">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="AgroPulse">
   <link rel="apple-touch-icon" href="icons/icon-192.svg">
   <link rel="icon" type="image/svg+xml" href="icons/icon.svg">
   <link rel="shortcut icon" href="favicon.ico">
+  
+  <!-- Typography & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <link rel="stylesheet" href="css/style.css?v=6">
+  <link rel="stylesheet" href="css/style.css?v=8">
 </head>
-<body class="auth-page">
+<body class="split-auth-body">
 
-  <div class="auth-card">
-    <div class="auth-header">
-      <div class="auth-brand-logo">
-        <i class="fa-solid fa-seedling"></i>
+  <div class="split-card-signup">
+    <!-- LEFT PANEL: Operator Sign-Up Form -->
+    <div class="split-left-panel-signup">
+      <div>
+        <!-- 1. Brand Logo Row -->
+        <div class="brand-row" style="margin-bottom: 14px;">
+          <div class="brand-logo-circle" aria-hidden="true">
+            <!-- Leaf / Sprout Icon -->
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M7 20h10"/>
+              <path d="M10 20c0-4.5 1.5-8 7-9"/>
+              <path d="M12 12c-4 0-7-2-7-7 5 0 7 3 7 7Z"/>
+            </svg>
+          </div>
+          <span class="brand-title">AgroPulse</span>
+        </div>
+
+        <!-- 2. Heading & Subtext -->
+        <h1 class="panel-heading" style="font-size: 25px;">Create your operator account</h1>
+        <p class="panel-subtext" style="margin-bottom: 16px;">Set up your farm profile and start monitoring fields in minutes</p>
+
+        <!-- 3. Form -->
+        <form id="signupForm" novalidate>
+          <!-- Row 1: First Name & Last Name (Side by Side) -->
+          <div class="form-row-2col">
+            <div class="form-group-compact">
+              <label for="firstName">First name</label>
+              <div class="input-wrap-split" id="wrapFirstName">
+                <span class="input-icon-left" aria-hidden="true">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/>
+                    <circle cx="12" cy="7" r="4"/>
+                  </svg>
+                </span>
+                <input 
+                  type="text" 
+                  id="firstName" 
+                  name="firstName" 
+                  class="split-input" 
+                  placeholder="First name" 
+                  required 
+                  autocomplete="given-name"
+                >
+              </div>
+              <div class="field-error-msg" id="firstNameError" role="alert" aria-live="polite"></div>
+            </div>
+
+            <div class="form-group-compact">
+              <label for="lastName">Last name</label>
+              <div class="input-wrap-split" id="wrapLastName">
+                <span class="input-icon-left" aria-hidden="true">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/>
+                    <circle cx="12" cy="7" r="4"/>
+                  </svg>
+                </span>
+                <input 
+                  type="text" 
+                  id="lastName" 
+                  name="lastName" 
+                  class="split-input" 
+                  placeholder="Last name" 
+                  required 
+                  autocomplete="family-name"
+                >
+              </div>
+              <div class="field-error-msg" id="lastNameError" role="alert" aria-live="polite"></div>
+            </div>
+          </div>
+
+          <!-- Row 2: Email -->
+          <div class="form-group-compact">
+            <label for="email">Email</label>
+            <div class="input-wrap-split" id="wrapEmail">
+              <span class="input-icon-left" aria-hidden="true">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect width="20" height="16" x="2" y="4" rx="2"/>
+                  <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+                </svg>
+              </span>
+              <input 
+                type="email" 
+                id="email" 
+                name="email" 
+                class="split-input" 
+                placeholder="you@farm.com" 
+                required 
+                autocomplete="email"
+              >
+            </div>
+            <div class="field-error-msg" id="emailError" role="alert" aria-live="polite"></div>
+          </div>
+
+          <!-- Row 3: Username -->
+          <div class="form-group-compact">
+            <label for="username">Username</label>
+            <div class="input-wrap-split" id="wrapUsername">
+              <span class="input-icon-left" aria-hidden="true">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                  <circle cx="12" cy="7" r="4"/>
+                </svg>
+              </span>
+              <input 
+                type="text" 
+                id="username" 
+                name="username" 
+                class="split-input" 
+                placeholder="e.g. farmer_john" 
+                required 
+                autocomplete="username"
+              >
+            </div>
+            <div class="field-error-msg" id="usernameError" role="alert" aria-live="polite"></div>
+          </div>
+
+          <!-- Row 4: Farm or Organization Name -->
+          <div class="form-group-compact">
+            <label for="farmName">Farm or organization name</label>
+            <div class="input-wrap-split" id="wrapFarmName">
+              <span class="input-icon-left" aria-hidden="true">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M3 21h18"/>
+                  <path d="M9 8h1"/>
+                  <path d="M9 12h1"/>
+                  <path d="M9 16h1"/>
+                  <path d="M14 8h1"/>
+                  <path d="M14 12h1"/>
+                  <path d="M14 16h1"/>
+                  <path d="M5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16"/>
+                </svg>
+              </span>
+              <input 
+                type="text" 
+                id="farmName" 
+                name="farmName" 
+                class="split-input" 
+                placeholder="e.g. Green Valley Farms" 
+                required 
+                autocomplete="organization"
+              >
+            </div>
+            <div class="field-error-msg" id="farmNameError" role="alert" aria-live="polite"></div>
+          </div>
+
+          <!-- Row 5: Role (Styled <select>) -->
+          <div class="form-group-compact">
+            <label for="role">Role</label>
+            <div class="input-wrap-split" id="wrapRole">
+              <span class="input-icon-left" aria-hidden="true">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                  <circle cx="9" cy="7" r="4"/>
+                  <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                </svg>
+              </span>
+              <select id="role" name="role" class="split-input" required>
+                <option value="" disabled selected>Select your role</option>
+                <option value="Farm Owner">Farm Owner</option>
+                <option value="Field Operator">Field Operator</option>
+                <option value="Agronomist">Agronomist</option>
+                <option value="Technician">Technician</option>
+              </select>
+              <span class="select-chevron" aria-hidden="true">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="6 9 12 15 18 9"/>
+                </svg>
+              </span>
+            </div>
+            <div class="field-error-msg" id="roleError" role="alert" aria-live="polite"></div>
+          </div>
+
+          <!-- Row 6: Password with 4-Segment Strength Meter -->
+          <div class="form-group-compact">
+            <label for="password">Password</label>
+            <div class="input-wrap-split" id="wrapPassword">
+              <span class="input-icon-left" aria-hidden="true">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/>
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                </svg>
+              </span>
+              <input 
+                type="password" 
+                id="password" 
+                name="password" 
+                class="split-input" 
+                placeholder="Create a strong password" 
+                required 
+                autocomplete="new-password"
+              >
+              <button type="button" class="password-toggle-btn" id="togglePassword" aria-label="Toggle password visibility" aria-pressed="false">
+                <svg class="eye-open" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/>
+                  <circle cx="12" cy="12" r="3"/>
+                </svg>
+                <svg class="eye-off" style="display:none;" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/>
+                  <path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/>
+                  <path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/>
+                  <line x1="2" x2="22" y1="2" y2="22"/>
+                </svg>
+              </button>
+            </div>
+            
+            <!-- 4-segment visual strength meter -->
+            <div class="strength-meter-wrap">
+              <div class="strength-segments" aria-hidden="true">
+                <div class="strength-seg" id="seg1"></div>
+                <div class="strength-seg" id="seg2"></div>
+                <div class="strength-seg" id="seg3"></div>
+                <div class="strength-seg" id="seg4"></div>
+              </div>
+              <span class="strength-hint-text" id="strengthHint">Use 8+ characters with a number and a symbol.</span>
+            </div>
+            <div class="field-error-msg" id="passwordError" role="alert" aria-live="polite"></div>
+          </div>
+
+          <!-- Row 7: Confirm Password -->
+          <div class="form-group-compact">
+            <label for="confirmPassword">Confirm password</label>
+            <div class="input-wrap-split" id="wrapConfirmPassword">
+              <span class="input-icon-left" aria-hidden="true">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/>
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                </svg>
+              </span>
+              <input 
+                type="password" 
+                id="confirmPassword" 
+                name="confirmPassword" 
+                class="split-input" 
+                placeholder="Confirm password" 
+                required 
+                autocomplete="new-password"
+              >
+              <button type="button" class="password-toggle-btn" id="toggleConfirmPassword" aria-label="Toggle confirm password visibility" aria-pressed="false">
+                <svg class="eye-open" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/>
+                  <circle cx="12" cy="12" r="3"/>
+                </svg>
+                <svg class="eye-off" style="display:none;" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/>
+                  <path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/>
+                  <path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/>
+                  <line x1="2" x2="22" y1="2" y2="22"/>
+                </svg>
+              </button>
+            </div>
+            <div class="field-error-msg" id="confirmPasswordError" role="alert" aria-live="polite"></div>
+          </div>
+
+          <!-- Row 8: Checkbox Terms & Conditions -->
+          <label class="terms-checkbox-row" for="termsCheckbox">
+            <input type="checkbox" id="termsCheckbox" class="custom-checkbox" required>
+            <span>I agree to the <a href="terms.html" target="_blank">Terms &amp; Conditions</a> and <a href="privacy.html" target="_blank">Privacy Policy</a></span>
+          </label>
+          <div class="field-error-msg" id="termsError" style="margin-top:-6px; margin-bottom:8px;" role="alert" aria-live="polite"></div>
+
+          <!-- Server / General Error Alert -->
+          <div id="generalError" class="general-error-msg" role="alert" aria-live="polite"></div>
+
+          <!-- Primary Submit Button -->
+          <button type="submit" class="btn-dark-charcoal" id="submitBtn">
+            <span>Create Account</span>
+            <i class="fa-solid fa-arrow-right"></i>
+          </button>
+        </form>
+
+        <!-- OR Divider -->
+        <div class="auth-divider">
+          <span>OR</span>
+        </div>
+
+        <!-- Google Sign-Up Button -->
+        <button type="button" class="btn-google" onclick="handleGoogleSignup()">
+          <svg width="18" height="18" viewBox="0 0 24 24">
+            <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.8-2.4 3.65v3.03h3.88c2.27-2.09 3.665-5.17 3.665-9.12Z"/>
+            <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.03c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.26v3.13C3.25 21.31 7.31 24 12 24Z"/>
+            <path fill="#FBBC05" d="M5.28 14.29c-.25-.72-.38-1.49-.38-2.29s.13-1.57.38-2.29V6.58H1.26C.46 8.17 0 9.99 0 12s.46 3.83 1.26 5.42l4.02-3.13Z"/>
+            <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.25 2.69 1.26 6.58l4.02 3.13c.95-2.83 3.6-4.96 6.72-4.96Z"/>
+          </svg>
+          <span>Sign Up with Google</span>
+        </button>
       </div>
-      <h1>Create Operator Account</h1>
-      <p>Set up automated irrigation &amp; sensor telemetry for your farm</p>
+
+      <!-- Footer Line -->
+      <div class="panel-footer" style="margin-top: 16px;">
+        Already have an account? <a href="login.html">Sign In</a>
+      </div>
     </div>
 
-    <form id="signupForm">
-      <div class="form-group">
-        <label for="username">Username</label>
-        <div class="input-icon-wrap">
-          <i class="fa-solid fa-user prefix-icon"></i>
-          <input type="text" id="username" class="form-input" placeholder="Choose a username" required autocomplete="username">
+    <!-- RIGHT PANEL: Onboarding Preview Dashboard Card -->
+    <div class="split-right-panel" aria-hidden="true">
+      <div class="preview-card" style="height: 600px;">
+        <!-- Top bar: AgroPulse Setup -->
+        <div class="preview-topbar">
+          <div class="preview-topbar-logo">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M7 20h10"/>
+              <path d="M10 20c0-4.5 1.5-8 7-9"/>
+              <path d="M12 12c-4 0-7-2-7-7 5 0 7 3 7 7Z"/>
+            </svg>
+          </div>
+          <span class="preview-topbar-title">AgroPulse Setup</span>
         </div>
-      </div>
 
-      <div class="form-group">
-        <label for="email">Registered Email Address</label>
-        <div class="input-icon-wrap">
-          <i class="fa-solid fa-envelope prefix-icon"></i>
-          <input type="email" id="email" class="form-input" placeholder="name@farm.com (used for OTP recovery)" required autocomplete="email">
+        <div class="preview-body">
+          <!-- Narrow vertical sidebar (6 buttons, 2nd button active) -->
+          <div class="preview-sidebar">
+            <!-- 1. Home -->
+            <button type="button" class="sidebar-icon-btn" title="Dashboard">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                <polyline points="9 22 9 12 15 12 15 22"/>
+              </svg>
+            </button>
+            <!-- 2. Grid/Fields (ACTIVE with dark background) -->
+            <button type="button" class="sidebar-icon-btn active" title="Fields">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="7" height="7"/>
+                <rect x="14" y="3" width="7" height="7"/>
+                <rect x="14" y="14" width="7" height="7"/>
+                <rect x="3" y="14" width="7" height="7"/>
+              </svg>
+            </button>
+            <!-- 3. Crops -->
+            <button type="button" class="sidebar-icon-btn" title="Crops">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M11 20A7 7 0 0 1 4 13c0-4 3.5-7.5 7.5-7.5s7.5 3.5 7.5 7.5a7 7 0 0 1-7 7Z"/>
+                <path d="M11 13V6"/>
+              </svg>
+            </button>
+            <!-- 4. Analytics -->
+            <button type="button" class="sidebar-icon-btn" title="Analytics">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="20" x2="18" y2="10"/>
+                <line x1="12" y1="20" x2="12" y2="4"/>
+                <line x1="6" y1="20" x2="6" y2="14"/>
+              </svg>
+            </button>
+            <!-- 5. Messages -->
+            <button type="button" class="sidebar-icon-btn" title="Notifications">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+              </svg>
+            </button>
+            <!-- 6. Settings at bottom -->
+            <button type="button" class="sidebar-icon-btn bottom" title="Settings">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="3"/>
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+              </svg>
+            </button>
+          </div>
+
+          <!-- Main Area: 3 Steps Onboarding Checklist + Farm Preview -->
+          <div class="preview-main" style="padding: 16px 20px;">
+            <div class="setup-header-title">Your farm, ready in 3 steps</div>
+            
+            <div class="setup-checklist">
+              <!-- Step 1: Done -->
+              <div class="setup-step-item">
+                <span class="step-icon-badge done">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"/>
+                  </svg>
+                </span>
+                <span>Add your fields</span>
+              </div>
+
+              <!-- Step 2: In Progress -->
+              <div class="setup-step-item">
+                <span class="step-icon-badge in-progress">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="9" stroke-dasharray="38" stroke-dashoffset="14"/>
+                  </svg>
+                </span>
+                <span>Connect sensors</span>
+              </div>
+
+              <!-- Step 3: Pending -->
+              <div class="setup-step-item">
+                <span class="step-icon-badge pending">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="9"/>
+                  </svg>
+                </span>
+                <span style="color: #6B7280;">Invite your team</span>
+              </div>
+            </div>
+
+            <!-- Isometric Garden Plot Preview -->
+            <div class="garden-visual-container" style="height: 185px;">
+              <img src="images/garden.png" onerror="this.onerror=null;this.src='images/garden.jpg';" alt="Farm setup preview" class="garden-visual-img">
+              <div class="garden-wireframe-box">
+                <div class="garden-section-badge">Section 3</div>
+              </div>
+            </div>
+
+            <!-- Bottom Row: 4 Stat Cards -->
+            <div class="preview-stats-grid" style="margin-top: 8px;">
+              <!-- Card 1: Solid Green, Fields -->
+              <div class="stat-preview-card primary">
+                <div class="stat-card-title">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="3" width="7" height="7"/>
+                    <rect x="14" y="3" width="7" height="7"/>
+                    <rect x="14" y="14" width="7" height="7"/>
+                    <rect x="3" y="14" width="7" height="7"/>
+                  </svg>
+                  <span>Fields</span>
+                </div>
+                <div class="stat-card-value">12</div>
+              </div>
+
+              <!-- Card 2: Light Gray, Sensors -->
+              <div class="stat-preview-card gray">
+                <div class="stat-card-title">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                  </svg>
+                  <span>Sensors</span>
+                </div>
+                <div class="stat-card-value">48</div>
+              </div>
+
+              <!-- Card 3: Light Gray, Alerts -->
+              <div class="stat-preview-card gray">
+                <div class="stat-card-title">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                    <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                  </svg>
+                  <span>Alerts</span>
+                </div>
+                <div class="stat-card-value">3</div>
+              </div>
+
+              <!-- Card 4: Light Gray, Yield (Cropped) -->
+              <div class="stat-preview-card gray">
+                <div class="stat-card-title">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
+                    <polyline points="17 6 23 6 23 12"/>
+                  </svg>
+                  <span>Yield</span>
+                </div>
+                <div class="stat-card-value">+18%</div>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
 
-      <div class="form-group">
-        <label for="password">Password</label>
-        <div class="input-icon-wrap">
-          <i class="fa-solid fa-lock prefix-icon"></i>
-          <input type="password" id="password" class="form-input" placeholder="Minimum 4 characters" required autocomplete="new-password">
-          <button type="button" class="password-toggle" id="togglePassword">
-            <i class="fa-solid fa-eye"></i>
-          </button>
-        </div>
-        <div class="strength-meter">
-          <div class="strength-bar" id="strengthBar"></div>
-        </div>
-        <span class="strength-text" id="strengthText">Password strength: None</span>
-      </div>
-
-      <div class="form-group">
-        <label for="confirmPassword">Confirm Password</label>
-        <div class="input-icon-wrap">
-          <i class="fa-solid fa-shield-check prefix-icon"></i>
-          <input type="password" id="confirmPassword" class="form-input" placeholder="Re-enter your password" required autocomplete="new-password">
-        </div>
-      </div>
-
-      <button type="submit" class="btn btn-primary btn-block btn-lg" id="submitBtn" style="margin-top:16px;">
-        <span>Create Farm Account</span>
-        <i class="fa-solid fa-arrow-right"></i>
-      </button>
-    </form>
-
-    <div class="auth-footer">
-      <div>Already have an account? <a href="login.html">Sign in here</a></div>
-      <div style="margin-top:10px; font-size:11.5px; color:var(--text-secondary);">
-        By registering, you agree to our <a href="terms.html" style="color:var(--text-secondary); font-weight:600;">Terms &amp; Conditions</a> and <a href="privacy.html" style="color:var(--text-secondary); font-weight:600;">Privacy Policy</a>.
+        <!-- White-to-green gradient fade overlay -->
+        <div class="preview-bottom-fade"></div>
       </div>
     </div>
   </div>
 
+  <!-- Shared App Utilities & Validation Script -->
   <script src="js/common.js"></script>
   <script>
-    const passwordInput = document.getElementById("password");
-    const strengthBar = document.getElementById("strengthBar");
-    const strengthText = document.getElementById("strengthText");
-    const toggleBtn = document.getElementById("togglePassword");
+    // Toggle Password Visibility helper
+    function setupPasswordToggle(btnId, inputId) {
+      const btn = document.getElementById(btnId);
+      const input = document.getElementById(inputId);
+      if (!btn || !input) return;
 
-    toggleBtn.addEventListener("click", () => {
-      const type = passwordInput.getAttribute("type") === "password" ? "text" : "password";
-      passwordInput.setAttribute("type", type);
-      toggleBtn.querySelector("i").className = type === "password" ? "fa-solid fa-eye" : "fa-solid fa-eye-slash";
-    });
+      btn.addEventListener("click", () => {
+        const isPassword = input.getAttribute("type") === "password";
+        const newType = isPassword ? "text" : "password";
+        input.setAttribute("type", newType);
+        btn.setAttribute("aria-pressed", String(isPassword));
+        btn.setAttribute("aria-label", isPassword ? "Hide password" : "Show password");
+
+        const eyeOpen = btn.querySelector(".eye-open");
+        const eyeOff = btn.querySelector(".eye-off");
+        if (eyeOpen && eyeOff) {
+          eyeOpen.style.display = isPassword ? "none" : "block";
+          eyeOff.style.display = isPassword ? "block" : "none";
+        }
+      });
+    }
+
+    setupPasswordToggle("togglePassword", "password");
+    setupPasswordToggle("toggleConfirmPassword", "confirmPassword");
+
+    // 4-Segment Password Strength Calculation
+    const passwordInput = document.getElementById("password");
+    const segs = [
+      document.getElementById("seg1"),
+      document.getElementById("seg2"),
+      document.getElementById("seg3"),
+      document.getElementById("seg4")
+    ];
+    const strengthHint = document.getElementById("strengthHint");
 
     passwordInput.addEventListener("input", () => {
       const val = passwordInput.value;
       let score = 0;
-      if (val.length >= 4) score += 25;
-      if (val.length >= 8) score += 25;
-      if (/[A-Z]/.test(val) && /[0-9]/.test(val)) score += 25;
-      if (/[^A-Za-z0-9]/.test(val)) score += 25;
 
-      strengthBar.style.width = score + "%";
-      if (score <= 25) {
-        strengthBar.style.backgroundColor = "#ef4444";
-        strengthText.textContent = "Password strength: Weak";
-        strengthText.style.color = "#ef4444";
-      } else if (score <= 50) {
-        strengthBar.style.backgroundColor = "#f59e0b";
-        strengthText.textContent = "Password strength: Fair";
-        strengthText.style.color = "#f59e0b";
-      } else if (score <= 75) {
-        strengthBar.style.backgroundColor = "#3b82f6";
-        strengthText.textContent = "Password strength: Good";
-        strengthText.style.color = "#3b82f6";
-      } else {
-        strengthBar.style.backgroundColor = "#10b981";
-        strengthText.textContent = "Password strength: Strong";
-        strengthText.style.color = "#10b981";
-      }
-    });
+      if (val.length >= 8) score++;
+      if (/\d/.test(val)) score++;
+      if (/[^A-Za-z0-9]/.test(val)) score++;
+      if (/[A-Z]/.test(val) && /[a-z]/.test(val)) score++;
 
-    document.getElementById("signupForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const username = document.getElementById("username").value.trim();
-      const email = document.getElementById("email").value.trim();
-      const password = document.getElementById("password").value;
-      const confirmPassword = document.getElementById("confirmPassword").value;
-      const submitBtn = document.getElementById("submitBtn");
+      // Reset segments
+      segs.forEach(seg => {
+        seg.className = "strength-seg";
+      });
 
-      if (password !== confirmPassword) {
-        showToast("Passwords do not match. Please check again.", "warning");
+      if (val.length === 0) {
+        strengthHint.textContent = "Use 8+ characters with a number and a symbol.";
+        strengthHint.style.color = "#9CA3AF";
         return;
       }
 
+      if (score === 1) {
+        segs[0].classList.add("weak");
+        strengthHint.textContent = "Password strength: Weak. Add numbers and symbols.";
+        strengthHint.style.color = "#EF4444";
+      } else if (score === 2) {
+        segs[0].classList.add("fair");
+        segs[1].classList.add("fair");
+        strengthHint.textContent = "Password strength: Fair. Add a special symbol.";
+        strengthHint.style.color = "#F59E0B";
+      } else if (score === 3) {
+        segs[0].classList.add("good");
+        segs[1].classList.add("good");
+        segs[2].classList.add("good");
+        strengthHint.textContent = "Password strength: Good. Add uppercase & lowercase letters.";
+        strengthHint.style.color = "#84CC16";
+      } else if (score >= 4) {
+        segs.forEach(s => s.classList.add("strong"));
+        strengthHint.textContent = "Password strength: Strong! Excellent security.";
+        strengthHint.style.color = "#22C55E";
+      }
+    });
+
+    // Validation & Error Handling Helpers
+    function setFieldError(fieldId, wrapId, errorId, message) {
+      const wrap = document.getElementById(wrapId);
+      const err = document.getElementById(errorId);
+      if (wrap) wrap.classList.add("invalid");
+      if (err) {
+        err.textContent = message;
+        err.classList.add("visible");
+      }
+    }
+
+    function clearFieldError(wrapId, errorId) {
+      const wrap = document.getElementById(wrapId);
+      const err = document.getElementById(errorId);
+      if (wrap) wrap.classList.remove("invalid");
+      if (err) {
+        err.textContent = "";
+        err.classList.remove("visible");
+      }
+      hideGeneralError();
+    }
+
+    function showGeneralError(msg) {
+      const el = document.getElementById("generalError");
+      if (el) {
+        el.textContent = msg;
+        el.classList.add("visible");
+      }
+    }
+
+    function hideGeneralError() {
+      const el = document.getElementById("generalError");
+      if (el) {
+        el.textContent = "";
+        el.classList.remove("visible");
+      }
+    }
+
+    // Clear errors on field input / change
+    const fieldsToWatch = [
+      { input: "firstName", wrap: "wrapFirstName", error: "firstNameError" },
+      { input: "lastName", wrap: "wrapLastName", error: "lastNameError" },
+      { input: "email", wrap: "wrapEmail", error: "emailError" },
+      { input: "username", wrap: "wrapUsername", error: "usernameError" },
+      { input: "farmName", wrap: "wrapFarmName", error: "farmNameError" },
+      { input: "role", wrap: "wrapRole", error: "roleError" },
+      { input: "password", wrap: "wrapPassword", error: "passwordError" },
+      { input: "confirmPassword", wrap: "wrapConfirmPassword", error: "confirmPasswordError" }
+    ];
+
+    fieldsToWatch.forEach(item => {
+      const el = document.getElementById(item.input);
+      if (el) {
+        const ev = el.tagName === "SELECT" ? "change" : "input";
+        el.addEventListener(ev, () => clearFieldError(item.wrap, item.error));
+      }
+    });
+
+    document.getElementById("termsCheckbox").addEventListener("change", () => {
+      const err = document.getElementById("termsError");
+      if (err) {
+        err.textContent = "";
+        err.classList.remove("visible");
+      }
+    });
+
+    // Google Sign-Up placeholder
+    function handleGoogleSignup() {
+      console.log("Google sign-up clicked");
+    }
+
+    // Form Submission & API Call
+    document.getElementById("signupForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      hideGeneralError();
+
+      const firstName = document.getElementById("firstName").value.trim();
+      const lastName = document.getElementById("lastName").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const username = document.getElementById("username").value.trim();
+      const farmName = document.getElementById("farmName").value.trim();
+      const role = document.getElementById("role").value;
+      const password = document.getElementById("password").value;
+      const confirmPassword = document.getElementById("confirmPassword").value;
+      const termsAccepted = document.getElementById("termsCheckbox").checked;
+      const submitBtn = document.getElementById("submitBtn");
+
+      let isValid = true;
+      let firstInvalidEl = null;
+
+      // 1. First Name
+      if (!firstName) {
+        setFieldError("firstName", "wrapFirstName", "firstNameError", "Please enter your first name.");
+        isValid = false;
+        if (!firstInvalidEl) firstInvalidEl = document.getElementById("firstName");
+      }
+
+      // 2. Last Name
+      if (!lastName) {
+        setFieldError("lastName", "wrapLastName", "lastNameError", "Please enter your last name.");
+        isValid = false;
+        if (!firstInvalidEl) firstInvalidEl = document.getElementById("lastName");
+      }
+
+      // 3. Email
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!email) {
+        setFieldError("email", "wrapEmail", "emailError", "Please enter your email address.");
+        isValid = false;
+        if (!firstInvalidEl) firstInvalidEl = document.getElementById("email");
+      } else if (!emailRegex.test(email)) {
+        setFieldError("email", "wrapEmail", "emailError", "Please enter a valid email address (e.g. you@farm.com).");
+        isValid = false;
+        if (!firstInvalidEl) firstInvalidEl = document.getElementById("email");
+      }
+
+      // 4. Username (3+ chars, letters, numbers, underscore)
+      const usernameRegex = /^[a-zA-Z0-9_]{3,}$/;
+      if (!username) {
+        setFieldError("username", "wrapUsername", "usernameError", "Please choose a username.");
+        isValid = false;
+        if (!firstInvalidEl) firstInvalidEl = document.getElementById("username");
+      } else if (!usernameRegex.test(username)) {
+        setFieldError("username", "wrapUsername", "usernameError", "Username must be 3+ characters (letters, numbers, underscore only).");
+        isValid = false;
+        if (!firstInvalidEl) firstInvalidEl = document.getElementById("username");
+      }
+
+      // 5. Farm Name
+      if (!farmName) {
+        setFieldError("farmName", "wrapFarmName", "farmNameError", "Please enter your farm or organization name.");
+        isValid = false;
+        if (!firstInvalidEl) firstInvalidEl = document.getElementById("farmName");
+      }
+
+      // 6. Role
+      if (!role) {
+        setFieldError("role", "wrapRole", "roleError", "Please select your role.");
+        isValid = false;
+        if (!firstInvalidEl) firstInvalidEl = document.getElementById("role");
+      }
+
+      // 7. Password (8+ chars with number and symbol)
+      const hasNumber = /\d/.test(password);
+      const hasSymbol = /[^A-Za-z0-9]/.test(password);
+      if (!password) {
+        setFieldError("password", "wrapPassword", "passwordError", "Please create a password.");
+        isValid = false;
+        if (!firstInvalidEl) firstInvalidEl = document.getElementById("password");
+      } else if (password.length < 8 || !hasNumber || !hasSymbol) {
+        setFieldError("password", "wrapPassword", "passwordError", "Password must be at least 8 characters with at least one number and one symbol.");
+        isValid = false;
+        if (!firstInvalidEl) firstInvalidEl = document.getElementById("password");
+      }
+
+      // 8. Confirm Password
+      if (!confirmPassword) {
+        setFieldError("confirmPassword", "wrapConfirmPassword", "confirmPasswordError", "Please confirm your password.");
+        isValid = false;
+        if (!firstInvalidEl) firstInvalidEl = document.getElementById("confirmPassword");
+      } else if (password !== confirmPassword) {
+        setFieldError("confirmPassword", "wrapConfirmPassword", "confirmPasswordError", "Passwords do not match.");
+        isValid = false;
+        if (!firstInvalidEl) firstInvalidEl = document.getElementById("confirmPassword");
+      }
+
+      // 9. Terms Checkbox
+      if (!termsAccepted) {
+        const termsErr = document.getElementById("termsError");
+        if (termsErr) {
+          termsErr.textContent = "You must agree to the Terms & Conditions and Privacy Policy.";
+          termsErr.classList.add("visible");
+        }
+        isValid = false;
+        if (!firstInvalidEl) firstInvalidEl = document.getElementById("termsCheckbox");
+      }
+
+      if (!isValid) {
+        if (firstInvalidEl) firstInvalidEl.focus();
+        return;
+      }
+
+      // Submit State
       submitBtn.disabled = true;
       submitBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Creating Account...';
+
+      const payload = {
+        username,
+        email,
+        password,
+        firstName,
+        lastName,
+        farmName,
+        role
+      };
+
+      console.log("Submitting registration for:", {
+        username: payload.username,
+        email: payload.email,
+        firstName: payload.firstName,
+        lastName: payload.lastName,
+        farmName: payload.farmName,
+        role: payload.role
+      });
 
       try {
         await apiFetch("/api/signup", {
           method: "POST",
-          body: JSON.stringify({ username, email, password })
+          body: JSON.stringify(payload)
         });
+
         showToast("Account created successfully! Redirecting to login...", "success");
         setTimeout(() => {
           window.location.href = "login.html";
         }, 1200);
       } catch (err) {
-        showToast(err.message, "error");
+        showGeneralError(err.message || "Failed to create account. Please try again.");
         submitBtn.disabled = false;
-        submitBtn.innerHTML = '<span>Create Farm Account</span> <i class="fa-solid fa-arrow-right"></i>';
+        submitBtn.innerHTML = '<span>Create Account</span> <i class="fa-solid fa-arrow-right"></i>';
       }
     });
   </script>
 </body>
 </html>
-
