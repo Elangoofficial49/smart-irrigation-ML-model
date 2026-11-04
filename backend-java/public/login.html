@@ -3,81 +3,921 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login &bull; AgroPulse</title>
+  <title>Operator Sign In &bull; AgroPulse</title>
   <link rel="canonical" href="https://agropulse.farm/login">
+  
   <!-- PWA Meta Tags & Web App Manifest -->
   <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#163D2B">
+  <meta name="theme-color" content="#55B312">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="AgroPulse">
   <link rel="apple-touch-icon" href="icons/icon-192.svg">
   <link rel="icon" type="image/svg+xml" href="icons/icon.svg">
   <link rel="shortcut icon" href="favicon.ico">
+  
+  <!-- Typography & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <link rel="stylesheet" href="css/style.css?v=6">
-</head>
-<body class="auth-page">
+  <link rel="stylesheet" href="css/style.css?v=7">
 
-  <div class="auth-card">
-    <div class="auth-header">
-      <div class="auth-brand-logo">
-        <i class="fa-solid fa-leaf"></i>
+  <style>
+    /* ==========================================================================
+       AgroPulse - Precision Agriculture Split-Screen Sign In Styles
+       ========================================================================== */
+    :root {
+      --green: #55B312;
+      --green-dark: #4CAF1A;
+      --bg-light: #F4F4F4;
+      --text: #1a1a1a;
+      --muted: #9CA3AF;
+      --card-radius: 4px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body.split-auth-body {
+      min-height: 100vh;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Urbanist', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(rgba(10, 20, 12, 0.40), rgba(10, 20, 12, 0.40)),
+                  url('https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?auto=format&fit=crop&w=1920&q=80') center center / cover no-repeat;
+      padding: 20px;
+      overflow-x: hidden;
+    }
+
+    /* Centered Split-Screen Card */
+    .split-card {
+      width: 1000px;
+      height: 650px;
+      max-width: 95vw;
+      border-radius: var(--card-radius);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      overflow: hidden;
+      box-shadow: 0 24px 50px rgba(0, 0, 0, 0.35);
+      background: #FFFFFF;
+    }
+
+    /* LEFT HALF (Form Panel) */
+    .split-left-panel {
+      background: var(--bg-light);
+      padding: 46px 50px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow-y: auto;
+    }
+
+    /* Logo Row */
+    .brand-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .brand-logo-circle {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--green-dark);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #FFFFFF;
+      flex-shrink: 0;
+    }
+
+    .brand-title {
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--text);
+      letter-spacing: -0.01em;
+    }
+
+    /* Heading & Subtext */
+    .panel-heading {
+      font-size: 28px;
+      font-weight: 500;
+      color: var(--text);
+      margin-bottom: 4px;
+      line-height: 1.2;
+    }
+
+    .panel-subtext {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 24px;
+    }
+
+    /* Form Fields */
+    .form-group-split {
+      margin-bottom: 14px;
+    }
+
+    .form-label-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+
+    .form-label-row label {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    .forgot-link {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--green);
+      text-decoration: none;
+      transition: color 0.15s ease;
+    }
+
+    .forgot-link:hover {
+      color: var(--green-dark);
+      text-decoration: underline;
+    }
+
+    .input-wrap-split {
+      position: relative;
+      display: flex;
+      align-items: center;
+      background: #FFFFFF;
+      border-radius: 12px;
+      height: 44px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      border: 1px solid transparent;
+      transition: box-shadow 0.2s ease, border-color 0.2s ease;
+    }
+
+    .input-wrap-split:focus-within {
+      box-shadow: 0 0 0 2px rgba(85, 179, 18, 0.4);
+      outline: none;
+      border-color: var(--green);
+    }
+
+    .input-icon-left {
+      position: absolute;
+      left: 14px;
+      width: 18px;
+      height: 18px;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+    }
+
+    .split-input {
+      width: 100%;
+      height: 100%;
+      border: none;
+      background: transparent;
+      padding: 0 42px 0 42px;
+      font-family: inherit;
+      font-size: 13.5px;
+      color: var(--text);
+      border-radius: 12px;
+      outline: none;
+    }
+
+    .split-input::placeholder {
+      color: var(--muted);
+    }
+
+    .password-toggle-btn {
+      position: absolute;
+      right: 12px;
+      background: none;
+      border: none;
+      color: var(--muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 6px;
+      border-radius: 6px;
+      transition: color 0.15s ease;
+    }
+
+    .password-toggle-btn:hover {
+      color: var(--text);
+    }
+
+    /* Sign In Button */
+    .btn-dark-charcoal {
+      width: 100%;
+      height: 42px;
+      border-radius: 10px;
+      border: none;
+      background: linear-gradient(180deg, #3a3a3a 0%, #111111 100%);
+      color: #FFFFFF;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18);
+      transition: background 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+      margin-top: 10px;
+    }
+
+    .btn-dark-charcoal:hover:not(:disabled) {
+      background: linear-gradient(180deg, #484848 0%, #1c1c1c 100%);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.22);
+    }
+
+    .btn-dark-charcoal:active:not(:disabled) {
+      transform: translateY(1px);
+    }
+
+    .btn-dark-charcoal:disabled {
+      opacity: 0.75;
+      cursor: not-allowed;
+    }
+
+    /* Thin Divider with OR */
+    .auth-divider {
+      display: flex;
+      align-items: center;
+      margin: 14px 0;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .auth-divider::before,
+    .auth-divider::after {
+      content: "";
+      flex: 1;
+      border-bottom: 1px solid #E5E7EB;
+    }
+
+    .auth-divider span {
+      padding: 0 10px;
+    }
+
+    /* Google Sign In Button */
+    .btn-google {
+      width: 100%;
+      height: 42px;
+      border-radius: 10px;
+      border: 1px solid #E5E7EB;
+      background: #FFFFFF;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 13.5px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      cursor: pointer;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      transition: background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .btn-google:hover {
+      background: #F9FAFB;
+      border-color: #D1D5DB;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    }
+
+    /* Footer */
+    .panel-footer {
+      margin-top: 14px;
+      text-align: center;
+      font-size: 12px;
+      color: var(--text);
+    }
+
+    .panel-footer a {
+      color: var(--green);
+      font-weight: 600;
+      text-decoration: none;
+      transition: color 0.15s ease;
+    }
+
+    .panel-footer a:hover {
+      color: var(--green-dark);
+      text-decoration: underline;
+    }
+
+    .legal-links {
+      margin-top: 8px;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .legal-links a {
+      color: var(--muted);
+      font-weight: 500;
+      text-decoration: none;
+    }
+
+    .legal-links a:hover {
+      color: var(--text);
+      text-decoration: underline;
+    }
+
+    /* RIGHT HALF (Solid Green Panel) */
+    .split-right-panel {
+      background: var(--green);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Dashboard Preview Card */
+    .preview-card {
+      position: absolute;
+      top: 45px;
+      left: 45px;
+      width: 530px;
+      height: 560px;
+      background: #FFFFFF;
+      border-radius: 24px;
+      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.16);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .preview-topbar {
+      display: flex;
+      align-items: center;
+      padding: 16px 20px;
+      border-bottom: 1px solid #F3F4F6;
+      gap: 10px;
+    }
+
+    .preview-topbar-logo {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--green-dark);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #FFFFFF;
+      flex-shrink: 0;
+    }
+
+    .preview-topbar-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .preview-body {
+      display: flex;
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Narrow Vertical Sidebar */
+    .preview-sidebar {
+      width: 50px;
+      padding: 14px 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      border-right: 1px solid #F3F4F6;
+      background: #FFFFFF;
+    }
+
+    .sidebar-icon-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted);
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      transition: background 0.15s ease, color 0.15s ease;
+    }
+
+    .sidebar-icon-btn.active {
+      background: #1A1A1A;
+      color: #FFFFFF;
+    }
+
+    .sidebar-icon-btn.bottom {
+      margin-top: auto;
+    }
+
+    /* Main Area of Preview Card */
+    .preview-main {
+      flex: 1;
+      padding: 16px 20px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .preview-header-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 4px;
+    }
+
+    .preview-date {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--muted);
+    }
+
+    .preview-location-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 10px;
+      border-radius: 12px;
+      border: 1px solid #E5E7EB;
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text);
+      background: #FAFAFA;
+    }
+
+    .preview-weather {
+      margin-bottom: 8px;
+    }
+
+    .temp-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .temp-large {
+      font-size: 38px;
+      font-weight: 500;
+      color: var(--text);
+      line-height: 1;
+    }
+
+    .weather-emoji {
+      font-size: 24px;
+      line-height: 1;
+    }
+
+    .weather-sub {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    /* Isometric Garden Image Area */
+    .garden-visual-container {
+      position: relative;
+      width: 100%;
+      height: 220px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 4px;
+    }
+
+    .garden-visual-img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.12));
+    }
+
+    /* Wireframe Overlay Box */
+    .garden-wireframe-box {
+      position: absolute;
+      top: 36%;
+      left: 36%;
+      width: 115px;
+      height: 75px;
+      border: 1px solid rgba(255, 255, 255, 0.95);
+      box-shadow: 0 0 12px rgba(255, 255, 255, 0.45);
+      transform: skew(-18deg, 12deg);
+      pointer-events: none;
+    }
+
+    .garden-section-badge {
+      position: absolute;
+      top: -12px;
+      left: 50%;
+      transform: translateX(-50%) skew(18deg, -12deg);
+      background: rgba(255, 255, 255, 0.92);
+      color: #1A1A1A;
+      font-size: 9px;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: 4px;
+      white-space: nowrap;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Bottom 4 Stat Cards */
+    .preview-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 110px);
+      gap: 10px;
+      margin-top: 10px;
+      z-index: 2;
+    }
+
+    .stat-preview-card {
+      border-radius: 14px;
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 72px;
+      box-sizing: border-box;
+    }
+
+    .stat-preview-card.primary {
+      background: var(--green);
+      color: #FFFFFF;
+    }
+
+    .stat-preview-card.gray {
+      background: #F4F4F4;
+      color: var(--text);
+    }
+
+    .stat-card-title {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      font-weight: 500;
+    }
+
+    .stat-card-title svg {
+      width: 13px;
+      height: 13px;
+    }
+
+    .stat-card-value {
+      font-size: 22px;
+      font-weight: 400;
+      margin-top: 6px;
+      line-height: 1;
+    }
+
+    /* Bottom Fade Overlay */
+    .preview-bottom-fade {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 95px;
+      background: linear-gradient(to bottom, rgba(85, 179, 18, 0) 0%, rgba(85, 179, 18, 0.75) 55%, #55B312 100%);
+      pointer-events: none;
+      z-index: 3;
+    }
+
+    /* Responsive: Mobile / Tablet */
+    @media (max-width: 768px) {
+      .split-card {
+        grid-template-columns: 1fr;
+        max-width: 440px;
+        height: auto;
+        min-height: unset;
+        margin: 20px 10px;
+        border-radius: 8px;
+      }
+
+      .split-right-panel {
+        display: none;
+      }
+
+      .split-left-panel {
+        padding: 32px 24px;
+      }
+    }
+  </style>
+</head>
+<body class="split-auth-body">
+
+  <div class="split-card">
+    <!-- LEFT PANEL: Operator Sign In Form -->
+    <div class="split-left-panel">
+      <div>
+        <!-- 1. Brand Logo Row -->
+        <div class="brand-row">
+          <div class="brand-logo-circle" aria-hidden="true">
+            <!-- Leaf / Sprout Icon -->
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M7 20h10"/>
+              <path d="M10 20c0-4.5 1.5-8 7-9"/>
+              <path d="M12 12c-4 0-7-2-7-7 5 0 7 3 7 7Z"/>
+            </svg>
+          </div>
+          <span class="brand-title">AgroPulse</span>
+        </div>
+
+        <!-- 2. Heading & Subtext -->
+        <h1 class="panel-heading">Operator Sign In</h1>
+        <p class="panel-subtext">Sign in to manage field telemetry and precision irrigation</p>
+
+        <!-- 3. Form -->
+        <form id="loginForm">
+          <!-- Field 1: Username or Email -->
+          <div class="form-group-split">
+            <div class="form-label-row">
+              <label for="username">Username or Email</label>
+            </div>
+            <div class="input-wrap-split">
+              <span class="input-icon-left" aria-hidden="true">
+                <!-- User Icon -->
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/>
+                  <circle cx="12" cy="7" r="4"/>
+                </svg>
+              </span>
+              <input 
+                type="text" 
+                id="username" 
+                class="split-input" 
+                placeholder="e.g. farmer_john or user@farm.com" 
+                required 
+                autocomplete="username"
+              >
+            </div>
+          </div>
+
+          <!-- Field 2: Password with Toggle and Forgot Password Link -->
+          <div class="form-group-split">
+            <div class="form-label-row">
+              <label for="password">Password</label>
+              <a href="forgot-password.html" class="forgot-link">Forgot password?</a>
+            </div>
+            <div class="input-wrap-split">
+              <span class="input-icon-left" aria-hidden="true">
+                <!-- Lock Icon -->
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/>
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                </svg>
+              </span>
+              <input 
+                type="password" 
+                id="password" 
+                class="split-input" 
+                placeholder="Enter your password" 
+                required 
+                autocomplete="current-password"
+              >
+              <button type="button" class="password-toggle-btn" id="togglePassword" aria-label="Toggle password visibility">
+                <!-- Eye Open (default) -->
+                <svg class="eye-icon eye-open" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/>
+                  <circle cx="12" cy="12" r="3"/>
+                </svg>
+                <!-- Eye Off (hidden initially) -->
+                <svg class="eye-icon eye-off" style="display:none;" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/>
+                  <path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/>
+                  <path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/>
+                  <line x1="2" x2="22" y1="2" y2="22"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Sign In Button -->
+          <button type="submit" class="btn-dark-charcoal" id="submitBtn">
+            <span>Sign In to Dashboard &rarr;</span>
+          </button>
+        </form>
+
+        <!-- Thin Divider line with centered small gray OR -->
+        <div class="auth-divider">
+          <span>OR</span>
+        </div>
+
+        <!-- Sign In with Google Button -->
+        <button type="button" class="btn-google" onclick="handleGoogleSignIn()">
+          <!-- Multicolor Google "G" SVG -->
+          <svg width="18" height="18" viewBox="0 0 24 24">
+            <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.8-2.4 3.65v3.03h3.88c2.27-2.09 3.665-5.17 3.665-9.12Z"/>
+            <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.03c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.26v3.13C3.25 21.31 7.31 24 12 24Z"/>
+            <path fill="#FBBC05" d="M5.28 14.29c-.25-.72-.38-1.49-.38-2.29s.13-1.57.38-2.29V6.58H1.26C.46 8.17 0 9.99 0 12s.46 3.83 1.26 5.42l4.02-3.13Z"/>
+            <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.25 2.69 1.26 6.58l4.02 3.13c.95-2.83 3.6-4.96 6.72-4.96Z"/>
+          </svg>
+          <span>Sign In with Google</span>
+        </button>
       </div>
-      <h1>Operator Sign In</h1>
-      <p>Sign in to manage field telemetry and precision irrigation</p>
+
+      <!-- Footer -->
+      <div class="panel-footer">
+        <div>Don't have an account yet? <a href="signup.html">Create an Account</a></div>
+        <div class="legal-links">
+          <a href="privacy.html">Privacy Policy</a>
+          <span style="margin: 0 6px;">&middot;</span>
+          <a href="terms.html">Terms &amp; Conditions</a>
+        </div>
+      </div>
     </div>
 
-    <form id="loginForm">
-      <div class="form-group">
-        <label for="username">Username or Email</label>
-        <div class="input-icon-wrap">
-          <i class="fa-solid fa-user prefix-icon"></i>
-          <input type="text" id="username" class="form-input" placeholder="e.g. farmer_john or user@farm.com" required autocomplete="username">
+    <!-- RIGHT PANEL: Solid Green Dashboard Preview -->
+    <div class="split-right-panel" aria-hidden="true">
+      <div class="preview-card">
+        <!-- Top bar -->
+        <div class="preview-topbar">
+          <div class="preview-topbar-logo">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M7 20h10"/>
+              <path d="M10 20c0-4.5 1.5-8 7-9"/>
+              <path d="M12 12c-4 0-7-2-7-7 5 0 7 3 7 7Z"/>
+            </svg>
+          </div>
+          <span class="preview-topbar-title">AgroPulse Monitoring</span>
         </div>
-      </div>
 
-      <div class="form-group">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:7px;">
-          <label for="password" style="margin-bottom:0;">Password</label>
-          <a href="forgot-password.html" style="font-size:12.5px; font-weight:600;">Forgot password?</a>
+        <div class="preview-body">
+          <!-- Narrow vertical sidebar with 6 rounded-square icon buttons -->
+          <div class="preview-sidebar">
+            <!-- 1. Home (active with dark background) -->
+            <button type="button" class="sidebar-icon-btn active" title="Dashboard">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                <polyline points="9 22 9 12 15 12 15 22"/>
+              </svg>
+            </button>
+            <!-- 2. Bolt / Power -->
+            <button type="button" class="sidebar-icon-btn" title="Sensors">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+              </svg>
+            </button>
+            <!-- 3. Leaf / Crops -->
+            <button type="button" class="sidebar-icon-btn" title="Crops">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M11 20A7 7 0 0 1 4 13c0-4 3.5-7.5 7.5-7.5s7.5 3.5 7.5 7.5a7 7 0 0 1-7 7Z"/>
+                <path d="M11 13V6"/>
+              </svg>
+            </button>
+            <!-- 4. Analytics / Telemetry -->
+            <button type="button" class="sidebar-icon-btn" title="Analytics">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="20" x2="18" y2="10"/>
+                <line x1="12" y1="20" x2="12" y2="4"/>
+                <line x1="6" y1="20" x2="6" y2="14"/>
+              </svg>
+            </button>
+            <!-- 5. Messages / Logs -->
+            <button type="button" class="sidebar-icon-btn" title="Notifications">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+              </svg>
+            </button>
+            <!-- 6. Settings at bottom -->
+            <button type="button" class="sidebar-icon-btn bottom" title="Settings">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="3"/>
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+              </svg>
+            </button>
+          </div>
+
+          <!-- Main Area -->
+          <div class="preview-main">
+            <!-- Header Meta: Date and Location Pill -->
+            <div class="preview-header-meta">
+              <span class="preview-date">Mon, 22 Jul</span>
+              <div class="preview-location-pill">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
+                  <circle cx="12" cy="10" r="3"/>
+                </svg>
+                <span>Madurai</span>
+              </div>
+            </div>
+
+            <!-- Temperature and Weather -->
+            <div class="preview-weather">
+              <div class="temp-row">
+                <span class="temp-large">22&deg;C</span>
+                <span class="weather-emoji">&#9728;&#65039;</span>
+              </div>
+              <div class="weather-sub">Sunny H:34&deg;C | L:24&deg;C</div>
+            </div>
+
+            <!-- Center: Isometric Garden Plot Image with Wireframe Overlay -->
+            <div class="garden-visual-container">
+              <img src="images/garden.png" alt="Isometric Garden Plot" class="garden-visual-img">
+              <div class="garden-wireframe-box">
+                <div class="garden-section-badge">Section 3</div>
+              </div>
+            </div>
+
+            <!-- Bottom Row: 4 Stat Cards -->
+            <div class="preview-stats-grid">
+              <!-- Card 1: Solid Green, Soil Moisture -->
+              <div class="stat-preview-card primary">
+                <div class="stat-card-title">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>
+                  </svg>
+                  <span>Soil Moisture</span>
+                </div>
+                <div class="stat-card-value">67%</div>
+              </div>
+
+              <!-- Card 2: Light Gray, Wind -->
+              <div class="stat-preview-card gray">
+                <div class="stat-card-title">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M17.7 7.7a2.5 2.5 0 1 1 1.8 4.3H2"/>
+                    <path d="M9.6 4.6A2 2 0 1 1 11 8H2"/>
+                    <path d="M12.6 19.4A2 2 0 1 0 14 16H2"/>
+                  </svg>
+                  <span>Wind</span>
+                </div>
+                <div class="stat-card-value">2 m/s</div>
+              </div>
+
+              <!-- Card 3: Light Gray, Temperature -->
+              <div class="stat-preview-card gray">
+                <div class="stat-card-title">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/>
+                  </svg>
+                  <span>Temperature</span>
+                </div>
+                <div class="stat-card-value">19&deg;C</div>
+              </div>
+
+              <!-- Card 4: Light Gray, Temperature (Cropped by edge) -->
+              <div class="stat-preview-card gray">
+                <div class="stat-card-title">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/>
+                  </svg>
+                  <span>Temperature</span>
+                </div>
+                <div class="stat-card-value">19&deg;C</div>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="input-icon-wrap">
-          <i class="fa-solid fa-lock prefix-icon"></i>
-          <input type="password" id="password" class="form-input" placeholder="Enter your password" required autocomplete="current-password">
-          <button type="button" class="password-toggle" id="togglePassword" aria-label="Toggle password visibility">
-            <i class="fa-solid fa-eye"></i>
-          </button>
-        </div>
-      </div>
 
-      <button type="submit" class="btn btn-primary btn-block btn-lg" id="submitBtn" style="margin-top:12px;">
-        <span>Sign In to Dashboard</span>
-        <i class="fa-solid fa-arrow-right"></i>
-      </button>
-    </form>
-
-    <div class="auth-footer">
-      <div>Don't have an account yet? <a href="signup.html">Create an Account</a></div>
-      <div style="margin-top:10px; font-size:11.5px; color:var(--text-secondary);">
-        <a href="privacy.html" style="color:var(--text-secondary); font-weight:500;">Privacy Policy</a>
-        <span style="margin:0 6px;">&middot;</span>
-        <a href="terms.html" style="color:var(--text-secondary); font-weight:500;">Terms &amp; Conditions</a>
+        <!-- Gradient overlay at bottom fading cards into #55B312 -->
+        <div class="preview-bottom-fade"></div>
       </div>
     </div>
   </div>
 
+  <!-- Shared App Utilities -->
   <script src="js/common.js"></script>
   <script>
-    // Password visibility toggle
+    // Password visibility toggle (preserves original element IDs and logic)
     const toggleBtn = document.getElementById("togglePassword");
     const passwordInput = document.getElementById("password");
-    toggleBtn.addEventListener("click", () => {
-      const type = passwordInput.getAttribute("type") === "password" ? "text" : "password";
-      passwordInput.setAttribute("type", type);
-      toggleBtn.querySelector("i").className = type === "password" ? "fa-solid fa-eye" : "fa-solid fa-eye-slash";
-    });
+    if (toggleBtn && passwordInput) {
+      toggleBtn.addEventListener("click", () => {
+        const isPassword = passwordInput.getAttribute("type") === "password";
+        const newType = isPassword ? "text" : "password";
+        passwordInput.setAttribute("type", newType);
+        
+        const eyeOpen = toggleBtn.querySelector(".eye-open");
+        const eyeOff = toggleBtn.querySelector(".eye-off");
+        if (eyeOpen && eyeOff) {
+          eyeOpen.style.display = isPassword ? "none" : "block";
+          eyeOff.style.display = isPassword ? "block" : "none";
+        }
+      });
+    }
 
+    // Google Sign-In Handler placeholder
+    function handleGoogleSignIn() {
+      console.log("Google sign-in clicked");
+    }
+
+    // Form submission (preserves exact API call, error handling, session saving, and redirect)
     document.getElementById("loginForm").addEventListener("submit", async (e) => {
       e.preventDefault();
       const username = document.getElementById("username").value.trim();
@@ -100,15 +940,14 @@
       } catch (err) {
         showToast(err.message, "error");
         submitBtn.disabled = false;
-        submitBtn.innerHTML = '<span>Sign In to Dashboard</span> <i class="fa-solid fa-arrow-right"></i>';
+        submitBtn.innerHTML = '<span>Sign In to Dashboard &rarr;</span>';
       }
     });
 
-    // If session already active, redirect
+    // If session already active, redirect to dashboard
     if (getToken()) {
       window.location.href = "dashboard.html";
     }
   </script>
 </body>
 </html>
-
