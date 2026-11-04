@@ -141,7 +141,7 @@
 
     backdrop = document.createElement("div");
     backdrop.id = "confirmModalBackdrop";
-    backdrop.className = "modal-backdrop";
+    backdrop.className = "modal-backdrop open";
     backdrop.setAttribute("role", "dialog");
     backdrop.setAttribute("aria-modal", "true");
 

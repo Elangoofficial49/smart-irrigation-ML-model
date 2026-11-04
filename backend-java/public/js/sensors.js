@@ -40,9 +40,9 @@
   };
 
   /**
-   * Initialize on Document Ready
+   * Initialize
    */
-  document.addEventListener("DOMContentLoaded", async () => {
+  async function init() {
     if (typeof AgroPulse.requireAuth === "function") {
       AgroPulse.requireAuth();
     }
@@ -83,7 +83,13 @@
         AgroPulse.updateLiveChip("paused", "(Tab hidden)");
       }
     );
-  });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
+  } else {
+    init();
+  }
 
   /**
    * Bind DOM Events (No inline onclick handlers, Rule 6)

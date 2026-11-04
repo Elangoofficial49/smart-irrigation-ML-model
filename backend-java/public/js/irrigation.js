@@ -26,7 +26,7 @@
   let btnTurnOn, btnTurnOff, manualFeedbackText;
   let logTableBody, logEmptyState, logFilterSelect, exportLogBtn;
 
-  document.addEventListener("DOMContentLoaded", () => {
+  function init() {
     if (typeof AgroPulse !== "undefined" && AgroPulse.initShell) {
       AgroPulse.initShell(
         "irrigation",
@@ -43,7 +43,13 @@
     if (AgroPulse.onTabVisibilityChange) {
       AgroPulse.onTabVisibilityChange(() => loadWorkspaceData(false), null);
     }
-  });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
+  } else {
+    init();
+  }
 
   function cacheElements() {
     // 4 KPI Cards
@@ -374,3 +380,4 @@
   }
 
 })();
+

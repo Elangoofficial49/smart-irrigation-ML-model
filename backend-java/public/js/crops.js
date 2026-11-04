@@ -9,7 +9,7 @@
 (function () {
   "use strict";
 
-  // Require login session
+  // Require authentication
   if (typeof AgroPulse !== "undefined" && AgroPulse.requireAuth) {
     AgroPulse.requireAuth();
   }
@@ -25,14 +25,14 @@
   let latestSensor = null;
   let latestStatus = null;
 
-  // DOM Elements
-  let searchInput, filterStage, filterStatus, exportBtn, addBtn;
+  // DOM Elements cache
+  let searchInput, filterStage, filterStatus, exportBtn, addBtn, emptyAddBtn;
   let tableBody, emptyState, prevPageBtn, nextPageBtn, pageIndicator, paginationSummary;
   let metricTotalFarm, metricTotalDesc, metricCultivated, metricCultDesc, metricVarieties, metricVarDesc, metricNeedingIrr, metricIrrDesc;
   let cropModal, cropForm, cropIdInput, cropNameInput, cropVarietyInput, fieldPlotInput, areaAcresInput, plantingDateInput, growthStageInput, irrigationStatusInput, cropNotesInput, formError, saveSubmitBtn, cancelModalBtn, closeModalBtn;
   let prioritySummaryEl, telemetryBreakdownEl, areaDistListEl;
 
-  document.addEventListener("DOMContentLoaded", () => {
+  function init() {
     // 1. Initialize Shell
     if (typeof AgroPulse !== "undefined" && AgroPulse.initShell) {
       AgroPulse.initShell(
@@ -50,7 +50,7 @@
     if (AgroPulse.onTabVisibilityChange) {
       AgroPulse.onTabVisibilityChange(() => loadWorkspaceData(false), null);
     }
-  });
+  }
 
   function cacheElements() {
     searchInput = document.getElementById("cropSearchInput");
@@ -58,6 +58,7 @@
     filterStatus = document.getElementById("filterStatus");
     exportBtn = document.getElementById("exportCropsCsvBtn");
     addBtn = document.getElementById("openAddCropBtn");
+    emptyAddBtn = document.getElementById("emptyStateAddBtn");
 
     tableBody = document.getElementById("cropTableBody");
     emptyState = document.getElementById("cropEmptyState");
@@ -106,6 +107,7 @@
 
     if (exportBtn) exportBtn.addEventListener("click", exportCsv);
     if (addBtn) addBtn.addEventListener("click", openAddModal);
+    if (emptyAddBtn) emptyAddBtn.addEventListener("click", openAddModal);
 
     if (prevPageBtn) prevPageBtn.addEventListener("click", () => changePage(-1));
     if (nextPageBtn) nextPageBtn.addEventListener("click", () => changePage(1));
@@ -125,9 +127,10 @@
       });
     });
 
-    // Modal actions
+    // Modal close triggers
     if (closeModalBtn) closeModalBtn.addEventListener("click", closeModal);
     if (cancelModalBtn) cancelModalBtn.addEventListener("click", closeModal);
+
     if (cropModal) {
       cropModal.addEventListener("click", (e) => {
         if (e.target === cropModal) closeModal();
@@ -135,19 +138,35 @@
     }
 
     document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape" && cropModal && cropModal.classList.contains("open")) {
+      if (e.key === "Escape" && cropModal && (cropModal.classList.contains("open") || cropModal.style.display !== "none")) {
         closeModal();
       }
     });
 
-    if (cropForm) cropForm.addEventListener("submit", handleFormSubmit);
+    if (cropForm) {
+      cropForm.addEventListener("submit", handleFormSubmit);
+    }
 
-    // Live blur validation
+    // Live validation cleanup on input
     [cropNameInput, fieldPlotInput, areaAcresInput].forEach((inp) => {
       if (inp) {
-        inp.addEventListener("blur", () => validateField(inp));
+        inp.addEventListener("input", () => {
+          inp.classList.remove("input-error");
+          if (formError) {
+            formError.textContent = "";
+            formError.classList.remove("show");
+            formError.style.display = "none";
+          }
+        });
       }
     });
+  }
+
+  // Expose global modal triggers on AgroPulse namespace
+  if (typeof AgroPulse !== "undefined") {
+    AgroPulse.openCropModal = openAddModal;
+    AgroPulse.closeCropModal = closeModal;
+    AgroPulse.openEditCropModal = openEditModal;
   }
 
   async function loadWorkspaceData(showToast = false) {
@@ -219,23 +238,20 @@
       return {
         needsWater: true,
         label: "Requires Irrigation",
-        pillClass: "warning",
-        dotClass: "dot-amber"
+        pillClass: "warning"
       };
     }
     if (status === "Scheduled") {
       return {
         needsWater: false,
         label: "Scheduled",
-        pillClass: "info",
-        dotClass: "dot-blue"
+        pillClass: "info"
       };
     }
     return {
       needsWater: false,
       label: "Optimal",
-      pillClass: "success",
-      dotClass: "dot-green"
+      pillClass: "success"
     };
   }
 
@@ -348,7 +364,6 @@
         </td>
       `;
 
-      // Attach button clicks
       tr.querySelector(".edit-btn").addEventListener("click", () => openEditModal(crop.id));
       tr.querySelector(".delete-btn").addEventListener("click", () => promptDelete(crop.id));
 
@@ -439,95 +454,141 @@
   }
 
   // ==========================================================================
-  // Modal Handling
+  // Modal Handling & Validation
   // ==========================================================================
 
   function openAddModal() {
-    if (!cropModal || !cropForm) return;
-    cropForm.reset();
-    cropIdInput.value = "";
-    document.getElementById("cropModalTitleText").textContent = "Add Crop Plot";
-    document.getElementById("saveCropBtnText").textContent = "Register Plot";
-    plantingDateInput.value = new Date().toISOString().slice(0, 10);
+    const modal = document.getElementById("cropModalBackdrop");
+    const form = document.getElementById("cropForm");
+    if (!modal) return;
+    if (form) form.reset();
+
+    const idInp = document.getElementById("cropIdInput");
+    if (idInp) idInp.value = "";
+
+    const titleEl = document.getElementById("cropModalTitleText");
+    const btnSpan = document.getElementById("saveCropBtnText");
+    if (titleEl) titleEl.textContent = "Add Crop Plot";
+    if (btnSpan) btnSpan.textContent = "Register Plot";
+
+    const dateInp = document.getElementById("plantingDateInput");
+    if (dateInp) dateInp.value = new Date().toISOString().slice(0, 10);
+
     clearValidation();
-    cropModal.classList.add("open");
-    setTimeout(() => cropNameInput.focus(), 50);
+    modal.style.display = "flex";
+    modal.classList.add("open");
+
+    const nameInp = document.getElementById("cropNameInput");
+    if (nameInp) setTimeout(() => nameInp.focus(), 50);
   }
 
   function openEditModal(cropId) {
     const crop = allCrops.find((c) => String(c.id) === String(cropId));
-    if (!crop || !cropModal) return;
+    const modal = document.getElementById("cropModalBackdrop");
+    if (!crop || !modal) return;
 
-    cropIdInput.value = String(crop.id);
-    document.getElementById("cropModalTitleText").textContent = `Edit ${crop.field_plot || "Crop Plot"}`;
-    document.getElementById("saveCropBtnText").textContent = "Save Changes";
+    const idInp = document.getElementById("cropIdInput");
+    if (idInp) idInp.value = String(crop.id);
 
-    cropNameInput.value = crop.crop_name || "";
-    cropVarietyInput.value = crop.variety || "";
-    fieldPlotInput.value = crop.field_plot || "";
-    areaAcresInput.value = crop.area_acres || "";
-    plantingDateInput.value = (crop.planting_date || "").slice(0, 10) || new Date().toISOString().slice(0, 10);
-    growthStageInput.value = crop.growth_stage || "Vegetative";
-    irrigationStatusInput.value = crop.irrigation_status || "Optimal";
-    cropNotesInput.value = crop.notes || "";
+    const titleEl = document.getElementById("cropModalTitleText");
+    const btnSpan = document.getElementById("saveCropBtnText");
+    if (titleEl) titleEl.textContent = `Edit ${crop.field_plot || "Crop Plot"}`;
+    if (btnSpan) btnSpan.textContent = "Save Changes";
+
+    if (cropNameInput) cropNameInput.value = crop.crop_name || "";
+    if (cropVarietyInput) cropVarietyInput.value = crop.variety || "";
+    if (fieldPlotInput) fieldPlotInput.value = crop.field_plot || "";
+    if (areaAcresInput) areaAcresInput.value = crop.area_acres || "";
+    if (plantingDateInput) plantingDateInput.value = (crop.planting_date || "").slice(0, 10) || new Date().toISOString().slice(0, 10);
+    if (growthStageInput) growthStageInput.value = crop.growth_stage || "Vegetative";
+    if (irrigationStatusInput) irrigationStatusInput.value = crop.irrigation_status || "Optimal";
+    if (cropNotesInput) cropNotesInput.value = crop.notes || "";
 
     clearValidation();
-    cropModal.classList.add("open");
-    setTimeout(() => cropNameInput.focus(), 50);
+    modal.style.display = "flex";
+    modal.classList.add("open");
+
+    if (cropNameInput) setTimeout(() => cropNameInput.focus(), 50);
   }
 
   function closeModal() {
-    if (cropModal) cropModal.classList.remove("open");
+    const modal = document.getElementById("cropModalBackdrop");
+    if (modal) {
+      modal.style.display = "none";
+      modal.classList.remove("open");
+    }
     clearValidation();
   }
 
   function clearValidation() {
-    if (formError) formError.textContent = "";
-    [cropNameInput, fieldPlotInput, areaAcresInput].forEach((inp) => {
+    const err = document.getElementById("cropFormError");
+    if (err) {
+      err.textContent = "";
+      err.classList.remove("show");
+      err.style.display = "none";
+    }
+    [cropNameInput, fieldPlotInput, areaAcresInput, plantingDateInput].forEach((inp) => {
       if (inp) inp.classList.remove("input-error");
     });
-  }
-
-  function validateField(inp) {
-    if (!inp) return true;
-    const val = inp.value.trim();
-    let isValid = true;
-
-    if (inp === cropNameInput && !val) isValid = false;
-    if (inp === fieldPlotInput && !val) isValid = false;
-    if (inp === areaAcresInput && (isNaN(Number(val)) || Number(val) <= 0)) isValid = false;
-
-    inp.classList.toggle("input-error", !isValid);
-    return isValid;
   }
 
   async function handleFormSubmit(e) {
     e.preventDefault();
     clearValidation();
 
-    const v1 = validateField(cropNameInput);
-    const v2 = validateField(fieldPlotInput);
-    const v3 = validateField(areaAcresInput);
+    const nameVal = cropNameInput ? cropNameInput.value.trim() : "";
+    const plotVal = fieldPlotInput ? fieldPlotInput.value.trim() : "";
+    const areaVal = areaAcresInput ? parseFloat(areaAcresInput.value) : 0;
+    const dateVal = plantingDateInput ? plantingDateInput.value : "";
 
-    if (!v1 || !v2 || !v3) {
-      if (formError) formError.textContent = "Please fill in all required fields marked with * correctly.";
+    let hasError = false;
+    let errorMsg = "";
+
+    if (!nameVal) {
+      if (cropNameInput) cropNameInput.classList.add("input-error");
+      hasError = true;
+      errorMsg = "Crop name is required (e.g. Tomato, Rice, Chilli).";
+    } else if (!plotVal) {
+      if (fieldPlotInput) fieldPlotInput.classList.add("input-error");
+      hasError = true;
+      errorMsg = "Field / Plot ID is required (e.g. Plot A-1).";
+    } else if (isNaN(areaVal) || areaVal <= 0) {
+      if (areaAcresInput) areaAcresInput.classList.add("input-error");
+      hasError = true;
+      errorMsg = "Planted area must be a positive number of acres (e.g. 2.5).";
+    } else if (!dateVal) {
+      if (plantingDateInput) plantingDateInput.classList.add("input-error");
+      hasError = true;
+      errorMsg = "Planting date is required.";
+    }
+
+    if (hasError) {
+      const err = document.getElementById("cropFormError");
+      if (err) {
+        err.textContent = errorMsg;
+        err.classList.add("show");
+        err.style.display = "block";
+      }
       return;
     }
 
     const payload = {
-      id: cropIdInput.value.trim(),
-      crop_name: cropNameInput.value.trim(),
-      variety: cropVarietyInput.value.trim() || "Standard",
-      field_plot: fieldPlotInput.value.trim(),
-      area_acres: parseFloat(areaAcresInput.value),
-      planting_date: plantingDateInput.value,
-      growth_stage: growthStageInput.value,
-      irrigation_status: irrigationStatusInput.value,
-      notes: cropNotesInput.value.trim()
+      id: cropIdInput ? cropIdInput.value.trim() : "",
+      crop_name: nameVal,
+      variety: (cropVarietyInput && cropVarietyInput.value.trim()) || "Standard",
+      field_plot: plotVal,
+      area_acres: areaVal,
+      planting_date: dateVal,
+      growth_stage: (growthStageInput && growthStageInput.value) || "Vegetative",
+      irrigation_status: (irrigationStatusInput && irrigationStatusInput.value) || "Optimal",
+      notes: (cropNotesInput && cropNotesInput.value.trim()) || ""
     };
 
-    saveSubmitBtn.disabled = true;
-    saveSubmitBtn.textContent = "Saving...";
+    const submitBtn = document.getElementById("saveCropSubmitBtn");
+    const btnSpan = document.getElementById("saveCropBtnText");
+
+    if (submitBtn) submitBtn.disabled = true;
+    if (btnSpan) btnSpan.textContent = "Saving...";
 
     try {
       await AgroPulse.api.saveCropPlot(payload);
@@ -537,10 +598,15 @@
       }
       await loadWorkspaceData();
     } catch (err) {
-      if (formError) formError.textContent = err.message || "Failed to save crop.";
+      const formErr = document.getElementById("cropFormError");
+      if (formErr) {
+        formErr.textContent = err.message || "Failed to save crop.";
+        formErr.classList.add("show");
+        formErr.style.display = "block";
+      }
     } finally {
-      saveSubmitBtn.disabled = false;
-      document.getElementById("saveCropBtnText").textContent = "Save Changes";
+      if (submitBtn) submitBtn.disabled = false;
+      if (btnSpan) btnSpan.textContent = payload.id ? "Save Changes" : "Save Plot";
     }
   }
 
@@ -616,6 +682,13 @@
       return `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8"></circle><path d="M12 2v4"></path><path d="M12 18v4"></path><path d="M4.93 4.93l2.83 2.83"></path><path d="M16.24 16.24l2.83 2.83"></path></svg>`;
     }
     return `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22v-9"></path><path d="M9 13a4 4 0 0 1 8 0c0 4-4 7-4 7s-4-3-4-7z"></path></svg>`;
+  }
+
+  // Self-executing initialization: works whether DOMContentLoaded fired or not
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
+  } else {
+    init();
   }
 
 })();
